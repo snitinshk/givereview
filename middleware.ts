@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { updateSession } from './lib/supabase/middlewares';
+import { updateSession } from './lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
-  await updateSession(request)
+  return await updateSession(request)
+  /*
   const access_token = request.cookies.get('access_token')?.value;
   const { pathname } = request.nextUrl;
 
@@ -35,6 +36,7 @@ export async function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
+  */
 }
 
 export const config = {

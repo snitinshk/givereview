@@ -9,6 +9,7 @@ import Breadcrumb from './breadcrum'
 import { postData } from '@/lib/api-helper'
 import { API_ROUTES } from '@/constant'
 import { MenuItem } from '@/interfaces/layout'
+import { logoutAction } from './action'
 
 interface SubMenuItem {
     name: string
@@ -58,20 +59,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         setOpenSubmenu(openSubmenu === path ? null : path)
     }
 
-    const logout = async () => {
-        const postObject = {
-            path: API_ROUTES.logout,
-        }
-        const responseData = await postData(postObject)
-        console.log('Response from API:', responseData);
-        router.replace('/auth/login')
-    }
+    // const handleLogout = () =>{
+
+    // }
+
+    // const logout = async () => {
+    // const postObject = {
+    //     path: API_ROUTES.logout,
+    // }
+    // const responseData = await postData(postObject)
+    // console.log('Response from API:', responseData);
+    // router.replace('/auth/login')
+    // }
 
     return (
         <div className="flex h-screen bg-gray-100">
             {/* Left Menu */}
             <aside className="w-64 bg-white shadow-md flex flex-col">
-                <div className="p-4 text-2xl font-bold text-primary">Admin Panel</div>
+                <div className="p-4 text-2xl font-bold text-primary">PLACE BOOSTER</div>
                 <nav className="flex-grow">
                     <ul>
                         {menuItems.map((item) => (
@@ -112,7 +117,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     </ul>
                 </nav>
                 <Button
-                    onClick={logout}
+                    onClick={() => { logoutAction(); }}
                     variant="ghost"
                     className="w-full justify-start text-left px-4 py-2 text-red-500 hover:text-red-700"
                 >

@@ -5,6 +5,7 @@ import { postData } from "@/lib/api-helper";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { addChannel } from "./action";
 
 export default function AddNewChannel({ setIsAdding }: any) {
 
@@ -37,7 +38,7 @@ export default function AddNewChannel({ setIsAdding }: any) {
                 path: API_ROUTES.channel,
                 postData: newChannelData
             }
-            const responseData = await postData(postObject)
+            const responseData = await addChannel(newChannelData)
             console.log(responseData);
 
             // setChannels([...channels, newChannel])
