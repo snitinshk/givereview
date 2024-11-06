@@ -15,10 +15,15 @@ const config: Config = {
 					"20%,50%": { opacity: "0" },
 				},
 			},
+			fontFamily: {
+				PUBSAN: ["Public Sans", "sans-serif"],
+				POPFN: ["Poppins", "sans-serif"],
+			},
 			animation: {
 				"caret-blink": "caret-blink 1.25s ease-out infinite",
 			},
 			colors: {
+				'ftClor': '#212B36',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

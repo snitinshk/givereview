@@ -1,9 +1,12 @@
-
+import Image from "next/image"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignInData } from "@/interfaces/user";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
+import Logo from "../../images/logo.svg"
+import { Checkbox } from "@/components/ui/checkbox"
+import Link from 'next/link'
 
 type LoginFormProps = {
     signInData: (data: SignInData) => void; // or Promise<void>
@@ -24,24 +27,27 @@ export default function LoginForm({ signInData }: LoginFormProps) {
 
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
-            <div className="text-center">
-                <h2 className="text-3xl font-bold">Welcome Back</h2>
-                <p className="text-sm text-muted-foreground mt-2">Please enter your details to sign in.</p>
+        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6 font-PUBSAN">
+            <div className="flex justify-center mb-20">
+                <Image src={Logo} alt="Logo" priority />
             </div>
+            <h2 className="text-2xl font-bold font-PUBSAN">Sign in</h2>
 
             <div className="space-y-6">
                 <div className="relative">
                     <Input
                         id="email"
                         type="email"
-                        onChange={(e) => setEmail(e.target.value as string)}
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                         required
-                        className="peer h-12 w-full border-b-2 border-gray-300 focus:outline-none focus:border-primary"
+                        className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary"
                     />
                     <label
                         htmlFor="email"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 transition-all duration-200 ease-in-out transform peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm"
+                        className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
+              ${email ? "-top-2 text-sm text-gray-700" : "top-3 text-base text-gray-500"}
+              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-gray-700`}
                     >
                         Email
                     </label>
@@ -50,14 +56,17 @@ export default function LoginForm({ signInData }: LoginFormProps) {
                 <div className="relative">
                     <Input
                         id="password"
-                        onChange={(e) => setPassword(e.target.value as string)}
                         type={showPassword ? "text" : "password"}
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                         required
-                        className="peer h-12 w-full border-b-2 border-gray-300 focus:outline-none focus:border-primary pr-10"
+                        className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary pr-10"
                     />
                     <label
                         htmlFor="password"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 transition-all duration-200 ease-in-out transform peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm"
+                        className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
+              ${password ? "-top-2 text-sm text-gray-700" : "top-3 text-base text-gray-500"}
+              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-gray-700`}
                     >
                         Password
                     </label>
@@ -74,14 +83,12 @@ export default function LoginForm({ signInData }: LoginFormProps) {
                     </button>
                 </div>
             </div>
-            <div className="text-right text-sm">
-                <a href="#" className="text-primary underline">
-                    Forgot password?
-                </a>
+
+            <div className="flex items-center gap-2"><Checkbox id="rembMe" /> <label htmlFor="rembMe">Remember me</label></div>
+            <div className="flex items-center justify-end">
+                <Link href="/auth/forgot" className="text-primary underline text-ftClor text-sm hover:no-underline">Forgot password?</Link>
             </div>
-            <Button type="submit" className="w-full">
-                Sign In
-            </Button>
+            <Button type="submit" className="w-full bg-ftClor py-6 rounded-lg">Login</Button>
         </form>
     )
 }
