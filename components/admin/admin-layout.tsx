@@ -3,41 +3,53 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { ReactNode } from 'react'
-import { Settings, Users, MessageSquareMore, LogOut, Folder, ChevronDown, ChevronRight } from 'lucide-react'
+import { LogOut, Folder, ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Breadcrumb from './breadcrum'
 import { postData } from '@/lib/api-helper'
 import { API_ROUTES } from '@/constant'
 import { MenuItem } from '@/interfaces/layout'
 import { logoutAction } from './action'
+import Image, { StaticImageData } from "next/image"
+import Logo from "@/app/images/logo.svg"
+import CLIMG from "@/app/images/clients-ico.svg"
+import RVIMG from "@/app/images/reviews-ico.svg"
+import STIMG from "@/app/images/settings-icon.svg"
 
-interface SubMenuItem {
-    name: string
-    path: string
-}
+
+const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
+    <Image src={src} alt={alt} priority />
+);
 
 const menuItems: MenuItem[] = [
     {
         name: 'Clients',
         path: '/admin/clients',
-        icon: Users,
+        clientNumber: 2,
+        icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />,
         submenu: [
             { name: 'Client List', path: '/admin/clients/list' },
             { name: 'Add Client', path: '/admin/clients/add' },
         ],
     },
-    { name: 'Reviews', path: '/admin/analytics', icon: MessageSquareMore },
-    { name: 'Settings', path: '/admin/settings/channels', icon: Settings },
-]
+    { name: 'Reviews', path: '/admin/analytics', icon: () => <IconWrapper src={RVIMG} alt="Reviews Icon" /> },
+    {
+        name: 'Settings', path: '/admin/settings/channels', icon: () => <IconWrapper src={STIMG} alt="Settings Icon" />,
+        submenu: [
+            { name: 'Link Channels', path: '/admin/settings/channels' },
+        ],
+    },
+];
+
 
 const breadcrumItem = [
     {
-        path: 'abc',
-        label: 'adfd'
+        path: '/admin/settings',
+        label: 'Settings'
     },
     {
-        path: 'abc',
-        label: 'adfd1'
+        path: '/admin/settings/channels',
+        label: 'channels'
     }
 ]
 
@@ -73,40 +85,50 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     // }
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-white">
             {/* Left Menu */}
-            <aside className="w-64 bg-white shadow-md flex flex-col">
-                <div className="p-4 text-2xl font-bold text-primary">PLACE BOOSTER</div>
-                <nav className="flex-grow">
+            <aside className="w-64 bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
+                <div className="flex justify-center mb-10">
+                    <Image src={Logo} alt="Logo" priority />
+                </div>
+                <nav>
                     <ul>
                         {menuItems.map((item) => (
-                            <li key={item.path} className="relative">
+                            <li key={item.path} className="relative mb-2">
                                 <Button
-                                    variant={selectedPath === item.path ? "secondary" : "ghost"}
-                                    className="w-full justify-start text-left px-4 py-2 flex items-center"
+                                    variant="ghost"
+                                    // variant={selectedPath === item.path ? "secondary" : "ghost"}
+                                    className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path ? '!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold' : ''}`}
                                     onClick={() => item.submenu ? toggleSubmenu(item.path) : handleNavigation(item.path)}
                                 >
-                                    <item.icon />
-                                    {item.name}
-                                    {item.submenu && (
-                                        openSubmenu === item.path ? (
-                                            <ChevronDown className="ml-auto" />
-                                        ) : (
-                                            <ChevronRight className="ml-auto" />
-                                        )
-                                    )}
+                                    <div className='flex items-center gap-4'>
+                                        <item.icon />
+                                        {item.name}
+                                    </div>
+                                    <div className='flex items-center gap-4'>
+
+                                        {item.clientNumber && <span className='ml-auto w-6 h-6 bg-[#FF5630]/[0.16] text-[#B71D18] flex justify-center items-center rounded-md'>{item.clientNumber}</span>}
+                                        {item.submenu && (
+                                            openSubmenu === item.path ? (
+                                                <ChevronDown />
+                                            ) : (
+                                                <ChevronRight />
+                                            )
+                                        )}
+                                    </div>
                                 </Button>
                                 {item.submenu && openSubmenu === item.path && (
-                                    <ul className="pl-8">
+                                    <ul className="mt-2 ml-2">
                                         {item.submenu.map((subItem) => (
                                             <li key={subItem.path}>
                                                 <Button
-                                                    variant={selectedPath === subItem.path ? "secondary" : "ghost"}
-                                                    className="w-full justify-start text-left px-4 py-2"
+                                                    variant="ghost"
+                                                    //variant={selectedPath === subItem.path ? "secondary" : "ghost"}
+                                                    className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor" : ""}`}
                                                     onClick={() => handleNavigation(subItem.path)}
                                                 >
-                                                    <Folder className="mr-2 h-4 w-4" />
-                                                    {subItem.name}
+
+                                                    <span className='w-1 h-1 bg-gray-500 rounded'></span> {subItem.name}
                                                 </Button>
                                             </li>
                                         ))}
@@ -119,9 +141,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Button
                     onClick={() => { logoutAction(); }}
                     variant="ghost"
-                    className="w-full justify-start text-left px-4 py-2 text-red-500 hover:text-red-700"
+                    className="mx-auto mt-36 justify-start text-left px-5 font-semibold py-3 h-auto text-white bg-[#36B37E] "
                 >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-1 h-4 w-4" />
                     Logout
                 </Button>
             </aside>
