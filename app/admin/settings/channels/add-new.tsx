@@ -1,20 +1,24 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { API_ROUTES, CHANNEL_TYPE } from "@/constant";
-import { postData } from "@/lib/api-helper";
+import { CHANNEL_TYPE } from "@/constant";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
+import { mediaUrl, uploadFile } from "@/lib/utils";
+import placeholder from "./placeholder.svg"
 
-export default function AddNewChannel({ setIsAdding }: any) {
+export default function AddNewChannel({ setIsAdding }) {
 
     const [channels, setChannels] = useState()
     const [newChannelName, setNewChannelName] = useState('')
-    const [newChannelLogo, setNewChannelLogo] = useState('/placeholder.svg?height=40&width=40')
+    const [newChannelLogo, setNewChannelLogo] = useState(placeholder)
+    const [newChannelLogoId, setNewChannelLogoId] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleNewLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNewLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
         const file = event.target.files?.[0]
         if (file) {
             const reader = new FileReader()
@@ -22,28 +26,38 @@ export default function AddNewChannel({ setIsAdding }: any) {
                 setNewChannelLogo(reader.result as string)
             }
             reader.readAsDataURL(file)
+
+            const { data, error } = await uploadFile(file, 'channels');
+
+            if (!error && data?.fullPath && data?.id) {
+                const fullPath = mediaUrl(data?.fullPath);
+                const logoId = data?.id;
+                setNewChannelLogoId(logoId);
+                setNewChannelLogo(fullPath);
+            }
         }
     }
 
     const handleCreateChannel = async () => {
+
         if (newChannelName) {
 
             const newChannelData = {
                 channel_name: newChannelName,
-                channel_logo: 'logo',
+                channel_logo_url: newChannelLogo,
+                channel_logo_id: newChannelLogoId,
                 channel_type: CHANNEL_TYPE.WIDGET
             }
 
-            const postObject = {
-                path: API_ROUTES.channel,
-                postData: newChannelData
+            const {data, error} = await addChannel(newChannelData)
+            if(error){
+
             }
-            const responseData = await addChannel(newChannelData)
-            console.log(responseData);
+            console.log(data)
 
             // setChannels([...channels, newChannel])
             setNewChannelName('')
-            setNewChannelLogo('/placeholder.svg?height=40&width=40')
+            setNewChannelLogo(placeholder)
             setIsAdding(false)
         }
     }

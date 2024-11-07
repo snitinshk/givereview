@@ -1,11 +1,9 @@
 'use client'
-
-import { useState, useRef } from 'react'
-import Image from 'next/image'
-import { PencilIcon, TrashIcon, CheckIcon, XIcon, UploadIcon, PlusIcon } from 'lucide-react'
+import { useState } from 'react'
+// import Image from 'next/image'
+import { PlusIcon } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import ChannelCard from './channel-card'
 import AddNewChannel from './add-new'
 
@@ -24,8 +22,6 @@ const initialChannels = [
 export default function ChannelsPage() {
   const [channels, setChannels] = useState(initialChannels)
   const [isAdding, setIsAdding] = useState(false)
-  const [newChannelLogo, setNewChannelLogo] = useState('/placeholder.svg?height=40&width=40')
-
 
   // Split channels into two arrays for two columns
   const midpoint = Math.ceil(channels.length / 2);

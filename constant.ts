@@ -13,3 +13,5 @@ export enum CHANNEL_TYPE {
     WIDGET = 'WIDGET',
     REVIEW = 'REVIEW'
 }
+
+export const BUCKET_NAME = 'media'
