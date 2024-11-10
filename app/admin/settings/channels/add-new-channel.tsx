@@ -5,9 +5,9 @@ import { CHANNEL_TYPE } from "@/constant";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
-import { mediaUrl, uploadFile } from "@/lib/utils";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { mapChannels } from "@/mappers";
-import { AddChannelProps } from "@/interfaces/channels";
+import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
 import placeholder from "./placeholder.svg"
 import { useAlert } from "@/app/context/alert-context";
@@ -18,6 +18,7 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
     const [newChannelName, setNewChannelName] = useState('')
     const [newChannelLogo, setNewChannelLogo] = useState(placeholder)
     const [newChannelLogoId, setNewChannelLogoId] = useState('')
+    const [channelFile, setChannelFile] = useState<File>();
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleNewLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,21 +30,24 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
                 setNewChannelLogo(reader.result as string)
             }
             reader.readAsDataURL(file)
-
-            const { data, error } = await uploadFile(file, 'channels');
-
-            if (!error && data?.fullPath && data?.id) {
-                const fullPath = mediaUrl(data?.fullPath);
-                const logoId = data?.id;
-                setNewChannelLogoId(logoId);
-                setNewChannelLogo(fullPath);
-            }
+            setChannelFile(file)
         }
     }
 
+
     const handleCreateChannel = async () => {
 
-        if (newChannelName) {
+        if (newChannelName && channelFile) {
+
+            const uploadPath = `channels/${getFileName(channelFile)}`;
+            const { data: uploadData, error: uploadError } = await uploadFile(channelFile, uploadPath);
+
+            if (!uploadError && uploadData?.fullPath && uploadData?.id) {
+                const fullPath = mediaUrl(uploadData?.fullPath);
+                const logoId = uploadData?.id;
+                setNewChannelLogoId(logoId);
+                setNewChannelLogo(fullPath);
+            }
 
             const newChannelData = {
                 channel_name: newChannelName,
@@ -52,18 +56,24 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
                 channel_type: CHANNEL_TYPE.WIDGET
             }
 
-            const { data: addedChannel, error } = await addChannel(newChannelData)
-            if (!error && addedChannel) {
-                const [newMappedChannel] = mapChannels(addedChannel)
+            const { data: addedChannel, error: addChannelError } = await addChannel(newChannelData)
+
+            if (!addChannelError && !uploadError && addedChannel) {
+                const [newMappedChannel]: Channel[] = mapChannels(addedChannel)
                 setChannels([...channels, newMappedChannel])
-                setAlert(
-                    {
-                        type: 'success',
-                        title: 'success',
-                        message: 'channel added successfully',
-                        visible: true
-                    }
-                )
+                setAlert({
+                    type: 'success',
+                    title: 'Success!',
+                    message: 'Channel added successfully',
+                    visible: true
+                })
+            }else {
+                setAlert({
+                    type: 'error',
+                    title: 'Error!',
+                    message: 'Something went wrong, please try again later',
+                    visible: true
+                })
             }
 
             setNewChannelName('')
@@ -106,7 +116,7 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
             />
         </div>
         <div className="flex space-x-2">
-            <Button variant="ghost" size="icon" onClick={handleCreateChannel}>
+            <Button disabled={!newChannelName || !channelFile} variant="ghost" size="icon" onClick={handleCreateChannel}>
                 <CheckIcon className="h-4 w-4" />
                 <span className="sr-only">Save new channel</span>
             </Button>

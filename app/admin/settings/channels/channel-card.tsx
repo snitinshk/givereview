@@ -1,46 +1,63 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UploadIcon, CheckIcon, PencilIcon, TrashIcon, XIcon } from "lucide-react";
+import { Channel, EditChannelData } from "@/interfaces/channels";
+// import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import { UploadIcon } from "@radix-ui/react-icons";
+import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-interface ChannelProps {
-  channel: { id: number; name: string; logo: string };
-  onEdit: (id: number, newName: string, newLogo: string) => void;
-}
 
-export default function ChannelCard({ channel, onEdit }: ChannelProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(channel.name);
-  const [editedLogo, setEditedLogo] = useState(channel.logo);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export default function ChannelCard({ channel, onEdit }: {
+  channel: Channel;
+  onEdit: (editChannelData: EditChannelData) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedName, setEditedName] = useState(channel.name)
+  const [editedLogo, setEditedLogo] = useState(channel.logo)
+  const [channelFile, setChannelFile] = useState<File>();
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSave = () => {
-    onEdit(channel.id, editedName, editedLogo);
-    setIsEditing(false);
-  };
+
+    const editChannelData = {
+      channelId: channel.id,
+      newName: editedName,
+      newLogoFile: channelFile as File,
+      newLogo: editedLogo, // base64logo
+    }
+
+    onEdit(editChannelData)
+    setIsEditing(false)
+  }
 
   const handleCancel = () => {
-    setEditedName(channel.name);
-    setEditedLogo(channel.logo);
-    setIsEditing(false);
-  };
+    setEditedName(channel.name)
+    setEditedLogo(channel.logo)
+    setIsEditing(false)
+  }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setEditedLogo(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        setEditedLogo(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+      setChannelFile(file)
+
     }
-  };
+  }
+
+  const handleDelete = () => {
+
+  }
 
   return (
     <div className="flex items-center space-x-4">
-      <div className="bg-gray-300 rounded-sm p-1">
+      <div className="border-2 border-primary rounded-sm p-1">
         <Image
           src={isEditing ? editedLogo : channel.logo}
           alt={`${channel.name} logo`}
@@ -49,14 +66,15 @@ export default function ChannelCard({ channel, onEdit }: ChannelProps) {
           className="rounded-sm"
         />
       </div>
-
-      {isEditing && (
-        <Button variant="outline" size="icon" onClick={() => fileInputRef.current?.click()}>
-          <UploadIcon className="h-4 w-4" />
-          <span className="sr-only">Upload new logo</span>
-        </Button>
-      )}
-
+      {isEditing && <Button
+        variant="outline"
+        size="icon"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <UploadIcon className="h-4 w-4" />
+        <span className="sr-only">Upload new logo</span>
+      </Button>
+      }
       <div className="flex-grow">
         {isEditing ? (
           <div className="flex items-center space-x-2">
@@ -79,28 +97,31 @@ export default function ChannelCard({ channel, onEdit }: ChannelProps) {
           </span>
         )}
       </div>
-
       <div className="flex space-x-2">
         {isEditing ? (
           <>
-            <Button variant="ghost" size="icon" onClick={handleSave} aria-label={`Save changes for ${channel.name}`}>
+            <Button variant="ghost" size="icon" onClick={handleSave}>
               <CheckIcon className="h-4 w-4" />
+              <span className="sr-only">Save changes for {channel.name}</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleCancel} aria-label={`Cancel editing ${channel.name}`}>
+            <Button variant="ghost" size="icon" onClick={handleCancel}>
               <XIcon className="h-4 w-4" />
+              <span className="sr-only">Cancel editing {channel.name}</span>
             </Button>
           </>
         ) : (
           <>
-            <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} aria-label={`Edit ${channel.name}`}>
+            <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
               <PencilIcon className="h-4 w-4" />
+              <span className="sr-only">Edit {channel.name}</span>
             </Button>
-            <Button variant="ghost" size="icon" aria-label={`Delete ${channel.name}`}>
+            <Button variant="ghost" size="icon" onClick={handleDelete}>
               <TrashIcon className="h-4 w-4" />
+              <span className="sr-only">Delete {channel.name}</span>
             </Button>
           </>
         )}
       </div>
     </div>
-  );
+  )
 }
