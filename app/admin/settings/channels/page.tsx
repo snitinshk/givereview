@@ -8,10 +8,12 @@ import ChannelCard from './channel-card'
 import AddNewChannel from './add-new-channel'
 import { fetchChannels, updateChannels } from './action'
 import { mapChannels } from '@/mappers'
-import { Channel } from '@/interfaces/channels'
+import { Channel, EditChannelData } from '@/interfaces/channels'
+import { useAlert } from '@/app/context/alert-context'
+import { getFileName, mediaUrl, uploadFile } from '@/lib/utils'
 
 export default function ChannelsPage() {
-
+  const { setAlert } = useAlert();
   useEffect(() => {
     fetchChannelsData();
   }, [])
@@ -34,20 +36,61 @@ export default function ChannelsPage() {
   const leftColumnChannels = channels.slice(0, midpoint);
   const rightColumnChannels = channels.slice(midpoint);
 
-  const handleEdit = async (channelId: number, newName: string, newLogo: string) => {
+  const handleEdit = async (editChannelData: EditChannelData) => {
+
+    const { channelId, newName, newLogoFile, newLogo } = editChannelData;
+
+    let updatedLogoUrl;
+
+    const channelToUpdate = channels?.find(channel => channel.id === channelId)
+
+    setChannels(channels.map(channel =>
+      channel.id === channelId ? {
+        ...channel,
+        name: newName ?? channelToUpdate?.name,
+        logo: newLogo ?? channelToUpdate?.logo
+      } : channel
+    ))
+
+    if (newLogoFile) {
+      const uploadPath = `channels/${getFileName(newLogoFile)}`;
+      const { data: uploadData, error: uploadError } = await uploadFile(newLogoFile, uploadPath);
+      if (!uploadError && uploadData?.fullPath) {
+        updatedLogoUrl = mediaUrl(uploadData?.fullPath);
+      } else {
+        setAlert({
+          type: 'error',
+          title: 'Error!',
+          message: 'Error in uploading file, please try again later.',
+          visible: true
+        })
+      }
+
+    }
 
     const updatedChannelData = {
-      channel_name: newName,
-      channel_logo_url: newLogo
+      channel_name: newName ?? channelToUpdate?.name,
+      channel_logo_url: updatedLogoUrl ?? channelToUpdate?.logo,
     }
 
-    const { error } = await updateChannels(updatedChannelData, channelId)
+    const {error: updateError} = await updateChannels(updatedChannelData, channelId)
 
-    if(!error){
-      setChannels(channels.map(channel =>
-        channel.id === channelId ? { ...channel, name: newName, logo: newLogo } : channel
-      ))
+    if (!updateError) {
+      setAlert({
+        type: 'success',
+        title: 'Success!',
+        message: 'Channel updated successfully.',
+        visible: true
+      })
+    } else {
+      setAlert({
+        type: 'error',
+        title: 'Error!',
+        message: 'Error in updating channel information.',
+        visible: true
+      })
     }
+
   }
 
 

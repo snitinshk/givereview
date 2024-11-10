@@ -1,22 +1,34 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Channel, EditChannelData } from "@/interfaces/channels";
+// import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
+
 export default function ChannelCard({ channel, onEdit }: {
-  channel: { id: number; name: string; logo: string };
-  onEdit: (id: number, newName: string, newLogo: string) => void;
+  channel: Channel;
+  onEdit: (editChannelData: EditChannelData) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState(channel.name)
   const [editedLogo, setEditedLogo] = useState(channel.logo)
+  const [channelFile, setChannelFile] = useState<File>();
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSave = () => {
-    onEdit(channel.id, editedName, editedLogo)
+
+    const editChannelData = {
+      channelId: channel.id,
+      newName: editedName,
+      newLogoFile: channelFile as File,
+      newLogo: editedLogo, // base64logo
+    }
+
+    onEdit(editChannelData)
     setIsEditing(false)
   }
 
@@ -26,7 +38,7 @@ export default function ChannelCard({ channel, onEdit }: {
     setIsEditing(false)
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -34,7 +46,13 @@ export default function ChannelCard({ channel, onEdit }: {
         setEditedLogo(reader.result as string)
       }
       reader.readAsDataURL(file)
+      setChannelFile(file)
+
     }
+  }
+
+  const handleDelete = () => {
+
   }
 
   return (
@@ -97,7 +115,7 @@ export default function ChannelCard({ channel, onEdit }: {
               <PencilIcon className="h-4 w-4" />
               <span className="sr-only">Edit {channel.name}</span>
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={handleDelete}>
               <TrashIcon className="h-4 w-4" />
               <span className="sr-only">Delete {channel.name}</span>
             </Button>

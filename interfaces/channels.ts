@@ -31,10 +31,12 @@ export interface AddChannel {
 export interface Channel {
     id: number,
     name: string,
-    logo: string
+    logo: string,
+    logoId: string
 }
 
 export interface ChannelDB {
+    id?: number,
     channel_name?: string,
     channel_logo?: string,
     channel_logo_id?: string
@@ -46,4 +48,11 @@ export interface AddChannelProps {
     channels: Channel[];
     setChannels: Dispatch<SetStateAction<Channel[]>>;
     setIsAdding: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface EditChannelData {
+    channelId: number,
+    newName: string,
+    newLogo: string,
+    newLogoFile: File
 }

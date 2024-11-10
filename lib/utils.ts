@@ -8,19 +8,23 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-export async function uploadFile(file: File, uploadFolder: string): Promise<SupabaseUploadResponse> {
+export async function uploadFile(file: File, uploadPath: string, upsert = false): Promise<SupabaseUploadResponse> {
 
   const supabase = createClient()
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-
   return await supabase
     .storage
     .from('media')
-    .upload(`${uploadFolder}/${fileName}`, file, {
+    .upload(uploadPath, file, {
       cacheControl: '3600',
-      upsert: false
+      upsert: upsert
     })
 }
 
+
+
 export const mediaUrl = (path: string) => `${process.env.NEXT_PUBLIC_MEDIA_BASE_URL + path}`
+export const extractMediaPath = (url: string) => url.split('/media/')[1];
+export const getFileName = (file: File): string => {
+  const fileExt = file.name.split('.').pop();
+  return `${Date.now()}.${fileExt}`;
+}
