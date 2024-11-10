@@ -57,7 +57,7 @@ export default function ChannelCard({ channel, onEdit }: {
 
   return (
     <div className="flex items-center space-x-4">
-      <div className="border-2 border-primary rounded-sm p-1">
+      <div className="bg-gray-100 w-14 h-14 rounded-sm p-3">
         <Image
           src={isEditing ? editedLogo : channel.logo}
           alt={`${channel.name} logo`}
@@ -68,7 +68,7 @@ export default function ChannelCard({ channel, onEdit }: {
       </div>
       {isEditing && <Button
         variant="outline"
-        size="icon"
+        className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
         onClick={() => fileInputRef.current?.click()}
       >
         <UploadIcon className="h-4 w-4" />
@@ -81,7 +81,7 @@ export default function ChannelCard({ channel, onEdit }: {
             <Input
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
-              className="flex-grow"
+              className="flex-grow px-5 h-14"
             />
             <input
               type="file"
@@ -92,7 +92,7 @@ export default function ChannelCard({ channel, onEdit }: {
             />
           </div>
         ) : (
-          <span className="font-medium border-2 border-primary rounded-full px-4 py-2 inline-block">
+          <span className="font-medium bg-gray-100 rounded-sm px-4 py-4 text-gray-400 w-full inline-block">
             {channel.name}
           </span>
         )}
@@ -100,23 +100,23 @@ export default function ChannelCard({ channel, onEdit }: {
       <div className="flex space-x-2">
         {isEditing ? (
           <>
-            <Button variant="ghost" size="icon" onClick={handleSave}>
-              <CheckIcon className="h-4 w-4" />
+            <Button variant="ghost" className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold" onClick={handleSave}>
+              <CheckIcon className="h-4 w-4" /> Save
               <span className="sr-only">Save changes for {channel.name}</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleCancel}>
-              <XIcon className="h-4 w-4" />
+            <Button variant="ghost" className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"  onClick={handleCancel}>
+              <XIcon className="h-4 w-4" />  Cancel
               <span className="sr-only">Cancel editing {channel.name}</span>
             </Button>
           </>
         ) : (
           <>
-            <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
-              <PencilIcon className="h-4 w-4" />
+            <Button variant="ghost" className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold" onClick={() => setIsEditing(true)}>
+              <PencilIcon className="h-4 w-4" /> Edit
               <span className="sr-only">Edit {channel.name}</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleDelete}>
-              <TrashIcon className="h-4 w-4" />
+            <Button variant="ghost" className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold" onClick={handleDelete}>
+              <TrashIcon className="h-4 w-4" /> Delete
               <span className="sr-only">Delete {channel.name}</span>
             </Button>
           </>

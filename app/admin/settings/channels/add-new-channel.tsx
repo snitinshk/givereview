@@ -67,7 +67,7 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
                     message: 'Channel added successfully',
                     visible: true
                 })
-            }else {
+            } else {
                 setAlert({
                     type: 'error',
                     title: 'Error!',
@@ -82,8 +82,8 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
         }
     }
 
-    return <div className="flex items-center space-x-4">
-        <div className="border-2 border-primary rounded-md p-1">
+    return <div className="flex w-[calc(50%-10px)] max-w-full items-center space-x-4">
+        <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
             <Image
                 src={newChannelLogo}
                 alt="New channel logo"
@@ -94,7 +94,7 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
         </div>
         <Button
             variant="outline"
-            size="icon"
+            className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
             onClick={() => fileInputRef.current?.click()}
         >
             <UploadIcon className="h-4 w-4" />
@@ -105,7 +105,7 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
                 value={newChannelName}
                 onChange={(e) => setNewChannelName(e.target.value)}
                 placeholder="Channel name"
-                className="w-1/3"
+                className="flex-grow px-5 h-14"
             />
             <input
                 type="file"
@@ -116,12 +116,12 @@ export default function AddNewChannel({ setIsAdding, setChannels, channels }: Ad
             />
         </div>
         <div className="flex space-x-2">
-            <Button disabled={!newChannelName || !channelFile} variant="ghost" size="icon" onClick={handleCreateChannel}>
-                <CheckIcon className="h-4 w-4" />
+            <Button disabled={!newChannelName || !channelFile} variant="ghost" className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold" onClick={handleCreateChannel}>
+                <CheckIcon className="h-4 w-4" /> Save
                 <span className="sr-only">Save new channel</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setIsAdding(false)}>
-                <XIcon className="h-4 w-4" />
+            <Button variant="ghost" className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold" onClick={() => setIsAdding(false)}>
+                <XIcon className="h-4 w-4" /> Cancel
                 <span className="sr-only">Cancel adding new channel</span>
             </Button>
         </div>

@@ -114,7 +114,7 @@ export default function ChannelsPage() {
         {isAdding ? (
           <AddNewChannel channels={channels} setChannels={setChannels} setIsAdding={setIsAdding} />
         ) : (
-          <Button variant="outline" onClick={() => setIsAdding(true)} className="flex items-center space-x-2">
+          <Button variant="ghost" onClick={() => setIsAdding(true)} className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6">
             <PlusIcon className="h-4 w-4" />
             <span>Add new channel</span>
           </Button>
