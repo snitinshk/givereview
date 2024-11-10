@@ -5,8 +5,7 @@ const Timer = (props: any) => {
     const [minutes, setMinutes] = useState(initialMinute);
     const [seconds, setSeconds] = useState(initialSeconds);
     useEffect(() => {
-        // eslint-disable-next-line prefer-const
-        let myInterval = setInterval(() => {
+        const myInterval = setInterval(() => {
             if (seconds > 0) {
                 setSeconds(seconds - 1);
                 setTimmer({ second: seconds - 1, minute: minutes });

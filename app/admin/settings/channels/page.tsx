@@ -1,41 +1,53 @@
 'use client'
-
-import { useState, useRef } from 'react'
-import Image from 'next/image'
+import { useEffect, useState } from 'react'
+// import Image from 'next/image'
 import { PlusIcon } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import ChannelCard from './channel-card'
-import AddNewChannel from './add-new'
-
-// Dummy data for channels
-const initialChannels = [
-  { id: 1, name: 'Google', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 2, name: 'TripAdvisor', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 3, name: 'Facebook', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 4, name: 'Instagram', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 5, name: 'Twitter', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 6, name: 'LinkedIn', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 7, name: 'YouTube', logo: '/placeholder.svg?height=40&width=40' },
-  { id: 8, name: 'Pinterest', logo: '/placeholder.svg?height=40&width=40' },
-]
+import AddNewChannel from './add-new-channel'
+import { fetchChannels, updateChannels } from './action'
+import { mapChannels } from '@/mappers'
+import { Channel } from '@/interfaces/channels'
 
 export default function ChannelsPage() {
-  const [channels, setChannels] = useState(initialChannels)
+
+  useEffect(() => {
+    fetchChannelsData();
+  }, [])
+
+  const fetchChannelsData = async () => {
+
+    const { data, error } = await fetchChannels()
+
+    if (!error && data) {
+      const channels = mapChannels(data)
+      setChannels(channels);
+    }
+
+  }
+
+  const [channels, setChannels] = useState<Channel[]>([])
   const [isAdding, setIsAdding] = useState(false)
-  const [newChannelLogo, setNewChannelLogo] = useState('/placeholder.svg?height=40&width=40')
 
-
-  // Split channels into two arrays for two columns
   const midpoint = Math.ceil(channels.length / 2);
   const leftColumnChannels = channels.slice(0, midpoint);
   const rightColumnChannels = channels.slice(midpoint);
 
-  const handleEdit = (id: number, newName: string, newLogo: string) => {
-    setChannels(channels.map(channel =>
-      channel.id === id ? { ...channel, name: newName, logo: newLogo } : channel
-    ))
+  const handleEdit = async (channelId: number, newName: string, newLogo: string) => {
+
+    const updatedChannelData = {
+      channel_name: newName,
+      channel_logo_url: newLogo
+    }
+
+    const { error } = await updateChannels(updatedChannelData, channelId)
+
+    if(!error){
+      setChannels(channels.map(channel =>
+        channel.id === channelId ? { ...channel, name: newName, logo: newLogo } : channel
+      ))
+    }
   }
 
 
@@ -57,7 +69,7 @@ export default function ChannelsPage() {
       </div>
       <div className="mt-8">
         {isAdding ? (
-          <AddNewChannel setIsAdding={setIsAdding} />
+          <AddNewChannel channels={channels} setChannels={setChannels} setIsAdding={setIsAdding} />
         ) : (
           <Button variant="outline" onClick={() => setIsAdding(true)} className="flex items-center space-x-2">
             <PlusIcon className="h-4 w-4" />

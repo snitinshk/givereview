@@ -1,20 +1,27 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { API_ROUTES, CHANNEL_TYPE } from "@/constant";
-import { postData } from "@/lib/api-helper";
+import { CHANNEL_TYPE } from "@/constant";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
-import Image from "next/image";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
+import { mediaUrl, uploadFile } from "@/lib/utils";
+import { mapChannels } from "@/mappers";
+import { AddChannelProps } from "@/interfaces/channels";
+import Image from "next/image";
+import placeholder from "./placeholder.svg"
+import { useAlert } from "@/app/context/alert-context";
 
-export default function AddNewChannel({ setIsAdding }: any) {
+export default function AddNewChannel({ setIsAdding, setChannels, channels }: AddChannelProps) {
 
-    const [channels, setChannels] = useState()
+    const { setAlert } = useAlert();
     const [newChannelName, setNewChannelName] = useState('')
-    const [newChannelLogo, setNewChannelLogo] = useState('/placeholder.svg?height=40&width=40')
+    const [newChannelLogo, setNewChannelLogo] = useState(placeholder)
+    const [newChannelLogoId, setNewChannelLogoId] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleNewLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNewLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
         const file = event.target.files?.[0]
         if (file) {
             const reader = new FileReader()
@@ -22,28 +29,45 @@ export default function AddNewChannel({ setIsAdding }: any) {
                 setNewChannelLogo(reader.result as string)
             }
             reader.readAsDataURL(file)
+
+            const { data, error } = await uploadFile(file, 'channels');
+
+            if (!error && data?.fullPath && data?.id) {
+                const fullPath = mediaUrl(data?.fullPath);
+                const logoId = data?.id;
+                setNewChannelLogoId(logoId);
+                setNewChannelLogo(fullPath);
+            }
         }
     }
 
     const handleCreateChannel = async () => {
+
         if (newChannelName) {
 
             const newChannelData = {
                 channel_name: newChannelName,
-                channel_logo: 'logo',
+                channel_logo_url: newChannelLogo,
+                channel_logo_id: newChannelLogoId,
                 channel_type: CHANNEL_TYPE.WIDGET
             }
 
-            const postObject = {
-                path: API_ROUTES.channel,
-                postData: newChannelData
+            const { data: addedChannel, error } = await addChannel(newChannelData)
+            if (!error && addedChannel) {
+                const [newMappedChannel] = mapChannels(addedChannel)
+                setChannels([...channels, newMappedChannel])
+                setAlert(
+                    {
+                        type: 'success',
+                        title: 'success',
+                        message: 'channel added successfully',
+                        visible: true
+                    }
+                )
             }
-            const responseData = await addChannel(newChannelData)
-            console.log(responseData);
 
-            // setChannels([...channels, newChannel])
             setNewChannelName('')
-            setNewChannelLogo('/placeholder.svg?height=40&width=40')
+            setNewChannelLogo(placeholder)
             setIsAdding(false)
         }
     }
@@ -58,6 +82,14 @@ export default function AddNewChannel({ setIsAdding }: any) {
                 className="rounded-sm"
             />
         </div>
+        <Button
+            variant="outline"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+        >
+            <UploadIcon className="h-4 w-4" />
+            <span className="sr-only">Upload logo</span>
+        </Button>
         <div className="flex-grow flex items-center space-x-2">
             <Input
                 value={newChannelName}
@@ -72,14 +104,6 @@ export default function AddNewChannel({ setIsAdding }: any) {
                 className="hidden"
                 accept="image/*"
             />
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <UploadIcon className="h-4 w-4" />
-                <span className="sr-only">Upload logo</span>
-            </Button>
         </div>
         <div className="flex space-x-2">
             <Button variant="ghost" size="icon" onClick={handleCreateChannel}>

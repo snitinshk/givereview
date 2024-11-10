@@ -1,5 +1,5 @@
-import AdminLayout from "@/components/admin/admin-layout"
 import { ReactNode } from "react"
+import AdminLayout from "./side-header"
 
 interface AdminLayoutProps {
   children: ReactNode
