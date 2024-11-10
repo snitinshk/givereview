@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { PencilIcon, TrashIcon, CheckIcon, XIcon, UploadIcon, PlusIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

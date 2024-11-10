@@ -17,13 +17,19 @@ export default function LoginForm({ signInData }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [loading, setLoading] = useState(false);
 
     const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        signInData({ email, password })
-    }
+        event.preventDefault();
+        setLoading(true);
+        try {
+            await signInData({ email, password });
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     return (
@@ -88,7 +94,20 @@ export default function LoginForm({ signInData }: LoginFormProps) {
             <div className="flex items-center justify-end">
                 <Link href="/auth/forgot" className="text-primary underline text-ftClor text-sm hover:no-underline">Forgot password?</Link>
             </div>
-            <Button type="submit" className="w-full bg-ftClor py-6 rounded-lg">Login</Button>
+            <Button
+                type="submit"
+                className="w-full bg-ftClor py-6 rounded-lg"
+                disabled={loading}
+            >
+                {loading ? (
+                    <span className="flex items-center justify-center">
+                        <span className="loader mr-2"></span> 
+                        Loading...
+                    </span>
+                ) : (
+                    "Login"
+                )}
+            </Button>
         </form>
     )
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { ReactNode } from 'react'
-import { LogOut, Folder, ChevronDown, ChevronRight } from 'lucide-react'
+import { LogOut, ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Breadcrumb from './breadcrum'
 import { postData } from '@/lib/api-helper'
@@ -54,10 +54,11 @@ const breadcrumItem = [
 ]
 
 interface AdminLayoutProps {
-    children: ReactNode
+    children: ReactNode,
+    pageHeading?: string
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminLayout({ children, pageHeading }: AdminLayoutProps) {
     const router = useRouter()
     const [selectedPath, setSelectedPath] = useState('/admin/clients')
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
@@ -141,7 +142,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Button
                     onClick={() => { logoutAction(); }}
                     variant="ghost"
-                    className="mx-auto mt-36 justify-start text-left px-5 font-semibold py-3 h-auto text-white bg-[#36B37E] "
+                    className="mx-auto mt-36 justify-start text-left px-5 font-semibold py-3 h-auto text-white bg-[#36B37E]"
                 >
                     <LogOut className="mr-1 h-4 w-4" />
                     Logout
@@ -150,6 +151,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             {/* Main Content */}
             <main className="flex-grow p-8">
+                <h1>{pageHeading}</h1>
                 <Breadcrumb items={breadcrumItem} />
                 {children}
             </main>
