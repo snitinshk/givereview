@@ -3,15 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CHANNEL_TYPE } from "@/constant";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
-import Image from "next/image";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
 import { mediaUrl, uploadFile } from "@/lib/utils";
+import { mapChannels } from "@/mappers";
+import { AddChannelProps } from "@/interfaces/channels";
+import Image from "next/image";
 import placeholder from "./placeholder.svg"
+import { useAlert } from "@/app/context/alert-context";
 
-export default function AddNewChannel({ setIsAdding }) {
+export default function AddNewChannel({ setIsAdding, setChannels, channels }: AddChannelProps) {
 
-    const [channels, setChannels] = useState()
+    const { setAlert } = useAlert();
     const [newChannelName, setNewChannelName] = useState('')
     const [newChannelLogo, setNewChannelLogo] = useState(placeholder)
     const [newChannelLogoId, setNewChannelLogoId] = useState('')
@@ -49,13 +52,20 @@ export default function AddNewChannel({ setIsAdding }) {
                 channel_type: CHANNEL_TYPE.WIDGET
             }
 
-            const {data, error} = await addChannel(newChannelData)
-            if(error){
-
+            const { data: addedChannel, error } = await addChannel(newChannelData)
+            if (!error && addedChannel) {
+                const [newMappedChannel] = mapChannels(addedChannel)
+                setChannels([...channels, newMappedChannel])
+                setAlert(
+                    {
+                        type: 'success',
+                        title: 'success',
+                        message: 'channel added successfully',
+                        visible: true
+                    }
+                )
             }
-            console.log(data)
 
-            // setChannels([...channels, newChannel])
             setNewChannelName('')
             setNewChannelLogo(placeholder)
             setIsAdding(false)
@@ -72,6 +82,14 @@ export default function AddNewChannel({ setIsAdding }) {
                 className="rounded-sm"
             />
         </div>
+        <Button
+            variant="outline"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+        >
+            <UploadIcon className="h-4 w-4" />
+            <span className="sr-only">Upload logo</span>
+        </Button>
         <div className="flex-grow flex items-center space-x-2">
             <Input
                 value={newChannelName}
@@ -86,14 +104,6 @@ export default function AddNewChannel({ setIsAdding }) {
                 className="hidden"
                 accept="image/*"
             />
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <UploadIcon className="h-4 w-4" />
-                <span className="sr-only">Upload logo</span>
-            </Button>
         </div>
         <div className="flex space-x-2">
             <Button variant="ghost" size="icon" onClick={handleCreateChannel}>

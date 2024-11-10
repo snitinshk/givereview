@@ -3,23 +3,29 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { ReactNode } from 'react'
-import { LogOut, Folder, ChevronDown, ChevronRight } from 'lucide-react'
+import { LogOut, ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import Breadcrumb from './breadcrum'
-import { postData } from '@/lib/api-helper'
-import { API_ROUTES } from '@/constant'
 import { MenuItem } from '@/interfaces/layout'
-import { logoutAction } from './action'
 import Image, { StaticImageData } from "next/image"
 import Logo from "@/app/images/logo.svg"
 import CLIMG from "@/app/images/clients-ico.svg"
 import RVIMG from "@/app/images/reviews-ico.svg"
 import STIMG from "@/app/images/settings-icon.svg"
+import CustomAlert from '@/components/alert/custom-alert'
+import { createClient } from '@/lib/supabase/supabase-client'
+import { useAlert } from '../context/alert-context'
+// import { ShowAlert } from '../context/alert-context'
+
 
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
     <Image src={src} alt={alt} priority />
 );
+
+interface BreadcrumbItem {
+    label: string
+    path: string
+}
 
 const menuItems: MenuItem[] = [
     {
@@ -58,6 +64,8 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
+    const { alert } = useAlert()
+
     const router = useRouter()
     const [selectedPath, setSelectedPath] = useState('/admin/clients')
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
@@ -71,18 +79,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         setOpenSubmenu(openSubmenu === path ? null : path)
     }
 
-    // const handleLogout = () =>{
+    const handleLogout = async () => {
 
-    // }
+        const supabase = createClient()
 
-    // const logout = async () => {
-    // const postObject = {
-    //     path: API_ROUTES.logout,
-    // }
-    // const responseData = await postData(postObject)
-    // console.log('Response from API:', responseData);
-    // router.replace('/auth/login')
-    // }
+        const { error } = await supabase.auth.signOut()
+        if (!error) {
+            router.replace('/auth/login')
+        }
+        //TODO: Handle else case
+    }
 
     return (
         <div className="flex h-screen bg-white">
@@ -139,7 +145,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     </ul>
                 </nav>
                 <Button
-                    onClick={() => { logoutAction(); }}
+                    onClick={handleLogout}
                     variant="ghost"
                     className="mx-auto mt-36 justify-start text-left px-5 font-semibold py-3 h-auto text-white bg-[#36B37E] "
                 >
@@ -151,8 +157,26 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* Main Content */}
             <main className="flex-grow p-8">
                 <Breadcrumb items={breadcrumItem} />
+                {alert?.visible && <CustomAlert type={alert?.type} title={alert?.title} message={alert?.message} />}
                 {children}
             </main>
         </div>
+    )
+}
+
+function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
+    return (
+        <nav aria-label="breadcrumb">
+            <ol className="flex space-x-2 text-gray-500">
+                {items.map((item, index) => (
+                    <li key={index}>
+                        <a href={item.path} className="hover:underline">
+                            {item.label}
+                        </a>
+                        {index < items.length - 1 && <span className="mx-2">/</span>}
+                    </li>
+                ))}
+            </ol>
+        </nav>
     )
 }

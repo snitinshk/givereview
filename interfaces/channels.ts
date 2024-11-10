@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface StorageObject {
     id: string;
     fullPath: string;
@@ -25,3 +27,23 @@ export interface AddChannel {
     data: unknown | null;
     error: SupabaseError | null;
 };
+
+export interface Channel {
+    id: number,
+    name: string,
+    logo: string
+}
+
+export interface ChannelDB {
+    channel_name?: string,
+    channel_logo?: string,
+    channel_logo_id?: string
+    channel_logo_url?: string
+}
+
+// Define the props type for your component
+export interface AddChannelProps {
+    channels: Channel[];
+    setChannels: Dispatch<SetStateAction<Channel[]>>;
+    setIsAdding: Dispatch<SetStateAction<boolean>>;
+}
