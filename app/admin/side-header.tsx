@@ -24,11 +24,7 @@ const menuItems: MenuItem[] = [
         name: 'Clients',
         path: '/admin/clients',
         clientNumber: 2,
-        icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />,
-        submenu: [
-            { name: 'Client List', path: '/admin/clients/list' },
-            { name: 'Add Client', path: '/admin/clients/add' },
-        ],
+        icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />
     },
     {
         name: 'Reviews',
