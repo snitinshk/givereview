@@ -40,7 +40,7 @@ export default function ChannelCard({ channel, onEdit }: ChannelProps) {
 
   return (
     <div className="flex items-center space-x-4">
-      <div className="border-2 border-primary rounded-sm p-1">
+      <div className="bg-gray-300 rounded-sm p-1">
         <Image
           src={isEditing ? editedLogo : channel.logo}
           alt={`${channel.name} logo`}
