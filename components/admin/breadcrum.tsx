@@ -20,7 +20,7 @@ export default function Breadcrumb() {
             const pathSegments = pathname.split('/').filter(Boolean)
             const items = pathSegments.map((segment, index) => {
                 const path = `/${pathSegments.slice(0, index + 1).join('/')}`
-                const label = index === 0 ? "Dashboard" : capitalize(segment)
+                const label = index === 0 ? "Dashboard" : capitalize(segment.replace(/-/g, ' '))
                 return { label, path }
             })
             setBreadcrumbItems(items)

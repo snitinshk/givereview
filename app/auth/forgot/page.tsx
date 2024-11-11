@@ -8,34 +8,28 @@ import Image from "next/image"
 import { useState } from "react"
 import Link from 'next/link'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { resetPasswordAction } from "./action"
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState<string>('')
-    const handleResetPassword = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const response = await resetPasswordAction(email);
-        console.log(response);
-    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <Card className="w-full h max-w-md border-none shadow-none">
-                <form onSubmit={handleResetPassword} className="space-y-4">
-                    <CardHeader>
-                        <div className="flex items-center justify-center mb-10">
-                            <Image
-                                src={ic_password}
-                                alt="lock icon"
-                                priority
-                            />
-                        </div>
-                        <CardTitle className="text-[32px] font-bold text-center mb-3">Forgot your Password ?</CardTitle>
-                        <CardDescription className="text-center text-base">
-                            Please enter the email address associated with your account, and we&apos;ll email you a link to reset your password.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                <CardHeader>
+                    <div className="flex items-center justify-center mb-10">
+                        <Image
+                            src={ic_password}
+                            alt="lock icon"
+                            priority
+                        />
+                    </div>
+                    <CardTitle className="text-[32px] font-bold text-center mb-3">Forgot your Password ?</CardTitle>
+                    <CardDescription className="text-center text-base">
+                        Please enter the email address associated with your account, and we&apos;ll email you a link to reset your password.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                         <div className="relative">
                             <Input
                                 id="email"
@@ -54,14 +48,14 @@ export default function ForgotPassword() {
                                 Email address
                             </label>
                         </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col items-center">
-                        <Button type="submit" className="w-full h-12 font-bold font-PUBSAN bg-[#00AB55]">
-                            Reset Password
-                        </Button>
-                        <Link href="/auth/login" className="flex items-center text-sm gap-1 mt-5 font-semibold hover:underline"><MdOutlineKeyboardArrowLeft className="text-lg" /> Return to sign in</Link>
-                    </CardFooter>
-                </form>
+                    </form>
+                </CardContent>
+                <CardFooter className="flex flex-col items-center">
+                    <Button type="submit" className="w-full h-12 font-bold font-PUBSAN bg-[#00AB55]">
+                        Reset Password
+                    </Button>
+                    <Link href="/auth/login" className="flex items-center text-sm gap-1 mt-5 font-semibold hover:underline"><MdOutlineKeyboardArrowLeft className="text-lg" /> Return to sign in</Link>
+                </CardFooter>
             </Card>
         </div>
     )

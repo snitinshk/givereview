@@ -68,7 +68,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
 
     return (
-        <div className="flex h-screen bg-white">
+        <div className="flex min-h-screen bg-white">
             <aside className="w-64 bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
                 <div className="flex justify-center mb-10">
                     <Image src={Logo} alt="Logo" priority />

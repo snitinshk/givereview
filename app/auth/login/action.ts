@@ -15,11 +15,6 @@ export async function loginAction(signInData: SignInData) {
     if (error) {
         return error;
     }
-    
-    revalidatePath('/', 'layout')
-    redirect('/admin/clients')
-    
-}
 
     // const cookieStore = cookies()
     // cookieStore.set('access_token', data?.session?.access_token as string, {
@@ -27,3 +22,8 @@ export async function loginAction(signInData: SignInData) {
     //     path: '/', // Cookie is available for all paths
     //     maxAge: 60 * 60 * 24, // 1 day
     // })
+
+    revalidatePath('/', 'layout')
+    redirect('/admin/clients')
+    
+}
