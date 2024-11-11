@@ -8,6 +8,7 @@ import Image from "next/image"
 import { useState } from "react"
 import Link from 'next/link'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { IoMdInformationCircle } from "react-icons/io";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState<string>('')
@@ -29,6 +30,7 @@ export default function ForgotPassword() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900 mb-4"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div>
                     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                         <div className="relative">
                             <Input

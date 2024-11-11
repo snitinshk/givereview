@@ -24,6 +24,6 @@ export async function loginAction(signInData: SignInData) {
     // })
 
     revalidatePath('/', 'layout')
-    redirect('/admin/clients')
+    redirect('/admin/clients/list')
     
 }

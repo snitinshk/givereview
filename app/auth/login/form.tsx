@@ -7,6 +7,7 @@ import { useState } from "react";
 import Logo from "../../images/logo.svg"
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from 'next/link'
+import { IoMdInformationCircle } from "react-icons/io";
 
 type LoginFormProps = {
     signInData: (data: SignInData) => void; // or Promise<void>
@@ -39,6 +40,7 @@ export default function LoginForm({ signInData }: LoginFormProps) {
             </div>
             <h2 className="text-2xl font-bold font-PUBSAN">Sign in</h2>
 
+            <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div>
             <div className="space-y-6">
                 <div className="relative">
                     <Input
@@ -101,7 +103,7 @@ export default function LoginForm({ signInData }: LoginFormProps) {
             >
                 {loading ? (
                     <span className="flex items-center justify-center">
-                        <span className="loader mr-2"></span> 
+                        <span className="loader mr-2"></span>
                         Loading...
                     </span>
                 ) : (

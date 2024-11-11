@@ -10,6 +10,7 @@ import Link from "next/link"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md"
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Timmer from "@/components/timmer"
+import { IoMdInformationCircle } from "react-icons/io";
 
 export default function ResetPassword() {
     const [email, setEmail] = useState<string>('')
@@ -50,6 +51,7 @@ export default function ResetPassword() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900 mb-4"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div>
                     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                         <div className="space-y-6">
                             <div className="relative">

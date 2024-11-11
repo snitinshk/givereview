@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { TbCameraPlus } from "react-icons/tb";
 import Image from 'next/image';
 import { IoMdClose } from "react-icons/io";
+import { IoMdInformationCircle } from "react-icons/io";
 
 const CreateClient: React.FC = () => {
     const [preview, setPreview] = useState<string | null>(null);
@@ -29,7 +30,10 @@ const CreateClient: React.FC = () => {
                 <Button className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold">Save</Button>
             </div>
             <div className="bg-white rounded-lg shadow-lg mb-5 p-5">
+
                 <div className="max-w-lg space-y-4 flex flex-col">
+                    <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900 mb-4"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div>
+
                     <Input type="text" placeholder="Client name" className="h-12" />
 
                     <Select>
@@ -55,8 +59,8 @@ const CreateClient: React.FC = () => {
                                     <Image
                                         src={preview}
                                         alt="Image Preview"
-                                        width={500}  
-                                        height={500} 
+                                        width={500}
+                                        height={500}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
