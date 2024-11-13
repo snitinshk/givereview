@@ -13,6 +13,7 @@ import Logo from "@/app/images/logo.svg"
 import CLIMG from "@/app/images/clients-ico.svg"
 import RVIMG from "@/app/images/reviews-ico.svg"
 import STIMG from "@/app/images/settings-icon.svg"
+import USERICON from "@/app/images/user-ico.svg"
 import { MenuItem } from '@/interfaces/layout'
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
@@ -22,9 +23,19 @@ const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
 const menuItems: MenuItem[] = [
     {
         name: 'Clients',
-        path: '/admin/clients',
+        path: '/admin/clients/list',
         clientNumber: 2,
         icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />
+    },
+    {
+        name: 'User Name',
+        path: '/admin/username/review-link',
+        icon: () => <IconWrapper src={USERICON} alt="Clients Icon" />,
+        submenu: [
+            { name: 'Review Link', path: '/admin/username/review-link' },
+            { name: 'Widget', path: '/admin/username/widget' },
+            { name: 'Settings', path: '/admin/username/settings' },
+        ],
     },
     {
         name: 'Reviews',
