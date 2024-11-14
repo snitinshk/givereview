@@ -1,36 +1,33 @@
-// import { NextResponse } from 'next/server';
-// import supabase from '@/lib/supabase-server';
-// import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/supabase-server';
 
-// export async function POST(request: Request) {
+export async function GET() {
 
-//     try {
-//         // const cookieStore = cookies();
-//         const requestData = await request.json();
-//         // const access_token = cookieStore.has('access_token');
+    try {
+        const supabase = await createClient()
 
-//         const { data, error } = await supabase
-//         .from('channels')
-//         .insert([
-//             requestData,
-//         ])
-//         .select()
+        const {error, data: channels} = await supabase
+        .from('channels')
+        .select('*')
+        .order('channel_name', { ascending: true })
 
-//         if (error) {
-//             return NextResponse.json(
-//                 { ...error },
-//                 { status: 400 }
-//             );
-//         } else {
+        if (!error) {
+            return NextResponse.json(channels, { status: 200 });
+            
+        } else {
+            return NextResponse.json(
+                { ...error },
+                { status: 400 }
+            );
+        }
 
-//             return NextResponse.json('Ok', { status: 200 });
-//         }
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        return NextResponse.json(
+            { error: errorMessage },
+            { status: 500 }
+        );
+    }
+}
 
-//     } catch (error) {
-//         return NextResponse.json(
-//             { status: 500 }
-//         );
-//     }
-// }
-
-// // You can also handle POST, PUT, DELETE, etc.
+// You can also handle POST, PUT, DELETE, etc.

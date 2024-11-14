@@ -82,7 +82,7 @@ const ClientTable: React.FC = () => {
 
   return (
     <>
-      <Link href={"/admin/clients/create-client"} className='bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12'>New Client</Link>
+      <Link href={"/admin/clients/add"} className='bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12'>New Client</Link>
 
       <div className="bg-white rounded-lg shadow-lg mb-5">
         <div className="px-6 pt-6 flex justify-between items-center mb-4 gap-4">

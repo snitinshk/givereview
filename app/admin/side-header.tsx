@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button"
 import { LogOut, ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Image, { StaticImageData } from "next/image"
-import { useAlert } from '../context/alert-context'
 import Breadcrumb from '@/components/admin/breadcrum'
-import CustomAlert from '@/components/alert/custom-alert'
 import { createClient } from '@/lib/supabase/supabase-client'
 import Logo from "@/app/images/logo.svg"
 import CLIMG from "@/app/images/clients-ico.svg"
@@ -15,6 +13,7 @@ import RVIMG from "@/app/images/reviews-ico.svg"
 import STIMG from "@/app/images/settings-icon.svg"
 import USERICON from "@/app/images/user-ico.svg"
 import { MenuItem } from '@/interfaces/layout'
+import { Toaster } from "@/components/ui/toaster"
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
     <Image src={src} alt={alt} priority />
@@ -58,8 +57,9 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
+    
     const router = useRouter()
-    const { alert } = useAlert()
+
     const [selectedPath, setSelectedPath] = useState('/admin/clients')
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
 
@@ -140,7 +140,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             <main className="flex-grow p-8">
                 <Breadcrumb />
-                {alert?.visible && <CustomAlert type={alert?.type} title={alert?.title} message={alert?.message} />}
+                <Toaster />
+                {/* { alert?.visible && <CustomAlert uniqueIdenifier={Math.random()} type={alert?.type} title={alert?.title} message={alert?.message} />} */}
                 {children}
             </main>
         </div>

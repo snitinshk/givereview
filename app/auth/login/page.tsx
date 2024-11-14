@@ -1,50 +1,47 @@
-'use client'
+"use client";
 
-import Image from "next/image"
-import bgImg from "./content.svg"
-import LoginForm from "./form"
+import Image from "next/image";
+import bgImg from "./content.svg";
+import LoginForm from "./form";
 
-import { useRouter } from 'next/navigation'
-import { API_ROUTES } from "@/constant"
-import { postData } from "@/lib/api-helper"
-import { loginAction } from "./action"
-import { SignInData } from "@/interfaces/user"
-
+import { loginAction } from "./action";
+import { SignInData } from "@/interfaces/user";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const [isInvalidCredentials, setIsInvalidCredentials] =
+    useState<boolean>(false);
 
-    const router = useRouter()
+  const router = useRouter();
 
-    const handleSignInData = async (signInData: SignInData) => {
-
-        const response = await loginAction(signInData);
-        console.log(response);
-        // loginAction(auth)
-        // const postObject = {
-        //     path: API_ROUTES.login,
-        //     postData: auth
-        // }
-        // const responseData = await postData(postObject)
-        // console.log('Response from API:', responseData);
-        // window.location.href = '/admin/clients';
-        // router.push('/admin/users')
+  const handleSignInData = async (signInData: SignInData) => {
+    const isError = await loginAction(signInData);
+    if (!isError) {
+      router.push("/admin/clients");
+    } else {
+      setIsInvalidCredentials(true);
     }
+  };
 
-    return (
-        <div className="flex h-screen">
-            <div className="hidden md:block md:w-2/3 relative bg-primary">
-                <Image
-                    src={bgImg}
-                    alt="Decorative background"
-                    layout="fill"
-                    objectFit="cover"
-                    priority
-                />
-            </div>
+  return (
+    <div className="flex h-screen">
+      <div className="hidden md:block md:w-2/3 relative bg-primary">
+        <Image
+          src={bgImg}
+          alt="Decorative background"
+          layout="fill"
+          objectFit="cover"
+          priority
+        />
+      </div>
 
-            <div className="w-full md:w-1/3 flex items-center justify-center p-8 bg-background">
-                <LoginForm signInData={handleSignInData} />
-            </div>
-        </div>
-    )
+      <div className="w-full md:w-1/3 flex items-center justify-center p-8 bg-background">
+        <LoginForm
+          invalidCredentials={isInvalidCredentials}
+          signInData={handleSignInData}
+        />
+      </div>
+    </div>
+  );
 }

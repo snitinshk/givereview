@@ -15,17 +15,16 @@ export async function addChannel(channelData: ChannelDB) {
 
 }
 
-export async function fetchChannels() {
-
+export async function deleteChannel(channelId: number) {
     const supabase = await createClient()
-
     return await supabase
         .from('channels')
-        .select('*')
+        .delete()
+        .eq('id', channelId)
 
 }
 
-export async function updateChannels(updateData: ChannelDB, channelId: number) {
+export async function updateChannel(updateData: ChannelDB, channelId: number) {
 
     const supabase = await createClient()
     return await supabase

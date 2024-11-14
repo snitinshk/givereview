@@ -8,33 +8,39 @@ interface CustomAlertProps {
   type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
+  uniqueIdenifier: number
 }
 
 export default function CustomAlert(
-  { type = 'success', title = 'Success!', message = 'Operation completed successfully.' }: CustomAlertProps
+  { type, title, message, uniqueIdenifier }: CustomAlertProps
 ) {
-  const [isVisible, setIsVisible] = useState(true)
+      
+  const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 
   useEffect(() => {
-    const duration = 3000 // 10 seconds
-    const interval = 100 // Update every 100ms for smooth animation
+    // Increment alertKey to reset the alert on each display
+    setIsVisible(true);
+    setProgress(100);
+
+    const duration = 3000; // 3 seconds
+    const interval = 100; // Update every 100ms for smooth animation
 
     const timer = setInterval(() => {
       setProgress((prevProgress) => {
         if (prevProgress <= 0) {
-          clearInterval(timer)
-          setIsVisible(false)
-          return 0
+          clearInterval(timer);
+          setIsVisible(false);
+          return 0;
         }
-        return prevProgress - (100 * interval / duration)
-      })
-    }, interval)
+        return prevProgress - (100 * interval / duration);
+      });
+    },interval);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer);
+  }, [uniqueIdenifier]);
 
-  const isSuccess = type === 'success'
+  const isSuccess = type === 'success';
 
   return (
     <div className={cn(
@@ -59,5 +65,5 @@ export default function CustomAlert(
         </p>
       </div>
     </div>
-  )
+  );
 }

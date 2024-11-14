@@ -8,18 +8,23 @@ import Image from "next/image"
 import { useState } from "react"
 import Link from 'next/link'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { IoMdInformationCircle } from "react-icons/io";
-import { resetPasswordAction } from "./action"
-import { CheckCircle } from "lucide-react"
 import InlineAlert from "@/components/alert/inline-alert"
+import forgotPasswordAction from "./action"
+
+interface NotifyTextObject {
+    isSuccess: boolean;
+    alertText: string
+}
 
 export default function ForgotPassword() {
+    
     const [email, setEmail] = useState<string>('')
-    const [notifyText, setNotifyText] = useState<any>(null)
+    const [notifyText, setNotifyText] = useState<NotifyTextObject>()
+
     const handleResetPassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const { error } = await resetPasswordAction(email);
-        console.log(error);
+        const { error } = await forgotPasswordAction(email);
+
         if (!error) {
             setNotifyText({ isSuccess: true, alertText: 'Please check your email for link to reset your password.' })
         } else {

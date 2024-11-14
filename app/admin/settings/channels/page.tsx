@@ -1,99 +1,111 @@
-'use client'
-import { useEffect, useState } from 'react'
-// import Image from 'next/image'
-import { PlusIcon } from 'lucide-react'
+"use client";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { PlusIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import ChannelCard from './channel-card'
-import AddNewChannel from './add-new-channel'
-import { fetchChannels, updateChannels } from './action'
-import { mapChannels } from '@/mappers'
-import { Channel, EditChannelData } from '@/interfaces/channels'
-import { useAlert } from '@/app/context/alert-context'
-import { getFileName, mediaUrl, uploadFile } from '@/lib/utils'
+import { Button } from "@/components/ui/button";
+import ChannelCard from "./channel-card";
+import AddNewChannel from "./add-new-channel";
+import { updateChannel } from "./action";
+import { mapChannels } from "@/mappers";
+import { Channel, EditChannelData } from "@/interfaces/channels";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ChannelsPage() {
-  const { setAlert } = useAlert();
-  useEffect(() => {
-    fetchChannelsData();
-  }, [])
 
-  const fetchChannelsData = async () => {
+  const { toast } = useToast();
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [leftColumnChannels, setLeftColumnChannels] = useState<Channel[]>([]);
+  const [rightColumnChannels, setRightColumnChannels] = useState<Channel[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
 
-    const { data, error } = await fetchChannels()
+  const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
 
-    if (!error && data) {
-      const channels = mapChannels(data)
-      setChannels(channels);
-    }
-
+  if (error) {
+    toast({
+      title: "Error!",
+      description: `Error in fetching channels list, please try again later`,
+    });
   }
 
-  const [channels, setChannels] = useState<Channel[]>([])
-  const [isAdding, setIsAdding] = useState(false)
+  useEffect(() => {
+    if (channelList) {
+      const mappedChannels = mapChannels(channelList);
+      setChannels(mappedChannels);
+    }
+  }, [channelList]);
 
-  const midpoint = Math.ceil(channels.length / 2);
-  const leftColumnChannels = channels.slice(0, midpoint);
-  const rightColumnChannels = channels.slice(midpoint);
+  useEffect(() => {
+    const midpoint = Math.ceil(channels.length / 2);
+    setLeftColumnChannels(channels.slice(0, midpoint));
+    setRightColumnChannels(channels.slice(midpoint));
+  }, [channels]);
 
   const handleEdit = async (editChannelData: EditChannelData) => {
 
+    console.log(editChannelData);
+    
     const { channelId, newName, newLogoFile, newLogo } = editChannelData;
-
-    let updatedLogoUrl;
-
-    const channelToUpdate = channels?.find(channel => channel.id === channelId)
-
-    setChannels(channels.map(channel =>
-      channel.id === channelId ? {
-        ...channel,
-        name: newName ?? channelToUpdate?.name,
-        logo: newLogo ?? channelToUpdate?.logo
-      } : channel
-    ))
+    const channelToUpdate = channels.find(
+      (channel) => channel.id === channelId
+    );
+    let updatedLogoUrl = newLogo ?? channelToUpdate?.logo;
 
     if (newLogoFile) {
       const uploadPath = `channels/${getFileName(newLogoFile)}`;
-      const { data: uploadData, error: uploadError } = await uploadFile(newLogoFile, uploadPath);
+      const { data: uploadData, error: uploadError } = await uploadFile(
+        newLogoFile,
+        uploadPath
+      );
       if (!uploadError && uploadData?.fullPath) {
-        updatedLogoUrl = mediaUrl(uploadData?.fullPath);
+        updatedLogoUrl = mediaUrl(uploadData.fullPath);
       } else {
-        setAlert({
-          type: 'error',
-          title: 'Error!',
-          message: 'Error in uploading file, please try again later.',
-          visible: true
-        })
+        toast({
+          title: "Error!",
+          description: `Error in uploading file, please try again later.`,
+        });
+        return;
       }
-
     }
 
     const updatedChannelData = {
       channel_name: newName ?? channelToUpdate?.name,
-      channel_logo_url: updatedLogoUrl ?? channelToUpdate?.logo,
-    }
-
-    const {error: updateError} = await updateChannels(updatedChannelData, channelId)
-
+      channel_logo_url: updatedLogoUrl,
+    };
+    
+    const { error: updateError } = await updateChannel(
+      updatedChannelData,
+      channelId
+    );
+    
     if (!updateError) {
-      setAlert({
-        type: 'success',
-        title: 'Success!',
-        message: 'Channel updated successfully.',
-        visible: true
-      })
+      
+      setChannels((prevChannels) =>
+        prevChannels.map((channel) =>
+          channel.id === channelId
+            ? {
+                ...channel,
+                name: updatedChannelData.channel_name,
+                logo: updatedChannelData.channel_logo_url,
+              }
+            : channel
+        )
+      );
+      toast({
+        title: "Success!",
+        description: `Channel updated successfully.`,
+      });
+
     } else {
-      setAlert({
-        type: 'error',
-        title: 'Error!',
-        message: 'Error in updating channel information.',
-        visible: true
-      })
+      toast({
+        title: "Error!",
+        description: `Error in updating channel information.`,
+      });
     }
-
-  }
-
-
+  };
 
   return (
     <div className="container mx-auto py-8 pr-8 md:pr-16 lg:pr-24">
@@ -101,25 +113,43 @@ export default function ChannelsPage() {
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
           {leftColumnChannels.map((channel) => (
-            <ChannelCard key={channel.id} channel={channel} onEdit={handleEdit} />
+            <ChannelCard
+              key={channel.id}
+              setChannels={setChannels}
+              channel={channel}
+              onEdit={handleEdit}
+            />
           ))}
         </div>
         <div className="space-y-4">
           {rightColumnChannels.map((channel) => (
-            <ChannelCard key={channel.id} channel={channel} onEdit={handleEdit} />
+            <ChannelCard
+              key={channel.id}
+              setChannels={setChannels}
+              channel={channel}
+              onEdit={handleEdit}
+            />
           ))}
         </div>
       </div>
       <div className="mt-8">
         {isAdding ? (
-          <AddNewChannel channels={channels} setChannels={setChannels} setIsAdding={setIsAdding} />
+          <AddNewChannel
+            channels={channels}
+            setChannels={setChannels}
+            setIsAdding={setIsAdding}
+          />
         ) : (
-          <Button variant="ghost" onClick={() => setIsAdding(true)} className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6">
+          <Button
+            variant="ghost"
+            onClick={() => setIsAdding(true)}
+            className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6"
+          >
             <PlusIcon className="h-4 w-4" />
             <span>Add new channel</span>
           </Button>
         )}
       </div>
     </div>
-  )
+  );
 }
