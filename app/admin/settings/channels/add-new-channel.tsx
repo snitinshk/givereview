@@ -10,6 +10,7 @@ import { mapChannels } from "@/mappers";
 import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
 import placeholder from "./placeholder.svg";
+
 import { useToast } from "@/hooks/use-toast";
 
 export default function AddNewChannel({

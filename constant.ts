@@ -14,4 +14,14 @@ export enum CHANNEL_TYPE {
     REVIEW = 'REVIEW'
 }
 
+export enum CLIENT_TYPE {
+    RESTAURANT = 'RESTAURANT',
+    NIGHTCLUB = 'NIGHTCLUB',
+    SPA = 'SPA',
+    SALON = 'SALON',
+    MASSAGE = 'MASSAGE',
+    CLINIC = 'CLINIC'
+
+}
+
 export const BUCKET_NAME = 'media'

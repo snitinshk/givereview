@@ -45,8 +45,6 @@ export default function ChannelsPage() {
   }, [channels]);
 
   const handleEdit = async (editChannelData: EditChannelData) => {
-
-    console.log(editChannelData);
     
     const { channelId, newName, newLogoFile, newLogo } = editChannelData;
     const channelToUpdate = channels.find(

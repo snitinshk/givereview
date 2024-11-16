@@ -28,3 +28,17 @@ export const getFileName = (file: File): string => {
   const fileExt = file.name.split('.').pop();
   return `${Date.now()}.${fileExt}`;
 }
+
+export const getSlug = (name: string) => {
+  return name
+    .toLowerCase() // Convert to lowercase
+    .trim() // Remove whitespace from both ends
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with dashes
+    .replace(/-+/g, '-'); // Remove multiple dashes
+}
+
+export function capitalizeFirstLetter(string: string) {
+  if (!string) return string; // Handle empty or null strings
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

@@ -1,36 +1,33 @@
-// import { NextResponse } from 'next/server';
-// import supabase from '@/lib/supabase-server';
+import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/supabase-server';
 
-// export async function POST(request: Request) {
+export async function GET() {
 
-//     try {
+    try {
+        const supabase = await createClient()
 
-//         const requestData = await request.json();
-//         const { client_name, client_type, client_logo, client_status } = requestData
+        const {error, data: channels} = await supabase
+        .from('clients')
+        .select('*')
+        .order('client_name', { ascending: true })
 
-//         const { data, error } = await supabase
-//             .from('clients')
-//             .insert([
-//                 { client_name, client_type, client_logo, client_status },
-//             ])
-//             .select()
+        if (!error) {
+            return NextResponse.json(channels, { status: 200 });
+            
+        } else {
+            return NextResponse.json(
+                { ...error },
+                { status: 400 }
+            );
+        }
 
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        return NextResponse.json(
+            { error: errorMessage },
+            { status: 500 }
+        );
+    }
+}
 
-//         if (error) {
-//             return NextResponse.json(
-//                 { ...error },
-//                 { status: 400 }
-//             );
-//         } else {
-
-//             return NextResponse.json('Ok', { status: 200 });
-//         }
-
-//     } catch (error) {
-//         return NextResponse.json(
-//             { status: 500 }
-//         );
-//     }
-// }
-
-// // You can also handle POST, PUT, DELETE, etc.
+// You can also handle POST, PUT, DELETE, etc.
