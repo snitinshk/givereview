@@ -5,6 +5,6 @@ interface AdminLayoutProps {
   children: ReactNode
 }
 
-export default function Layout({ children }: AdminLayoutProps) {
+export default async function Layout({ children }: AdminLayoutProps) {
   return <AdminLayout>{children}</AdminLayout>
 }

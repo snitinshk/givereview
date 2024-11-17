@@ -42,3 +42,5 @@ export function capitalizeFirstLetter(string: string) {
   if (!string) return string; // Handle empty or null strings
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());

@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/supabase-server';
+import { clients } from '@/app/admin/clients/[slug]/review-link/page';
 
 export async function GET() {
 
     try {
         const supabase = await createClient()
 
-        const {error, data: channels} = await supabase
+        const {error, data: clients} = await supabase
         .from('clients')
         .select('*')
-        .order('client_name', { ascending: true })
+        .order('created_at', { ascending: false })
 
         if (!error) {
-            return NextResponse.json(channels, { status: 200 });
+            return NextResponse.json(clients, { status: 200 });
             
         } else {
             return NextResponse.json(

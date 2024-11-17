@@ -14,7 +14,8 @@ import STIMG from "@/app/images/settings-icon.svg";
 import USERICON from "@/app/images/user-ico.svg";
 import { MenuItem } from "@/interfaces/layout";
 import { Toaster } from "@/components/ui/toaster";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, fetcher } from "@/lib/utils";
+import useSWR from "swr";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -48,6 +49,10 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
 
+  const { data: clientsList } = useSWR("/api/admin/client", fetcher);
+
+  menuItems[0].clientNumber = clientsList?.length;
+  
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();

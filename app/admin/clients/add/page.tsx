@@ -43,7 +43,8 @@ const CreateClient: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (event: any) => {
-    event.currentTarget.preventDefault();
+
+    event.preventDefault();
 
     if (!clientLogo || !clientName || !clientType) {
       toast({
@@ -75,6 +76,7 @@ const CreateClient: React.FC = () => {
     };
 
     const response = await addClient(newClientData);
+
     const { error } = JSON.parse(response);
 
     if (error) {
@@ -94,10 +96,11 @@ const CreateClient: React.FC = () => {
   return (
     <>
       <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
-        <Button className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
+        <Button onClick={()=>{ router.back() }} className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
           Cancel
         </Button>
         <Button
+          disabled={ !clientName || !clientType || !clientLogo}
           form="add-client"
           type="submit"
           className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
