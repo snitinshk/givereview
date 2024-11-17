@@ -41,6 +41,7 @@ const CreateClient: React.FC = () => {
     setPreview(null);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (event: any) => {
     event.currentTarget.preventDefault();
 

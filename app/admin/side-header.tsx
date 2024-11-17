@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode, useEffect } from "react";
+import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, ChevronRight } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
