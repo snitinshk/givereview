@@ -1,15 +1,10 @@
 import { MdEdit } from "react-icons/md";
 import { Button } from '@/components/ui/button';
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { useState } from "react";
-// import AddNewChannel from "../../../settings/channels/add-new-channel";
 import Image from "next/image";
 import GLGIMG from "@/app/images/google.svg"
 
 const PositiveTabs: React.FC = () => {
-    // const [isAdding, setIsAdding] = useState(false);
-    // const [channels, setChannels] = useState<Channel[]>([]);
-
     return (
         <>
             <div className='flex flex-col gap-5 items-start'>
@@ -47,24 +42,14 @@ const PositiveTabs: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                {/* <div className="mt-8 w-full [&>div]:w-full">
-                    {isAdding ? (
-                        <AddNewChannel
-                            channels={channels}
-                            setChannels={setChannels}
-                            setIsAdding={setIsAdding}
-                        />
-                    ) : (
-                        <Button
-                            variant="ghost"
-                            onClick={() => setIsAdding(true)}
-                            className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6"
-                        >
-                            <PlusIcon className="h-4 w-4" />
-                            <span>Add new channel</span>
-                        </Button>
-                    )}
-                </div> */}
+                <Button
+                    variant="ghost"
+                    //onClick={() => setIsAdding(true)}
+                    className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6"
+                >
+                    <PlusIcon className="h-4 w-4" />
+                    <span>Add new channel</span>
+                </Button>
             </div>
         </>
     )
