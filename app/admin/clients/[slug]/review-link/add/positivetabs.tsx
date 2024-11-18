@@ -2,13 +2,13 @@ import { MdEdit } from "react-icons/md";
 import { Button } from '@/components/ui/button';
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
-import AddNewChannel from "../../settings/channels/add-new-channel";
+// import AddNewChannel from "../../../settings/channels/add-new-channel";
 import Image from "next/image";
 import GLGIMG from "@/app/images/google.svg"
 
 const PositiveTabs: React.FC = () => {
-    const [isAdding, setIsAdding] = useState(false);
-    const [channels, setChannels] = useState<Channel[]>([]);
+    // const [isAdding, setIsAdding] = useState(false);
+    // const [channels, setChannels] = useState<Channel[]>([]);
 
     return (
         <>
@@ -47,7 +47,7 @@ const PositiveTabs: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <div className="mt-8 w-full [&>div]:w-full">
+                {/* <div className="mt-8 w-full [&>div]:w-full">
                     {isAdding ? (
                         <AddNewChannel
                             channels={channels}
@@ -64,7 +64,7 @@ const PositiveTabs: React.FC = () => {
                             <span>Add new channel</span>
                         </Button>
                     )}
-                </div>
+                </div> */}
             </div>
         </>
     )

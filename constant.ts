@@ -25,3 +25,9 @@ export enum CLIENT_TYPE {
 }
 
 export const BUCKET_NAME = 'media'
+
+export const DEFAULT_REVIEW_LINK_TEXTS = {
+    SETTINGS:{
+        homeReviewTitle: ''
+    }
+}

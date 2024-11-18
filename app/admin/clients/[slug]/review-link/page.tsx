@@ -72,7 +72,7 @@ const ReviewLink: React.FC = (params) => {
   return (
     <>
       <Link
-        href={"/admin/clients/add-client"}
+        href={`/admin/clients/${slug}/review-link/add`}
         className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
       >
         Create Link
