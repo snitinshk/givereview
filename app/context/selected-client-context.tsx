@@ -24,7 +24,7 @@ interface ClientContextProps {
 // Create the context
 const ClientContext = createContext<ClientContextProps | undefined>(undefined);
 
-export const ClientContextProvider = ({
+export const ClientProvider = ({
   children,
 }: {
   children: ReactNode;

@@ -17,11 +17,12 @@ export async function addChannel(channelData: ChannelDB) {
 
 export async function deleteChannel(channelId: number) {
     const supabase = await createClient()
-    return await supabase
+    const response = await supabase
         .from('channels')
         .delete()
         .eq('id', channelId)
 
+    return JSON.stringify(response)
 }
 
 export async function updateChannel(updateData: ChannelDB, channelId: number) {

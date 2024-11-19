@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { deleteChannel } from "./action";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 export default function ChannelCard({
   channel,
@@ -19,7 +20,6 @@ export default function ChannelCard({
   setChannels: Dispatch<SetStateAction<Channel[]>>;
   onEdit: (editChannelData: EditChannelData) => void;
 }) {
-  
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(channel.name);
@@ -59,15 +59,32 @@ export default function ChannelCard({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     const channelId = channel?.id;
 
-    const { error } = await deleteChannel(channelId);
+    toast({
+      title: "Are you sure you want to delete?",
+      description: "This action cannot be undone.",
+      variant: "destructive",
+      action: (
+        <ToastAction
+          altText="Delete"
+          onClick={() => confirmDelete(Number(channelId))}
+        >
+          Delete
+        </ToastAction>
+      ),
+      duration: 5000, // 5 seconds
+    });
+  };
+
+  const confirmDelete = async (channelId: number) => {
+    const response = await deleteChannel(channelId);
+    const { error } = JSON.parse(response);
 
     if (!error) {
       toast({
-        title: "Channel deleted!",
-        description: `Channel ${channel?.name} deleted successfully`,
+        description: `Channel deleted successfully`,
       });
 
       setChannels((prevChannels) =>
@@ -75,7 +92,6 @@ export default function ChannelCard({
       );
     } else {
       toast({
-        title: "Error in deleting",
         description: `Error in deleting channel.`,
       });
     }

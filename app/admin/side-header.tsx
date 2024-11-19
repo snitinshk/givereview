@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, ChevronRight } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ import { MenuItem } from "@/interfaces/layout";
 import { Toaster } from "@/components/ui/toaster";
 import { capitalizeFirstLetter, fetcher } from "@/lib/utils";
 import useSWR from "swr";
+import { useClientCount } from "../context/client-count-context";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -25,7 +26,7 @@ const menuItems: MenuItem[] = [
   {
     name: "Clients",
     path: "/admin/clients",
-    clientNumber: 2,
+    clientNumber: 0,
     icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />,
   },
   {
@@ -48,11 +49,22 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
+  const { clientCount, setClientCount } = useClientCount();
 
   const { data: clientsList } = useSWR("/api/admin/client", fetcher);
 
   menuItems[0].clientNumber = clientsList?.length;
-  
+
+  // useEffect(() => {
+  //   setClientCount(clientsList?.length);
+    
+  // }, [clientsList?.length]);
+
+  // useEffect(() => {
+  //   setClientCount(clientsList?.length);
+  //   menuItems[0].clientNumber = clientCount ?? clientsList?.length;
+  // }, [clientsList?.length]);
+
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
@@ -118,9 +130,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     {item.name}
                   </div>
                   <div className="flex items-center gap-4">
-                    {item.clientNumber && (
+                    { item.clientNumber && (
                       <span className="ml-auto w-6 h-6 bg-[#FF5630]/[0.16] text-[#B71D18] flex justify-center items-center rounded-md">
-                        {item.clientNumber}
+                        { item.clientNumber }
                       </span>
                     )}
                     {item.submenu &&

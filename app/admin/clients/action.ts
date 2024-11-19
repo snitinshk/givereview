@@ -16,3 +16,14 @@ export async function addClient(clientData: ClientDB) {
 
     return JSON.stringify(response)
 }
+
+export async function deleteClient(clientId: number) {
+    const supabase = await createClient()
+    const response = await supabase
+        .from('clients')
+        .delete()
+        .eq('id', clientId)
+        
+    return JSON.stringify(response)
+
+}

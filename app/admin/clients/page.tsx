@@ -29,6 +29,10 @@ import useSWR from "swr";
 import { mapClients } from "@/mappers";
 import { useRouter } from "next/navigation";
 import { capitalizeFirstLetter, getSlug } from "@/lib/utils";
+import { deleteClient } from "./action";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
+import { useClientCount } from "@/app/context/client-count-context";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -52,7 +56,11 @@ const getStatusColor = (status: Client["status"]) => {
 };
 
 const ClientTable: React.FC = () => {
+  const { toast } = useToast();
   const { data: clientsList, error } = useSWR("/api/admin/client", fetcher);
+  if (error) {
+    toast({ description: "Error in fetching clients list." });
+  }
   const router = useRouter();
 
   const [clients, setClients] = useState<Client[]>([]);
@@ -85,10 +93,49 @@ const ClientTable: React.FC = () => {
     return matchesType && matchesStatus && matchesSearch;
   });
 
-  const handleSelectClient: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+  const handleSelectClient: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
     const slug = event.currentTarget.getAttribute("data-client-slug");
     if (slug) {
       router.push(`/admin/clients/${slug}/review-link`);
+    }
+  };
+
+  const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (
+    event
+  ) => {
+    const clientId = event.currentTarget.getAttribute("data-client-id");
+
+    toast({
+      title: "Are you sure you want to delete?",
+      description: "This action cannot be undone.",
+      variant: "destructive",
+      action: (
+        <ToastAction
+          altText="Delete"
+          onClick={() => confirmDelete(Number(clientId))}
+        >
+          Delete
+        </ToastAction>
+      ),
+      duration: 5000, // 5 seconds
+    });
+  };
+  
+  const { clientCount, setClientCount } = useClientCount();
+
+  const confirmDelete = async (clientId: number) => {
+    const response = await deleteClient(clientId);
+    const { error } = JSON.parse(response);
+    if (!error) {
+      setClientCount(clientCount-1);
+      setClients((prevClients) =>
+        prevClients.filter((client) => client.id !== clientId)
+      );
+      toast({ description: "Client deleted successfully." });
+    } else {
+      toast({ description: "Some error occured in deleting the client." });
     }
   };
 
@@ -196,6 +243,8 @@ const ClientTable: React.FC = () => {
                         Go to client
                       </Button>
                       <Button
+                        data-client-id={client?.id}
+                        onClick={handleDelete}
                         variant="ghost"
                         size="sm"
                         className="bg-[#ff5631] text-white px-3 h-6 font-bold !bottom-0 !shadow-none"
