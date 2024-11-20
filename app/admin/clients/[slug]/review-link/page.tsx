@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,9 @@ import GGLIMG from "@/app/images/google.svg";
 import TRIPIMG from "@/app/images/tripadvisor.svg";
 import { BiLinkExternal } from "react-icons/bi";
 import { useParams } from "next/navigation";
-import { useClient } from "@/app/context/selected-client-context";
+import { useSelectedClient } from "@/app/context/selected-client-context";
+import { useToast } from "@/hooks/use-toast";
+import { useReviewLink } from "@/app/context/review-link-context";
 
 export type Client = {
   id: string;
@@ -66,8 +68,33 @@ export const clients: Client[] = [
 ];
 
 const ReviewLink: React.FC = (params) => {
-    
+
+  const { selectedClient } = useSelectedClient();
+  const { reviewLinkDetail, setReviewLinkDetail } = useReviewLink();
   const { slug } = useParams();
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (selectedClient) {
+      const fetchReviewLink = async () => {
+        const response = await fetch(
+          `/api/admin/review-link?clientId=${selectedClient?.id}`
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          toast({
+            description: errorData.error || `HTTP Error: ${response.status}`,
+          });
+        }
+        const reviewLink = await response.json();
+        console.log(reviewLink);
+        setReviewLinkDetail(reviewLink);
+      };
+
+      fetchReviewLink();
+    }
+  }, [selectedClient]);
 
   return (
     <>

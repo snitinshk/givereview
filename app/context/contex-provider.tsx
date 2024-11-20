@@ -1,11 +1,14 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ClientProvider } from "./selected-client-context";
-import { ClientCountProvider } from "./client-count-context";
+import { ClientProvider } from "./clients-context";
+import { SelectedClientProvider } from "./selected-client-context";
+import { ReviewLinkProvider } from "./review-link-context";
 
 export const ContextProvider = ({ children }: { children: ReactNode }) => (
   <ClientProvider>
-    <ClientCountProvider>{children}</ClientCountProvider>
+    <SelectedClientProvider>
+      <ReviewLinkProvider>{children}</ReviewLinkProvider>
+    </SelectedClientProvider>
   </ClientProvider>
 );

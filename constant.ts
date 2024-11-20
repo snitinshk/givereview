@@ -26,8 +26,10 @@ export enum CLIENT_TYPE {
 
 export const BUCKET_NAME = 'media'
 
-export const DEFAULT_REVIEW_LINK_TEXTS = {
-    SETTINGS:{
-        homeReviewTitle: ''
-    }
+export const DEFAULT_TEXTS = {
+    homeReviewTitle: 'How was your experience with ',
+    positiveReviewTitle: 'Leave us a review, it will help us grow and better serve our customers like you.',
+    negativePageTitle: 'Appears publicly on Google',
+    negativePageDescription: 'We want our customers to be 100% satisfied. Please let us know why you had a bad experience, so we can improve our service. Leave your email to be contacted.',
+    thankyouPageTitle: 'Thank you for your review'
 }

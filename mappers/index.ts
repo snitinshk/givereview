@@ -1,3 +1,4 @@
+import { Client } from "@/app/admin/clients/[slug]/review-link/page";
 import { ChannelDB, Channel } from "@/interfaces/channels"
 import { ClientDB } from "@/interfaces/clients"
 import { format } from 'date-fns';
@@ -20,9 +21,10 @@ export const mapClients = (clients: ClientDB[]) => {
             name: client?.client_name ?? '',
             logo: client?.client_logo ?? '',
             type: client?.client_type ?? '',
+            slug: client?.client_slug ?? '',
             nrOfLinks: 2,
-            createdAt: client?.created_at,
-            status: client?.client_status
+            createdAt: client?.created_at as number,
+            status: client?.client_status as string
 
         }
     })

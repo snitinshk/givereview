@@ -14,14 +14,18 @@ import {
 import { TbCameraPlus } from "react-icons/tb";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import { fetcher, getFileName, getSlug, mediaUrl, uploadFile } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { addClient } from "../action";
 import { useRouter } from 'next/navigation'
+import { mapClients } from "@/mappers";
+import { useClients } from "@/app/context/clients-context";
 // import { IoMdInformationCircle } from "react-icons/io";
 
 const CreateClient: React.FC = () => {
+  
   const [preview, setPreview] = useState<string | null>(null);
+  const { setClients } = useClients();
   const router = useRouter()
 
   const { toast } = useToast();
@@ -73,6 +77,7 @@ const CreateClient: React.FC = () => {
       client_name: clientName,
       client_logo: clientLogoUrl,
       client_type: clientType,
+      client_slug: getSlug(clientName)
     };
 
     const response = await addClient(newClientData);
@@ -85,10 +90,16 @@ const CreateClient: React.FC = () => {
         description: `Error in adding a new client, please try again later`,
       });
     } else {
+
+      const clientsList = await fetcher("/api/admin/clients");
+      const mappedClients = mapClients(clientsList);
+      setClients(mappedClients);
+
       toast({
         title: "Success!",
         description: `New client with name ${clientName} created successfully`,
       });
+
       router.push('/admin/clients');
     }
   };

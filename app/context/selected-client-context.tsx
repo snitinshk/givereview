@@ -1,5 +1,7 @@
 "use client";
 
+import { Client } from "@/interfaces/clients";
+
 import React, {
   createContext,
   useContext,
@@ -7,42 +9,49 @@ import React, {
   ReactNode,
   SetStateAction,
   Dispatch,
+  useEffect,
 } from "react";
-
-interface Client {
-  clientId: number;
-  clientName: string;
-  clientType: string;
-  clientLogo: string;
-}
+import { useClients } from "./clients-context";
+import { useParams } from "next/navigation";
 
 interface ClientContextProps {
-  client: Client;
-  setClient: Dispatch<SetStateAction<Client>>;
+  selectedClient: Client | null;
+  setSelectedClient: Dispatch<SetStateAction<Client | null>>;
 }
 
-// Create the context
-const ClientContext = createContext<ClientContextProps | undefined>(undefined);
+const SelectedClientContext = createContext<ClientContextProps | undefined>(
+  undefined
+);
 
-export const ClientProvider = ({
+export const SelectedClientProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const [client, setClient] = useState<Client | any>();
+  const { slug } = useParams();
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
+  const { clients } = useClients();
+
+  useEffect(() => {
+    const [selectedClient] = clients?.filter((client) => client.slug === slug);
+    setSelectedClient(selectedClient);
+  }, [clients]);
 
   return (
-    <ClientContext.Provider value={{ client, setClient }}>
+    <SelectedClientContext.Provider
+      value={{ selectedClient, setSelectedClient }}
+    >
       {children}
-    </ClientContext.Provider>
+    </SelectedClientContext.Provider>
   );
 };
 
 // Custom hook for consuming the alert context
-export const useClient = (): ClientContextProps => {
-  const context = useContext(ClientContext);
+export const useSelectedClient = (): ClientContextProps => {
+  const context = useContext(SelectedClientContext);
   if (!context) {
-    throw new Error("useClient must be used within an ClientProvider");
+    throw new Error("useSelectedClient must be used within an ClientProvider");
   }
   return context;
 };

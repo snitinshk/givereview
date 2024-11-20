@@ -28,25 +28,15 @@ import Link from "next/link";
 import useSWR from "swr";
 import { mapClients } from "@/mappers";
 import { useRouter } from "next/navigation";
-import { capitalizeFirstLetter, getSlug } from "@/lib/utils";
+import { capitalizeFirstLetter, fetcher, getSlug } from "@/lib/utils";
 import { deleteClient } from "./action";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-import { useClientCount } from "@/app/context/client-count-context";
+import { Client } from "@/interfaces/clients";
+import { useClients } from "@/app/context/clients-context";
+import { useSelectedClient } from "@/app/context/selected-client-context";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-interface Client {
-  id: number;
-  logo: string | StaticImport;
-  name: string;
-  type: string;
-  createdAt: number;
-  nrOfLinks: number;
-  status: string;
-}
-
-const getStatusColor = (status: Client["status"]) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case "ACTIVE":
       return "bg-[#def4e9] text-[#1a806a]";
@@ -57,33 +47,18 @@ const getStatusColor = (status: Client["status"]) => {
 
 const ClientTable: React.FC = () => {
   const { toast } = useToast();
-  const { data: clientsList, error } = useSWR("/api/admin/client", fetcher);
-  if (error) {
-    toast({ description: "Error in fetching clients list." });
-  }
   const router = useRouter();
 
-  const [clients, setClients] = useState<Client[]>([]);
+  // const [clients, setClients] = useState<Client[]>([]);
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-  const [isClient, setIsClient] = useState<boolean>(true);
+  const { setSelectedClient } = useSelectedClient();
 
-  // useEffect(() => {
-  //   setIsClient(true);
-  // }, []);
+  const { clients, setClients } = useClients();
 
-  useEffect(() => {
-    if (clientsList) {
-      const mappedClients = mapClients(clientsList);
-      if (mappedClients) {
-        setClients(mappedClients as Client[]);
-      }
-    }
-  }, [clientsList]);
-
-  const filteredClients = clients.filter((client) => {
+  const filteredClients = clients?.filter((client) => {
     const matchesType = typeFilter === "All" || client.type === typeFilter;
     const matchesStatus =
       statusFilter === "All" || client.status === statusFilter;
@@ -96,7 +71,12 @@ const ClientTable: React.FC = () => {
   const handleSelectClient: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
-    const slug = event.currentTarget.getAttribute("data-client-slug");
+    const clientId = event.currentTarget.getAttribute("data-client-id");
+    const [selectedClient] = clients.filter(
+      (client) => client?.id === Number(clientId)
+    );
+    setSelectedClient(selectedClient);
+    const slug = getSlug(selectedClient?.name);
     if (slug) {
       router.push(`/admin/clients/${slug}/review-link`);
     }
@@ -122,14 +102,11 @@ const ClientTable: React.FC = () => {
       duration: 5000, // 5 seconds
     });
   };
-  
-  const { clientCount, setClientCount } = useClientCount();
 
   const confirmDelete = async (clientId: number) => {
     const response = await deleteClient(clientId);
     const { error } = JSON.parse(response);
     if (!error) {
-      setClientCount(clientCount-1);
       setClients((prevClients) =>
         prevClients.filter((client) => client.id !== clientId)
       );
@@ -203,83 +180,78 @@ const ClientTable: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isClient &&
-              filteredClients.slice(0, rowsPerPage).map((client) => (
-                <TableRow key={client.id}>
-                  <TableCell className="flex items-center pl-4 gap-3">
-                    <div className="w-[52px] h-[52px] bg-gray-100 rounded-sm flex items-center justify-center p-2">
-                      <Image
-                        src={client.logo}
-                        alt={`${client.name} logo`}
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    {client.name}
-                  </TableCell>
-                  <TableCell>{capitalizeFirstLetter(client.type)}</TableCell>
-                  <TableCell>
-                    {format(client.createdAt, "dd MMM yyyy")}
-                  </TableCell>
-                  <TableCell>{client.nrOfLinks}</TableCell>
-                  <TableCell>
-                    <Badge
-                      className={`!bottom-0 !shadow-none pointer-events-none ${getStatusColor(
-                        client.status
-                      )}`}
+            {filteredClients?.slice(0, rowsPerPage)?.map((client) => (
+              <TableRow key={client.id}>
+                <TableCell className="flex items-center pl-4 gap-3">
+                  <div className="w-[52px] h-[52px] bg-gray-100 rounded-sm flex items-center justify-center p-2">
+                    <Image
+                      src={client.logo}
+                      alt={`${client.name} logo`}
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                  {client.name}
+                </TableCell>
+                <TableCell>{capitalizeFirstLetter(client.type)}</TableCell>
+                <TableCell>{format(client.createdAt, "dd MMM yyyy")}</TableCell>
+                <TableCell>{client.nrOfLinks}</TableCell>
+                <TableCell>
+                  <Badge
+                    className={`!bottom-0 !shadow-none pointer-events-none ${getStatusColor(
+                      client.status
+                    )}`}
+                  >
+                    {capitalizeFirstLetter(client.status)}
+                  </Badge>
+                </TableCell>
+                <TableCell className="">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      data-client-id={client?.id}
+                      onClick={handleSelectClient}
+                      variant="ghost"
+                      size="sm"
+                      className="bg-[#9edcc0] text-[#027b55] px-3 h-6 font-bold !bottom-0 !shadow-none"
                     >
-                      {capitalizeFirstLetter(client.status)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        data-client-slug={getSlug(client?.name)}
-                        onClick={handleSelectClient}
-                        variant="ghost"
-                        size="sm"
-                        className="bg-[#9edcc0] text-[#027b55] px-3 h-6 font-bold !bottom-0 !shadow-none"
-                      >
-                        Go to client
-                      </Button>
-                      <Button
-                        data-client-id={client?.id}
-                        onClick={handleDelete}
-                        variant="ghost"
-                        size="sm"
-                        className="bg-[#ff5631] text-white px-3 h-6 font-bold !bottom-0 !shadow-none"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      Go to client
+                    </Button>
+                    <Button
+                      data-client-id={client?.id}
+                      onClick={handleDelete}
+                      variant="ghost"
+                      size="sm"
+                      className="bg-[#ff5631] text-white px-3 h-6 font-bold !bottom-0 !shadow-none"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 items-center p-4">
-          {isClient && (
-            <Select
-              value={rowsPerPage.toString()}
-              onValueChange={(value) => setRowsPerPage(Number(value))}
-            >
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Rows per page" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
+          <Select
+            value={rowsPerPage.toString()}
+            onValueChange={(value) => setRowsPerPage(Number(value))}
+          >
+            <SelectTrigger className="w-24">
+              <SelectValue placeholder="Rows per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+
           <p>
-            {isClient &&
-              `Showing ${Math.min(rowsPerPage, filteredClients.length)} of ${
-                filteredClients.length
-              }`}
+            {`Showing ${Math.min(rowsPerPage, filteredClients?.length)} of ${
+              filteredClients?.length
+            }`}
           </p>
         </div>
       </div>

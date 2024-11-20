@@ -14,9 +14,8 @@ import STIMG from "@/app/images/settings-icon.svg";
 import USERICON from "@/app/images/user-ico.svg";
 import { MenuItem } from "@/interfaces/layout";
 import { Toaster } from "@/components/ui/toaster";
-import { capitalizeFirstLetter, fetcher } from "@/lib/utils";
-import useSWR from "swr";
-import { useClientCount } from "../context/client-count-context";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { useClients } from "../context/clients-context";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -49,11 +48,10 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
-  const { clientCount, setClientCount } = useClientCount();
 
-  const { data: clientsList } = useSWR("/api/admin/client", fetcher);
+  const { clients } = useClients();
 
-  menuItems[0].clientNumber = clientsList?.length;
+  menuItems[0].clientNumber = clients?.length;
 
   // useEffect(() => {
   //   setClientCount(clientsList?.length);

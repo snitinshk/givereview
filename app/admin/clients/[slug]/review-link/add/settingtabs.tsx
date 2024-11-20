@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DEFAULT_TEXTS } from '@/constant';
 
 const EditableField = ({
   isEditing,
@@ -80,13 +81,14 @@ const EditableField = ({
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SettingTabs: React.FC = (params) => {
+  
   const { slug } = useParams();
 
   const [isActive, setIsActive] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [editingName, setEditingName] = useState(false);
-  const [name, setName] = useState("For website");
+  const [name, setName] = useState();
 
   const [editingUrl, setEditingUrl] = useState(false);
   const [baseUrl] = useState("https://placereview.se/");
@@ -105,13 +107,12 @@ const SettingTabs: React.FC = (params) => {
     }
   };
 
-
   const [isEditingExperience, setIsEditingExperience] = useState(false);
-  const [experienceText, setExperienceText] = useState(slug);
-  const [tempExperienceText, setTempExperienceText] = useState(experienceText);
+  const [homeReviewTitle, setHomeReviewTitle] = useState(DEFAULT_TEXTS.homeReviewTitle);
+  // const [tempExperienceText, setTempExperienceText] = useState(experienceText);
 
   const handleSaveExperience = () => {
-    setExperienceText(tempExperienceText);
+    // setExperienceText(tempExperienceText);
     setIsEditingExperience(false);
   };
 
@@ -124,14 +125,14 @@ const SettingTabs: React.FC = (params) => {
   return (
     <div className="flex flex-col gap-5 items-start">
       {/* Active/Inactive Switch */}
-      <div className="flex items-center space-x-2">
+      {/* <div className="flex items-center space-x-2">
         <Label htmlFor="active-toggle">{isActive ? "Active" : "Inactive"}</Label>
         <Switch
           id="active-toggle"
           checked={isActive}
           onCheckedChange={() => setIsActive(!isActive)}
         />
-      </div>
+      </div> */}
 
       {/* Editable Name Field */}
       <EditableField
@@ -167,7 +168,7 @@ const SettingTabs: React.FC = (params) => {
         <div className="flex items-center gap-1">
           {!isEditingExperience ? (
             <>
-              <p>How was your experience with {experienceText}?</p>
+              <p>{homeReviewTitle}{slug}?</p>
               <Button
                 variant="ghost"
                 className="text-green-600 font-semibold flex items-center"
@@ -179,7 +180,7 @@ const SettingTabs: React.FC = (params) => {
           ) : (
             <div className="flex items-center gap-2">
               <Input
-                value={tempExperienceText}
+                value={homeReviewTitle}
                 onChange={(e) => setTempExperienceText(e.target.value)}
                 className="w-40"
                 autoFocus
