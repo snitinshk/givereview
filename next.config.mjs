@@ -3,6 +3,9 @@ const nextConfig = {
   images: {
     domains: ["hwqcsflrmhlffnqlprib.supabase.co"],
   },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 export default nextConfig;
