@@ -32,18 +32,29 @@ export default function ResetPassword() {
   const [cnpassword, setCnpassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showCnPassword, setShowCnPassword] = useState(false);
+  const [authCode, setAuthCode] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const searchParams = useSearchParams();
 
-  const authCode = searchParams.get("code");
-  const errorMsg = searchParams.get("error_description");
+  useEffect(()=>{
+    
+    const code = searchParams.get("code");
+    setAuthCode(code);
+    const errorMsg = searchParams.get("error_description");
+    setErrorMsg(errorMsg);
+
+  },[searchParams])
 
   useEffect(()=>{
+
     if (errorMsg) {
       setNotifyText({
         isSuccess: false,
         alertText: errorMsg,
       });
     }
+
   },[errorMsg])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
