@@ -1,7 +1,5 @@
 "use client";
 
-import { Client } from "@/interfaces/clients";
-
 import React, {
   createContext,
   useContext,

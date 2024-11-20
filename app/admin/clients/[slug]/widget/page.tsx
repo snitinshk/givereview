@@ -10,58 +10,59 @@ import TRIPIMG from "@/app/images/tripadvisor.svg";
 import { BiLinkExternal } from "react-icons/bi";
 import { useParams } from "next/navigation";
 
-export type Client = {
+type Client = {
   id: string;
   images: string[];
   description: string;
   status: "Active" | "Inactive" | "Disabled" | "Pending";
 };
 
-export const getStatusColor = (status: Client["status"]) => {
-  switch (status) {
-    case "Active":
-      return "bg-[#def4e9] text-[#1a806a]";
-    case "Inactive":
-      return "bg-yellow-100 text-yellow-800";
-    case "Disabled":
-      return "bg-[#fff3d6] text-[#b76e00]";
-    case "Pending":
-      return "bg-blue-100 text-blue-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
 
-export const clients: Client[] = [
-  {
-    id: "1",
-    images: [GGLIMG, TRIPIMG],
-    description: "Client A is a leading provider of tech solutions.",
-    status: "Active",
-  },
-  {
-    id: "2",
-    images: [GGLIMG],
-    description: "Client B specializes in financial services and consulting.",
-    status: "Inactive",
-  },
-  {
-    id: "3",
-    images: [GGLIMG, TRIPIMG],
-    description: "Client C focuses on innovative healthcare solutions.",
-    status: "Disabled",
-  },
-  {
-    id: "4",
-    images: [TRIPIMG],
-    description: "Client D is known for its educational and training programs.",
-    status: "Pending",
-  },
-];
+const Widget: React.FC = () => {
 
-const widget: React.FC = (params) => {
+  const getStatusColor = (status: Client["status"]) => {
+    switch (status) {
+      case "Active":
+        return "bg-[#def4e9] text-[#1a806a]";
+      case "Inactive":
+        return "bg-yellow-100 text-yellow-800";
+      case "Disabled":
+        return "bg-[#fff3d6] text-[#b76e00]";
+      case "Pending":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+  
+  const clients: Client[] = [
+    {
+      id: "1",
+      images: [GGLIMG, TRIPIMG],
+      description: "Client A is a leading provider of tech solutions.",
+      status: "Active",
+    },
+    {
+      id: "2",
+      images: [GGLIMG],
+      description: "Client B specializes in financial services and consulting.",
+      status: "Inactive",
+    },
+    {
+      id: "3",
+      images: [GGLIMG, TRIPIMG],
+      description: "Client C focuses on innovative healthcare solutions.",
+      status: "Disabled",
+    },
+    {
+      id: "4",
+      images: [TRIPIMG],
+      description: "Client D is known for its educational and training programs.",
+      status: "Pending",
+    },
+  ];
     
-  const { slug } = useParams();
+  const { slug } = useParams()
 
   return (
     <>
@@ -123,4 +124,4 @@ const widget: React.FC = (params) => {
   );
 };
 
-export default widget;
+export default Widget;

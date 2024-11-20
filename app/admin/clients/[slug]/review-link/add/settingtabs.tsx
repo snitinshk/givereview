@@ -109,7 +109,7 @@ const SettingTabs: React.FC = (params) => {
 
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [homeReviewTitle, setHomeReviewTitle] = useState(DEFAULT_TEXTS.homeReviewTitle);
-  // const [tempExperienceText, setTempExperienceText] = useState(experienceText);
+  const [tempExperienceText, setTempExperienceText] = useState(DEFAULT_TEXTS.homeReviewTitle);
 
   const handleSaveExperience = () => {
     // setExperienceText(tempExperienceText);
@@ -117,7 +117,7 @@ const SettingTabs: React.FC = (params) => {
   };
 
   const handleCancelExperience = () => {
-    setTempExperienceText(experienceText);
+    setTempExperienceText('experienceText');
     setIsEditingExperience(false);
   };
 
@@ -137,11 +137,11 @@ const SettingTabs: React.FC = (params) => {
       {/* Editable Name Field */}
       <EditableField
         isEditing={editingName}
-        value={name}
+        value=""
         onEdit={() => setEditingName(true)}
         onSave={(newValue) => {
-          setName(newValue);
-          setEditingName(false);
+          // setName(newValue);
+          // setEditingName(false);
         }}
         onCancel={() => setEditingName(false)}
         renderValue={<p className="text-gray-700">{name}</p>}
@@ -150,7 +150,7 @@ const SettingTabs: React.FC = (params) => {
       {/* Editable URL Field */}
       <EditableField
         isEditing={editingUrl}
-        value={urlSegment}
+        value=""
         onEdit={() => setEditingUrl(true)}
         onSave={(newValue) => {
           setUrlSegment(newValue);
@@ -223,7 +223,7 @@ const SettingTabs: React.FC = (params) => {
             <span>If stars bigger than</span>
             <Select
               onValueChange={(value) => setStarsThreshold(value)}
-              value={starsThreshold}
+              value=""
             >
               <SelectTrigger className="min-w-14 w-auto">
                 <SelectValue placeholder="number" />
