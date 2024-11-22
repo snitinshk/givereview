@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { CheckIcon, XIcon } from 'lucide-react';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
+import { CheckIcon, XIcon } from "lucide-react";
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 
 import {
@@ -16,87 +16,66 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DEFAULT_TEXTS } from '@/constant';
+import { DEFAULT_TEXTS } from "@/constant";
+import EditableField from "./editable";
+import { useReviewLink } from "@/app/context/review-link-context";
 
-const EditableField = ({
-  isEditing,
-  value,
-  onEdit,
-  onSave,
-  onCancel,
-  renderValue,
-}: {
-  isEditing: boolean;
-  value: string;
-  onEdit: () => void;
-  onSave: (newValue: string) => void;
-  onCancel: () => void;
-  renderValue: JSX.Element;
-}) => {
-  const [editValue, setEditValue] = useState(value);
+interface Settings {
+  reviewLinkName: string;
+  reviewLinkSlug: string;
+  homeReviewTitle: string;
+  skipFirstPageEnabled: boolean;
+  ratingThresholdCount: number;
+  poweredByEnabled: boolean;
+  desktopBgImage: string;
+}
 
-  const handleSave = () => {
-    onSave(editValue);
-  };
-
-  return (
-    <>
-      {!isEditing ? (
-        <div className='flex items-center'>
-          {renderValue}
-          <Button
-            variant="ghost"
-            className="text-green-600 font-semibold flex items-center"
-            onClick={onEdit}
-          >
-            <MdEdit className="mr-1" /> Edit
-          </Button>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          <Input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            autoFocus
-          />
-          <Button
-            variant="ghost"
-            className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold flex items-center"
-            onClick={handleSave}
-          >
-            <CheckIcon className="h-4 w-4 mr-1" /> Save
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold flex items-center"
-            onClick={onCancel}
-          >
-            <XIcon className="h-4 w-4 mr-1" /> Cancel
-          </Button>
-        </div>
-      )}
-    </>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SettingTabs: React.FC = (params) => {
-  
+export default function SettingTabs({ disableSaveBtn }: any) {
   const { slug } = useParams();
 
-  const [isActive, setIsActive] = useState(true);
+  const { reviewLinkDetail, setReviewLinkDetail } = useReviewLink();
+
+  const defaultSetting = {
+    reviewLinkName: "",
+    reviewLinkSlug: slug as string,
+    homeReviewTitle: "",
+    skipFirstPageEnabled: false,
+    ratingThresholdCount: 4,
+    poweredByEnabled: true,
+    desktopBgImage: "",
+  };
+
+  const [settingData, setSettingData] = useState<Settings>(defaultSetting);
+
+  // const [isActive, setIsActive] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File>();
 
   const [editingName, setEditingName] = useState(false);
-  const [name, setName] = useState();
+  const [reviewLinkName, setReviewLinkName] = useState<string>(
+    defaultSetting?.reviewLinkName
+  );
 
-  const [editingUrl, setEditingUrl] = useState(false);
-  const [baseUrl] = useState("https://placereview.se/");
-  const [urlSegment, setUrlSegment] = useState(slug);
+  const [editingSlug, setEditingSlug] = useState(false);
+  const [reviewLinkSlug, setReviewLinkSlug] = useState<string>(
+    defaultSetting?.reviewLinkSlug
+  );
 
+  const [editingHomeTitle, setEditingHomeTitle] = useState(false);
+  const [reviewLinkHomeTitle, setReviewLinkHomeTitle] = useState<string>(
+    DEFAULT_TEXTS.homeReviewTitle + "" + settingData?.reviewLinkSlug
+  );
 
-  const [isSkipPageEnabled, setIsSkipPageEnabled] = useState(false);
-  const [starsThreshold, setStarsThreshold] = useState<string | null>(null);
+  const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
+    defaultSetting?.skipFirstPageEnabled
+  );
+  const [isPoweredByEnabled, setIsPoweredByEnabled] = useState(
+    defaultSetting?.poweredByEnabled
+  );
+
+  const [starsThreshold, setStarsThreshold] = useState<number>(
+    settingData?.ratingThresholdCount
+  );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -104,23 +83,63 @@ const SettingTabs: React.FC = (params) => {
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
-  const [isEditingExperience, setIsEditingExperience] = useState(false);
-  const [homeReviewTitle, setHomeReviewTitle] = useState(DEFAULT_TEXTS.homeReviewTitle);
-  const [tempExperienceText, setTempExperienceText] = useState(DEFAULT_TEXTS.homeReviewTitle);
+  useEffect(() => {
+    if (reviewLinkName && imageFile) {
+      disableSaveBtn(false);
+    }
 
-  const handleSaveExperience = () => {
-    // setExperienceText(tempExperienceText);
-    setIsEditingExperience(false);
-  };
+    if (
+      !reviewLinkName ||
+      !imageFile ||
+      !reviewLinkSlug ||
+      !reviewLinkHomeTitle
+    ) {
+      disableSaveBtn(true);
+    }
 
-  const handleCancelExperience = () => {
-    setTempExperienceText('experienceText');
-    setIsEditingExperience(false);
-  };
+    setReviewLinkDetail({
+      ...reviewLinkDetail,
+      reviewLinkName,
+      reviewLinkSlug,
+      starsThreshold,
+      reviewLinkHomeTitle,
+      isSkipFirstPageEnabled,
+      imageFile,
+      isPoweredByEnabled,
+    });
+  }, [
+    reviewLinkName,
+    reviewLinkSlug,
+    reviewLinkHomeTitle,
+    isSkipFirstPageEnabled,
+    imageFile,
+    starsThreshold,
+    isPoweredByEnabled,
+  ]);
 
+  // const [isEditingExperience, setIsEditingExperience] = useState(false);
+  // const [homeReviewTitle, setHomeReviewTitle] = useState(
+  //   DEFAULT_TEXTS.homeReviewTitle
+  // );
+  // const [tempExperienceText, setTempExperienceText] = useState(
+  //   DEFAULT_TEXTS.homeReviewTitle
+  // );
+
+  // const handleSaveExperience = () => {
+  //   // setExperienceText(tempExperienceText);
+  //   setIsEditingExperience(false);
+  // };
+
+  // const handleCancelExperience = () => {
+  //   setTempExperienceText("experienceText");
+  //   setIsEditingExperience(false);
+  // };
+
+  const editMode = false;
 
   return (
     <div className="flex flex-col gap-5 items-start">
@@ -135,72 +154,60 @@ const SettingTabs: React.FC = (params) => {
       </div> */}
 
       {/* Editable Name Field */}
-      <EditableField
-        isEditing={editingName}
-        value=""
-        onEdit={() => setEditingName(true)}
-        onSave={(newValue) => {
-          // setName(newValue);
-          // setEditingName(false);
-        }}
-        onCancel={() => setEditingName(false)}
-        renderValue={<p className="text-gray-700">{name}</p>}
-      />
+
+      {!editMode ? (
+        <Input
+          value={reviewLinkName}
+          onChange={(e) => setReviewLinkName(e.target.value)}
+          placeholder="name"
+          className="w-50"
+        />
+      ) : (
+        <EditableField
+          isEditing={editingName}
+          value=""
+          onEdit={() => setEditingName(true)}
+          onSave={(newValue) => {
+            setReviewLinkName(newValue);
+            // setEditingName(false);
+          }}
+          onCancel={() => setEditingName(false)}
+          renderValue={
+            <p className="text-gray-700">{settingData?.reviewLinkName}</p>
+          }
+        />
+      )}
 
       {/* Editable URL Field */}
       <EditableField
-        isEditing={editingUrl}
-        value=""
-        onEdit={() => setEditingUrl(true)}
+        isEditing={editingSlug}
+        value={reviewLinkSlug}
+        onEdit={() => setEditingSlug(true)}
         onSave={(newValue) => {
-          setUrlSegment(newValue);
-          setEditingUrl(false);
+          setReviewLinkSlug(newValue);
+          setEditingSlug(false);
         }}
-        onCancel={() => setEditingUrl(false)}
+        onCancel={() => setEditingSlug(false)}
         renderValue={
           <p>
-            {baseUrl}
-            <span className="text-black">{urlSegment}</span>
+            {DEFAULT_TEXTS.reviewSiteBaseUrl}
+            <span className="text-black">{reviewLinkSlug}</span>
           </p>
         }
       />
       <div className="flex flex-col gap-5 items-start">
         <div className="flex items-center gap-1">
-          {!isEditingExperience ? (
-            <>
-              <p>{homeReviewTitle}{slug}?</p>
-              <Button
-                variant="ghost"
-                className="text-green-600 font-semibold flex items-center"
-                onClick={() => setIsEditingExperience(true)}
-              >
-                <MdEdit className="mr-1" /> Edit
-              </Button>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Input
-                value={homeReviewTitle}
-                onChange={(e) => setTempExperienceText(e.target.value)}
-                className="w-40"
-                autoFocus
-              />
-              <Button
-                variant="ghost"
-                className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold flex items-center"
-                onClick={handleSaveExperience}
-              >
-                <CheckIcon className="h-4 w-4 mr-1" /> Save
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold flex items-center"
-                onClick={handleCancelExperience}
-              >
-                <XIcon className="h-4 w-4 mr-1" /> Cancel
-              </Button>
-            </div>
-          )}
+          <EditableField
+            isEditing={editingHomeTitle}
+            value={reviewLinkHomeTitle}
+            onEdit={() => setEditingHomeTitle(true)}
+            onSave={(newValue) => {
+              setReviewLinkHomeTitle(newValue);
+              setEditingHomeTitle(false);
+            }}
+            onCancel={() => setEditingHomeTitle(false)}
+            renderValue={<p>{reviewLinkHomeTitle}</p>}
+          />
         </div>
       </div>
 
@@ -209,37 +216,50 @@ const SettingTabs: React.FC = (params) => {
         <div className="flex items-center gap-4 font-semibold">
           <span>Skip first page and go to positive page</span>
           <div className="flex items-center space-x-2">
-            <Label htmlFor="skip-page-toggle">{isSkipPageEnabled ? "Enable" : "Disable"}</Label>
+            <Label htmlFor="skip-page-toggle">
+              {isSkipFirstPageEnabled ? "Enable" : "Disable"}
+            </Label>
             <Switch
               id="skip-page-toggle"
-              checked={isSkipPageEnabled}
-              onCheckedChange={(checked) => setIsSkipPageEnabled(checked)}
+              checked={isSkipFirstPageEnabled}
+              onCheckedChange={(checked) => setIsSkipFirstPageEnabled(checked)}
             />
           </div>
         </div>
-
-        {isSkipPageEnabled && (
-          <div className="flex items-center gap-4 font-semibold">
-            <span>If stars bigger than</span>
-            <Select
-              onValueChange={(value) => setStarsThreshold(value)}
-              value=""
-            >
-              <SelectTrigger className="min-w-14 w-auto">
-                <SelectValue placeholder="number" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-              </SelectContent>
-            </Select>
-            <span>go to positive page else go to negative page</span>
+        <div className="flex items-center gap-4 font-semibold">
+          <span>If stars bigger than</span>
+          <Select
+            onValueChange={(value) => setStarsThreshold(Number(value))}
+            value={starsThreshold.toString()}
+          >
+            <SelectTrigger className="min-w-14 w-auto">
+              <SelectValue placeholder="number" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+            </SelectContent>
+          </Select>
+          <span>go to positive page else go to negative page</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span>
+            <strong>Show</strong> Powered with love by place booster
+          </span>
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="skip-page-toggle">
+              {isPoweredByEnabled ? "Enable" : "Disable"}
+            </Label>
+            <Switch
+              id="skip-page-toggle"
+              checked={isPoweredByEnabled}
+              onCheckedChange={(checked) => setIsPoweredByEnabled(checked)}
+            />
           </div>
-        )}
+        </div>
       </div>
-
       {/* Image Upload */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-4 font-semibold text-gray-500">
@@ -251,7 +271,10 @@ const SettingTabs: React.FC = (params) => {
               onClick={() => setImagePreview(null)}
             >
               <MdEdit /> Edit
-            </Button>) : ('')}
+            </Button>
+          ) : (
+            ""
+          )}
         </div>
         {imagePreview ? (
           <div className="relative w-96 h-36">
@@ -283,6 +306,4 @@ const SettingTabs: React.FC = (params) => {
       </div>
     </div>
   );
-};
-
-export default SettingTabs;
+}

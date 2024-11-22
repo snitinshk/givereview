@@ -11,11 +11,63 @@ import SettingTabs from "./settingtabs";
 import PositiveTabs from "./positivetabs";
 import NegativeTabs from "./negativetabs";
 import ThankYouTabs from "./thankyoutabs";
-import { fetcher } from "@/lib/utils";
+import { fetcher, getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import useSWR from "swr";
 import { useToast } from "@/hooks/use-toast";
+import { useReviewLink } from "@/app/context/review-link-context";
+import { createReviewLink } from "../action";
+import { useSelectedClient } from "@/app/context/selected-client-context";
 
 const CreateReviewLink: React.FC = () => {
+  const { toast } = useToast();
+  const [isDisabled, setIsDisabled] = useState(true);
+  const { reviewLinkDetail } = useReviewLink();
+  const { selectedClient } = useSelectedClient();
+
+  const handleSaveReviewLink = async () => {
+    
+    const desktopBgImage = await uploadBgImage(reviewLinkDetail?.imageFile)
+
+    const settingsData = {
+      client_id: selectedClient?.id,
+      review_link_name: reviewLinkDetail?.reviewLinkName,
+      review_link_slug: reviewLinkDetail?.reviewLinkSlug,
+      rating_threshold_count: reviewLinkDetail?.starsThreshold,
+      review_link_home_title: reviewLinkDetail?.reviewLinkHomeTitle,
+      skip_first_page_enabled: reviewLinkDetail?.isSkipFirstPageEnabled,
+      desktop_bg_image: desktopBgImage,
+    };
+
+     const { data, error }  = await createReviewLink({settingsData});
+     
+     if(error){
+      console.log(error);
+      toast({
+        description: `Error in creating review link, please try again later`,
+      });
+     }
+
+  };
+
+  const uploadBgImage = async (file: File) => {
+
+    const uploadPath = `reviewlinks/${getFileName(
+      file
+    )}`;
+    const { data: uploadData, error: uploadError } = await uploadFile(
+      file,
+      uploadPath
+    );
+
+    if (uploadError) {
+      toast({
+        description: `Error in uploading client logo, please try again later`,
+      });
+    }
+
+    return mediaUrl(uploadData?.fullPath as string);
+  };
+
   // const { client } = useClient();
   // const [reviewLink, setReviewLink] = useState();
   // const { toast } = useToast();
@@ -48,7 +100,11 @@ const CreateReviewLink: React.FC = () => {
         <Button className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
           Cancel
         </Button>
-        <Button className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold">
+        <Button
+          onClick={handleSaveReviewLink}
+          disabled={isDisabled}
+          className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
+        >
           Save
         </Button>
       </div>
@@ -65,7 +121,7 @@ const CreateReviewLink: React.FC = () => {
             <TabsTrigger value="thanksyoupg">4-Thank you</TabsTrigger>
           </TabsList>
           <TabsContent value="settings">
-            <SettingTabs />
+            <SettingTabs disableSaveBtn={setIsDisabled} />
           </TabsContent>
           <TabsContent value="positivepg">
             <PositiveTabs />

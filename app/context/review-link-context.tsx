@@ -31,7 +31,7 @@ export const ReviewLinkProvider = ({
 export const useReviewLink = (): any => {
   const context = useContext(ReviewLinkContext);
   if (!context) {
-    throw new Error("useSelectedClient must be used within an ClientProvider");
+    throw new Error("useReviewLink must be used within an ClientProvider");
   }
   return context;
 };

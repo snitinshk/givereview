@@ -12,60 +12,17 @@ import { useParams } from "next/navigation";
 import { useSelectedClient } from "@/app/context/selected-client-context";
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLink } from "@/app/context/review-link-context";
+import { getReviewLinks } from "./action";
 
-export type Client = {
-  id: string;
-  images: string[];
-  description: string;
-  link: string;
-  status: "Active" | "Inactive" | "Disabled" | "Pending";
-};
 const ReviewLink: React.FC = (params) => {
+  const clients: Client[] = [];
 
-  const clients: Client[] = [
-    {
-      id: "1",
-      images: [GGLIMG, TRIPIMG],
-      description: "Client A is a leading provider of tech solutions.",
-      link: "https://clienta.com",
-      status: "Active",
-    },
-    {
-      id: "2",
-      images: [GGLIMG],
-      description: "Client B specializes in financial services and consulting.",
-      link: "https://clientb.com",
-      status: "Inactive",
-    },
-    {
-      id: "3",
-      images: [GGLIMG, TRIPIMG],
-      description: "Client C focuses on innovative healthcare solutions.",
-      link: "https://clientc.com",
-      status: "Disabled",
-    },
-    {
-      id: "4",
-      images: [TRIPIMG],
-      description: "Client D is known for its educational and training programs.",
-      link: "https://clientd.com",
-      status: "Pending",
-    },
-  ];
-
-  
   const getStatusColor = (status: Client["status"]) => {
     switch (status) {
       case "Active":
         return "bg-[#def4e9] text-[#1a806a]";
       case "Inactive":
         return "bg-yellow-100 text-yellow-800";
-      case "Disabled":
-        return "bg-[#fff3d6] text-[#b76e00]";
-      case "Pending":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -76,25 +33,41 @@ const ReviewLink: React.FC = (params) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (selectedClient) {
-      const fetchReviewLink = async () => {
-        const response = await fetch(
-          `/api/admin/review-link?clientId=${selectedClient?.id}`
-        );
-        if (!response.ok) {
-          const errorData = await response.json();
-          toast({
-            description: errorData.error || `HTTP Error: ${response.status}`,
-          });
-        }
-        const reviewLink = await response.json();
-        console.log(reviewLink);
-        setReviewLinkDetail(reviewLink);
-      };
 
-      fetchReviewLink();
-    }
+    (async () => {
+      if (selectedClient) {
+        const response = await getReviewLinks(selectedClient?.id);
+        const { data: reviewLink, error } = JSON.parse(response);
+        if (error) {
+          toast({ description: "Error in fetching review links." });
+        }
+        setReviewLinkDetail(reviewLink);
+      }
+    })();
+    
   }, [selectedClient]);
+
+  // useEffect(() => {
+
+  //   if (selectedClient) {
+  //     const fetchReviewLink = async () => {
+  //       const response = await fetch(
+  //         `/api/admin/review-link?clientId=${selectedClient?.id}`
+  //       );
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         toast({
+  //           description: errorData.error || `HTTP Error: ${response.status}`,
+  //         });
+  //       }
+  //       const reviewLink = await response.json();
+  //       console.log(reviewLink);
+  //       setReviewLinkDetail(reviewLink);
+  //     };
+
+  //     fetchReviewLink();
+  //   }
+  // }, [selectedClient]);
 
   return (
     <>
