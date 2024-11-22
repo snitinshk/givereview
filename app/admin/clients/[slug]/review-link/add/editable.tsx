@@ -40,11 +40,12 @@ export default function EditableField ({
             </Button>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <Input
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               autoFocus
+              className="h-12 w-full"
             />
             <Button
               variant="ghost"

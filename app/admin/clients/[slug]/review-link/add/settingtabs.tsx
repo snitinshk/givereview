@@ -160,7 +160,7 @@ export default function SettingTabs({ disableSaveBtn }: any) {
           value={reviewLinkName}
           onChange={(e) => setReviewLinkName(e.target.value)}
           placeholder="name"
-          className="w-50"
+          className="h-12 shadow-none max-w-80"
         />
       ) : (
         <EditableField
@@ -195,8 +195,8 @@ export default function SettingTabs({ disableSaveBtn }: any) {
           </p>
         }
       />
-      <div className="flex flex-col gap-5 items-start">
-        <div className="flex items-center gap-1">
+      <div className="flex flex-col gap-5 items-start w-full">
+        <div className="flex items-center gap-1 w-full">
           <EditableField
             isEditing={editingHomeTitle}
             value={reviewLinkHomeTitle}

@@ -21,12 +21,12 @@ import { useSelectedClient } from "@/app/context/selected-client-context";
 const CreateReviewLink: React.FC = () => {
   const { toast } = useToast();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
   const { reviewLinkDetail } = useReviewLink();
   const { selectedClient } = useSelectedClient();
 
   const handleSaveReviewLink = async () => {
-    
-    const desktopBgImage = await uploadBgImage(reviewLinkDetail?.imageFile)
+    const desktopBgImage = await uploadBgImage(reviewLinkDetail?.imageFile);
 
     const settingsData = {
       client_id: selectedClient?.id,
@@ -38,22 +38,18 @@ const CreateReviewLink: React.FC = () => {
       desktop_bg_image: desktopBgImage,
     };
 
-     const { data, error }  = await createReviewLink({settingsData});
-     
-     if(error){
+    const { data, error } = await createReviewLink({ settingsData });
+
+    if (error) {
       console.log(error);
       toast({
         description: `Error in creating review link, please try again later`,
       });
-     }
-
+    }
   };
 
   const uploadBgImage = async (file: File) => {
-
-    const uploadPath = `reviewlinks/${getFileName(
-      file
-    )}`;
+    const uploadPath = `reviewlinks/${getFileName(file)}`;
     const { data: uploadData, error: uploadError } = await uploadFile(
       file,
       uploadPath
@@ -67,32 +63,6 @@ const CreateReviewLink: React.FC = () => {
 
     return mediaUrl(uploadData?.fullPath as string);
   };
-
-  // const { client } = useClient();
-  // const [reviewLink, setReviewLink] = useState();
-  // const { toast } = useToast();
-
-  // console.log(client);
-
-  // useEffect(() => {
-  //   if (client && !reviewLink) {
-  //     const fetchReviewLink = async () => {
-  //       const response = await fetch(
-  //         `/api/admin/review-link?clientId=${client?.id}`
-  //       );
-  //       if (!response.ok) {
-  //         const errorData = await response.json();
-  //         toast({
-  //           description: errorData.error || `HTTP Error: ${response.status}`,
-  //         });
-  //       }
-  //       const reviewLink = await response.json();
-  //       setReviewLink(reviewLink);
-  //     };
-
-  //     fetchReviewLink();
-  //   }
-  // }, [client, reviewLink, toast]);
 
   return (
     <>
@@ -124,7 +94,7 @@ const CreateReviewLink: React.FC = () => {
             <SettingTabs disableSaveBtn={setIsDisabled} />
           </TabsContent>
           <TabsContent value="positivepg">
-            <PositiveTabs />
+            <PositiveTabs setIsMainDivVisible={setIsMainDivVisible} /> {/* Pass setter */}
           </TabsContent>
           <TabsContent value="negativepg">
             <NegativeTabs />
@@ -133,20 +103,23 @@ const CreateReviewLink: React.FC = () => {
             <ThankYouTabs />
           </TabsContent>
         </Tabs>
-        <div className="w-1/2 min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-          <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
-          <p>How was your experience with Silvis?</p>
-          <div className="flex gap-3">
-            <FaRegStar className="text-3xl" />
-            <FaRegStar className="text-3xl" />
-            <FaRegStar className="text-3xl" />
-            <FaRegStar className="text-3xl" />
-            <FaRegStar className="text-3xl" />
+        {isMainDivVisible && ( // Conditional rendering
+          <div className="mt-14 w-1/2 min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+            <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+            <p>How was your experience with Silvis?</p>
+            <div className="flex gap-3">
+              <FaRegStar className="text-3xl" />
+              <FaRegStar className="text-3xl" />
+              <FaRegStar className="text-3xl" />
+              <FaRegStar className="text-3xl" />
+              <FaRegStar className="text-3xl" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
 };
 
 export default CreateReviewLink;
+
