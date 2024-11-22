@@ -5,11 +5,11 @@ import { createClient } from "@/lib/supabase/supabase-server"
 export const getReviewLinks = async (clientId: number) => {
 
     const supabase = await createClient();
-    const response = supabase
+    const response = await supabase
         .from('setting_review_link_details')
         .select(`
             *,
-            positive_review_link_details!inner(*) 
+            positive_review_link_details!left(*) 
         `)
         .eq('client_id', clientId);
 
