@@ -9,7 +9,7 @@ import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { mapChannels } from "@/mappers";
 import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
-import placeholder from "./placeholder.svg";
+import placeholder from "../../../images/placeholder.svg";
 
 import { useToast } from "@/hooks/use-toast";
 
