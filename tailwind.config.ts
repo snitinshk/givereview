@@ -69,7 +69,17 @@ const config: Config = {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			}
+			},
+			screens: {
+				"max-xs": { max: "480px" },
+				"max-sm": { max: "576px" },
+				"max-md": { max: "768px" },
+				"max-lg": { max: "992px" },
+				"max-tablet": { max: "1024px" },
+				"max-xl": { max: "1280px" },
+				"max-2xl": { max: "1536px" },
+			  },
+		
 		}
 	},
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
