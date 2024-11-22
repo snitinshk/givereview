@@ -95,6 +95,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ setIsMainDivVisible }) => {
         setItems((prevItems) => [...prevItems, channel]);
         setNewChannels((prevChannels) => prevChannels.filter((item) => item.id !== channel.id));
         setShowMainContent(true);
+        setIsMainDivVisible(true);
     };
 
 
