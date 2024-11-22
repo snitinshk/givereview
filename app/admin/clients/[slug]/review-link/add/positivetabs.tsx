@@ -205,6 +205,12 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ setIsMainDivVisible }) => {
                                     {channel.name}
                                 </span>
                             </div>
+                            <Input
+                                value={channel.link}
+                                onChange={(e) => setNewLink(e.target.value)}
+                                autoFocus
+                                className="h-12 w-full"
+                            />
                             <Button
                                 variant="ghost"
                                 className="flex items-center font-bold hover:bg-[#36B37E] hover:text-white py-6"
