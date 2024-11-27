@@ -101,8 +101,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
-      <aside className="w-64 bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
+    <div className="flex min-h-screen bg-white flex-wrap">
+      <aside className="w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
         <div className="flex justify-center mb-10">
           <Image src={Logo} alt="Logo" priority />
         </div>
@@ -175,7 +175,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </Button>
       </aside>
 
-      <main className="flex-grow p-8">
+      <main className="w-[calc(100%-256px)] p-8">
         <Breadcrumb />
         <Toaster />
         {/* { alert?.visible && <CustomAlert uniqueIdenifier={Math.random()} type={alert?.type} title={alert?.title} message={alert?.message} />} */}
