@@ -39,7 +39,6 @@ const ThankYouTabs: React.FC = () => {
             <Image
               src={imagePreview}
               alt="Preview"
-              layout="fill"
               objectFit="cover"
               className="rounded-2xl"
             />

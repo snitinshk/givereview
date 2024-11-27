@@ -22,7 +22,7 @@ export default function LoginPage() {
     } else {
       setIsInvalidCredentials(true);
     }
-  };
+  }
 
   return (
     <div className="flex h-screen">

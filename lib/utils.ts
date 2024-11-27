@@ -44,3 +44,14 @@ export function capitalizeFirstLetter(string: string) {
 }
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export const isValidUrl = (url: string) => {
+  try {
+    // Use the URL constructor to validate the URL
+    new URL(url);
+    return true;
+  } catch (e) {
+    // If the URL constructor throws an error, it's invalid
+    return false;
+  }
+}

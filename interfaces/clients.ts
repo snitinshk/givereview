@@ -6,6 +6,7 @@ export interface ClientDB {
     client_logo: string;
     client_type: string;
     client_slug: string;
+    setting_review_link_details: any,
     created_at?: number;
     client_status?: string;
 }

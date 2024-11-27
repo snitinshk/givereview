@@ -16,99 +16,122 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { DEFAULT_TEXTS } from "@/constant";
 import EditableField from "./editable";
 import { useReviewLink } from "@/app/context/review-link-context";
+import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
+import { updateReviewLink } from "../action";
+import { useToast } from "@/hooks/use-toast";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 
 interface Settings {
   reviewLinkName: string;
   reviewLinkSlug: string;
   homeReviewTitle: string;
-  skipFirstPageEnabled: boolean;
+  isSkipFirstPageEnabled: boolean;
   ratingThresholdCount: number;
-  poweredByEnabled: boolean;
+  isPoweredByEnabled: boolean;
   desktopBgImage: string;
 }
 
-export default function SettingTabs({ disableSaveBtn }: any) {
-  const { slug } = useParams();
+export default function SettingTabs() {
+  
+  const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    reviewLinkSettings?.desktopBgImage
+  );
+  const [desktopBgImage, setDesktopBgImage] = useState<File>();
 
-  const { reviewLinkDetail, setReviewLinkDetail } = useReviewLink();
+  if (reviewLinkSettings?.imageFile) {
+    const reader = new FileReader();
+    reader.onload = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(reviewLinkSettings?.imageFile);
+  }
 
-  const defaultSetting = {
-    reviewLinkName: "",
-    reviewLinkSlug: slug as string,
-    homeReviewTitle: "",
-    skipFirstPageEnabled: false,
-    ratingThresholdCount: 4,
-    poweredByEnabled: true,
-    desktopBgImage: "",
-  };
+  const { toast } = useToast();
 
-  const [settingData, setSettingData] = useState<Settings>(defaultSetting);
+  useEffect(() => {
 
-  // const [isActive, setIsActive] = useState(true);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File>();
+    if (reviewLinkSettings?.reviewLinkName) {
+      setReviewLinkName(reviewLinkSettings?.reviewLinkName);
+    }
+    if (reviewLinkSettings?.reviewLinkSlug) {
+      setReviewLinkSlug(reviewLinkSettings?.reviewLinkSlug);
+    }
+    if (reviewLinkSettings?.reviewLinkHomeTitle) {
+      setReviewLinkHomeTitle(reviewLinkSettings?.reviewLinkHomeTitle);
+    }
+    if (reviewLinkSettings?.isPoweredByEnabled) {
+      setIsPoweredByEnabled(reviewLinkSettings?.isPoweredByEnabled);
+    }
+    if (reviewLinkSettings?.isSkipFirstPageEnabled) {
+      setIsSkipFirstPageEnabled(reviewLinkSettings?.isSkipFirstPageEnabled);
+    }
+    if(reviewLinkSettings?.ratingThresholdCount){
+      setRatingThresholdCount(reviewLinkSettings?.ratingThresholdCount)
+    }
+
+    if (reviewLinkSettings?.imageFile) {
+      const reader = new FileReader();
+      reader.onload = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(reviewLinkSettings?.imageFile);
+    }
+
+  }, [reviewLinkSettings]);
 
   const [editingName, setEditingName] = useState(false);
   const [reviewLinkName, setReviewLinkName] = useState<string>(
-    defaultSetting?.reviewLinkName
+    reviewLinkSettings?.reviewLinkName
   );
 
   const [editingSlug, setEditingSlug] = useState(false);
   const [reviewLinkSlug, setReviewLinkSlug] = useState<string>(
-    defaultSetting?.reviewLinkSlug
+    reviewLinkSettings?.reviewLinkSlug
   );
 
   const [editingHomeTitle, setEditingHomeTitle] = useState(false);
   const [reviewLinkHomeTitle, setReviewLinkHomeTitle] = useState<string>(
-    DEFAULT_TEXTS.homeReviewTitle + "" + settingData?.reviewLinkSlug
+    reviewLinkSettings?.reviewLinkHomeTitle
   );
 
   const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
-    defaultSetting?.skipFirstPageEnabled
+    reviewLinkSettings?.isSkipFirstPageEnabled
   );
   const [isPoweredByEnabled, setIsPoweredByEnabled] = useState(
-    defaultSetting?.poweredByEnabled
+    reviewLinkSettings?.isPoweredByEnabled
   );
 
-  const [starsThreshold, setStarsThreshold] = useState<number>(
-    settingData?.ratingThresholdCount
+  const [ratingThresholdCount, setRatingThresholdCount] = useState<number>(
+    reviewLinkSettings?.ratingThresholdCount
   );
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
-      setImageFile(file);
+      setDesktopBgImage(file);
+      if(!reviewLinkSettings?.reviewLinkId){
+        return;
+      }
+      const imageUrl = await uploadBgImage(file);
+      handleUpdateReviewLinkSettings({
+        desktop_bg_image: imageUrl,
+      });
     }
   };
 
   useEffect(() => {
-    if (reviewLinkName && imageFile) {
-      disableSaveBtn(false);
-    }
-
-    if (
-      !reviewLinkName ||
-      !imageFile ||
-      !reviewLinkSlug ||
-      !reviewLinkHomeTitle
-    ) {
-      disableSaveBtn(true);
-    }
-
-    setReviewLinkDetail({
-      ...reviewLinkDetail,
+    setReviewLinkSettings({
+      ...reviewLinkSettings,
       reviewLinkName,
       reviewLinkSlug,
-      starsThreshold,
+      ratingThresholdCount,
       reviewLinkHomeTitle,
       isSkipFirstPageEnabled,
-      imageFile,
+      desktopBgImage,
       isPoweredByEnabled,
     });
   }, [
@@ -116,30 +139,49 @@ export default function SettingTabs({ disableSaveBtn }: any) {
     reviewLinkSlug,
     reviewLinkHomeTitle,
     isSkipFirstPageEnabled,
-    imageFile,
-    starsThreshold,
+    desktopBgImage,
+    ratingThresholdCount,
     isPoweredByEnabled,
   ]);
 
-  // const [isEditingExperience, setIsEditingExperience] = useState(false);
-  // const [homeReviewTitle, setHomeReviewTitle] = useState(
-  //   DEFAULT_TEXTS.homeReviewTitle
-  // );
-  // const [tempExperienceText, setTempExperienceText] = useState(
-  //   DEFAULT_TEXTS.homeReviewTitle
-  // );
+  const uploadBgImage = async (file: File) => {
+    const uploadPath = `reviewlinks/${getFileName(file)}`;
+    const { data: uploadData, error: uploadError } = await uploadFile(
+      file,
+      uploadPath
+    );
 
-  // const handleSaveExperience = () => {
-  //   // setExperienceText(tempExperienceText);
-  //   setIsEditingExperience(false);
-  // };
+    if (uploadError) {
+      toast({
+        description: `Error in uploading image, please try again later`,
+      });
+    }
 
-  // const handleCancelExperience = () => {
-  //   setTempExperienceText("experienceText");
-  //   setIsEditingExperience(false);
-  // };
+    return mediaUrl(uploadData?.fullPath as string);
+  };
 
-  const editMode = false;
+  const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
+    // do nothing for add case;
+    if(!reviewLinkSettings?.reviewLinkId){
+      return;
+    }
+    
+    const response = await updateReviewLink(
+      "setting_review_link_details",
+      updateInfo,
+      {
+        col: "id",
+        val: reviewLinkSettings?.reviewLinkId,
+      }
+    );
+    const { error } = JSON.parse(response);
+
+    if (!error) {
+      toast({
+        description: "Field updated",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5 items-start">
@@ -154,27 +196,28 @@ export default function SettingTabs({ disableSaveBtn }: any) {
       </div> */}
 
       {/* Editable Name Field */}
-
-      {!editMode ? (
+      {!reviewLinkSettings?.reviewLinkId ? (
         <Input
           value={reviewLinkName}
           onChange={(e) => setReviewLinkName(e.target.value)}
-          placeholder="name"
-          className="h-12 shadow-none max-w-80"
+          autoFocus
+          className="h-12 w-full"
         />
       ) : (
         <EditableField
+          fieldName="name"
           isEditing={editingName}
-          value=""
+          value={reviewLinkName}
           onEdit={() => setEditingName(true)}
           onSave={(newValue) => {
+            handleUpdateReviewLinkSettings({
+              review_link_name: newValue,
+            });
             setReviewLinkName(newValue);
-            // setEditingName(false);
+            setEditingName(false);
           }}
           onCancel={() => setEditingName(false)}
-          renderValue={
-            <p className="text-gray-700">{settingData?.reviewLinkName}</p>
-          }
+          renderValue={<p className="text-gray-700">{reviewLinkName}</p>}
         />
       )}
 
@@ -184,6 +227,9 @@ export default function SettingTabs({ disableSaveBtn }: any) {
         value={reviewLinkSlug}
         onEdit={() => setEditingSlug(true)}
         onSave={(newValue) => {
+          handleUpdateReviewLinkSettings({
+            review_link_slug: newValue,
+          });
           setReviewLinkSlug(newValue);
           setEditingSlug(false);
         }}
@@ -202,6 +248,9 @@ export default function SettingTabs({ disableSaveBtn }: any) {
             value={reviewLinkHomeTitle}
             onEdit={() => setEditingHomeTitle(true)}
             onSave={(newValue) => {
+              handleUpdateReviewLinkSettings({
+                review_link_positive_title: newValue,
+              });
               setReviewLinkHomeTitle(newValue);
               setEditingHomeTitle(false);
             }}
@@ -222,15 +271,25 @@ export default function SettingTabs({ disableSaveBtn }: any) {
             <Switch
               id="skip-page-toggle"
               checked={isSkipFirstPageEnabled}
-              onCheckedChange={(checked) => setIsSkipFirstPageEnabled(checked)}
+              onCheckedChange={(checked) => {
+                handleUpdateReviewLinkSettings({
+                  skip_first_page_enabled: checked,
+                });
+                setIsSkipFirstPageEnabled(checked)
+              }}
             />
           </div>
         </div>
         <div className="flex items-center gap-4 font-semibold">
           <span>If stars bigger than</span>
           <Select
-            onValueChange={(value) => setStarsThreshold(Number(value))}
-            value={starsThreshold.toString()}
+            onValueChange={(newValue) => {
+              setRatingThresholdCount(Number(newValue))
+              handleUpdateReviewLinkSettings({
+                rating_threshold_count: newValue,
+              });
+            }}
+            value={ratingThresholdCount.toString()}
           >
             <SelectTrigger className="min-w-14 w-auto">
               <SelectValue placeholder="number" />
@@ -255,7 +314,12 @@ export default function SettingTabs({ disableSaveBtn }: any) {
             <Switch
               id="skip-page-toggle"
               checked={isPoweredByEnabled}
-              onCheckedChange={(checked) => setIsPoweredByEnabled(checked)}
+              onCheckedChange={(checked) => {
+                handleUpdateReviewLinkSettings({
+                  powered_by_enabled: checked,
+                });
+                setIsPoweredByEnabled(checked)
+              }}
             />
           </div>
         </div>
@@ -281,7 +345,8 @@ export default function SettingTabs({ disableSaveBtn }: any) {
             <Image
               src={imagePreview}
               alt="Preview"
-              layout="fill"
+              width={150}
+              height={150}
               objectFit="cover"
               className="rounded-2xl"
             />

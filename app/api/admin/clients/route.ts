@@ -8,7 +8,7 @@ export async function GET() {
 
         const {error, data: clients} = await supabase
         .from('clients')
-        .select('*')
+        .select(`*,setting_review_link_details(*)`)
         .order('created_at', { ascending: false })
 
         if (!error) {

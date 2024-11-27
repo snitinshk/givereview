@@ -52,7 +52,6 @@ const CreateClient: React.FC = () => {
 
     if (!clientLogo || !clientName || !clientType) {
       toast({
-        title: "Error!",
         description: `Fill all client detail and then submit form`,
       });
       return;
@@ -66,7 +65,6 @@ const CreateClient: React.FC = () => {
 
     if (uploadError) {
       toast({
-        title: "Error!",
         description: `Error in uploading client logo, please try again later`,
       });
     }

@@ -14,38 +14,206 @@ import ThankYouTabs from "./thankyoutabs";
 import { fetcher, getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import useSWR from "swr";
 import { useToast } from "@/hooks/use-toast";
-import { useReviewLink } from "@/app/context/review-link-context";
-import { createReviewLink } from "../action";
+import {
+  saveReviewLinkNegativePage,
+  saveReviewLinkPositivePage,
+  saveReviewLinkSettings,
+} from "../action";
 import { useSelectedClient } from "@/app/context/selected-client-context";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
+import {
+  mapChannels,
+  mapNegativePageDataToDbFormat,
+  mapSettingsDbFormat,
+} from "@/mappers";
+import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
+import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
+
+// {
+//   "defaultChannel": {
+//       "logo": "https://hwqcsflrmhlffnqlprib.supabase.co/storage/v1/object/public/media/static/google.svg",
+//       "enabled": true
+//   },
+//   "negativePageTitle": {
+//       "title": "Appears publicly on Google",
+//       "enabled": true
+//   },
+//   "negativePageDescription": "We want our customers to be 100% satisfied. Please let us know why you had a bad experience, so we can improve our service. Leave your email to be contacted.",
+//   "ratingCategories": [
+//       {
+//           "name": "Food",
+//           "enabled": true
+//       },
+//       {
+//           "name": "Service",
+//           "enabled": true
+//       },
+//       {
+//           "name": "Atmosphere",
+//           "enabled": true
+//       },
+//       {
+//           "name": "Noise",
+//           "enabled": false
+//       },
+//       {
+//           "name": "Price",
+//           "enabled": false
+//       },
+//       {
+//           "name": "Cleanliness",
+//           "enabled": false
+//       },
+//       {
+//           "name": "WaitTime",
+//           "enabled": false
+//       }
+//   ],
+//   "inputCategories": [
+//       {
+//           "placeholder": "Name",
+//           "type": "text",
+//           "enabled": true
+//       },
+//       {
+//           "placeholder": "Phone number",
+//           "type": "tel",
+//           "enabled": false
+//       },
+//       {
+//           "placeholder": "Email",
+//           "type": "email",
+//           "enabled": true
+//       }
+//   ],
+//   "textareaCategories": [
+//       {
+//           "placeholder": "Share information about how you experienced the place",
+//           "enabled": false
+//       },
+//       {
+//           "placeholder": "What was good about your visit?",
+//           "enabled": false
+//       },
+//       {
+//           "placeholder": "What was bad about your visit?",
+//           "enabled": true
+//       },
+//       {
+//           "placeholder": "Other comments"
+//       }
+//   ],
+//   "reviewLinkId": null,
+//   "uploadedFile": {}
+// }
 
 const CreateReviewLink: React.FC = () => {
+  const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
+  const { reviewLinkSettings } = useReviewLinkSettings();
+  const { reviewLinkPositive } = useReviewLinkPositive();
+  const { reviewLinkNegative } = useReviewLinkNegative();
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { toast } = useToast();
-  const [isDisabled, setIsDisabled] = useState(true);
+
+  const reviewLinkId = searchParams.get("review-link");
+  
+  const { slug } = useParams();
+
   const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
-  const { reviewLinkDetail } = useReviewLink();
+
   const { selectedClient } = useSelectedClient();
 
   const handleSaveReviewLink = async () => {
-    const desktopBgImage = await uploadBgImage(reviewLinkDetail?.imageFile);
+    // Validate selected channels
+    if (!reviewLinkPositive?.selectedChannels?.length) {
+      toast({ description: "Please select at least one channel!" });
+      return;
+    }
 
-    const settingsData = {
-      client_id: selectedClient?.id,
-      review_link_name: reviewLinkDetail?.reviewLinkName,
-      review_link_slug: reviewLinkDetail?.reviewLinkSlug,
-      rating_threshold_count: reviewLinkDetail?.starsThreshold,
-      review_link_home_title: reviewLinkDetail?.reviewLinkHomeTitle,
-      skip_first_page_enabled: reviewLinkDetail?.isSkipFirstPageEnabled,
-      desktop_bg_image: desktopBgImage,
-    };
+    try {
+      // Upload desktop background image
+      const desktopBgImage = await uploadBgImage(
+        reviewLinkSettings?.desktopBgImage
+      );
 
-    const { data, error } = await createReviewLink({ settingsData });
+      // Prepare and save settings data
+      const settingsData = mapSettingsDbFormat({
+        ...reviewLinkSettings,
+        clientId: selectedClient?.id,
+        reviewLinkPositiveTitle: reviewLinkPositive?.reviewLinkPositiveTitle,
+        desktopBgImage,
+      });
 
-    if (error) {
-      console.log(error);
+      const { data: settings, error: settingsError } =
+        await saveReviewLinkSettings(settingsData);
+      if (settingsError) {
+        handleSaveError(
+          settingsError,
+          "Error in creating review link, please try again later"
+        );
+        return;
+      }
+
+      // Prepare positive and negative review link data
+      const positivePageData = reviewLinkPositive.selectedChannels.map(
+        (channel: any) => ({
+          channel_id: channel.id,
+          channel_review_link: channel.link,
+          review_link_id: settings.id,
+        })
+      );
+
+      const negativeReviewData = mapNegativePageDataToDbFormat({
+        ...reviewLinkNegative,
+        reviewLinkId: settings.id,
+      });
+
+      // Trigger both saves concurrently
+      const [positiveReviewLinkResult, negativeReviewLinkResult] =
+        await Promise.all([
+          saveReviewLinkPositivePage(positivePageData),
+          saveReviewLinkNegativePage(negativeReviewData),
+        ]);
+
+      const { error: positiveReviewLinkError } = positiveReviewLinkResult;
+      const { error: negativeReviewLinkError } = negativeReviewLinkResult;
+
+      // Handle errors for either save
+      if (positiveReviewLinkError) {
+        toast({
+          description:
+            "Error in saving positive review links, please try again later",
+        });
+        return;
+      }
+
+      if (negativeReviewLinkError) {
+        toast({
+          description:
+            "Error in saving negative review links, please try again later",
+        });
+        return;
+      }
+
+      // Success toast and redirection
+      toast({ description: "Review link created successfully!" });
+      router.push(`/admin/clients/${slug}/review-link/`);
+    } catch (err) {
+      console.error("Unexpected error:", err);
       toast({
-        description: `Error in creating review link, please try again later`,
+        description: "An unexpected error occurred, please try again later",
       });
     }
+  };
+
+  // Helper function to handle errors
+  const handleSaveError = (error: any, fallbackMessage: string) => {
+    const errorMessage =
+      error?.code === "23505" ? "Duplicate slug" : fallbackMessage;
+    toast({ description: errorMessage });
   };
 
   const uploadBgImage = async (file: File) => {
@@ -57,28 +225,41 @@ const CreateReviewLink: React.FC = () => {
 
     if (uploadError) {
       toast({
-        description: `Error in uploading client logo, please try again later`,
+        description: `Error in uploading image, please try again later`,
       });
     }
 
     return mediaUrl(uploadData?.fullPath as string);
   };
 
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  useEffect(() => {
+    const reviewLinkName = reviewLinkSettings?.reviewLinkName == "";
+    const reviewLinkBgImage =
+      typeof reviewLinkSettings?.desktopBgImage === "object";
+    setIsDisabled(reviewLinkName || !reviewLinkBgImage);
+  }, [reviewLinkSettings?.desktopBgImage, reviewLinkSettings?.reviewLinkName]);
+
   return (
     <>
-      <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
-        <Button className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSaveReviewLink}
-          disabled={isDisabled}
-          className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
-        >
-          Save
-        </Button>
-      </div>
-
+      {!reviewLinkSettings?.reviewLinkId && (
+        <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
+          <Button
+            onClick={() => router.back()}
+            className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveReviewLink}
+            disabled={isDisabled}
+            className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
+          >
+            Save
+          </Button>
+        </div>
+      )}
       <div className="flex flex-wrap gap-8">
         <Tabs defaultValue="settings" className="flex-grow">
           <TabsList className="bg-transparent p-0 mb-4 gap-10 [&>button]:px-0 [&>button]:pb-2 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none">
@@ -91,10 +272,13 @@ const CreateReviewLink: React.FC = () => {
             <TabsTrigger value="thanksyoupg">4-Thank you</TabsTrigger>
           </TabsList>
           <TabsContent value="settings">
-            <SettingTabs disableSaveBtn={setIsDisabled} />
+            <SettingTabs />
           </TabsContent>
           <TabsContent value="positivepg">
-            <PositiveTabs setIsMainDivVisible={setIsMainDivVisible} /> {/* Pass setter */}
+            <PositiveTabs
+              channels={mapChannels(channelList)}
+              setIsMainDivVisible={setIsMainDivVisible}
+            />
           </TabsContent>
           <TabsContent value="negativepg">
             <NegativeTabs />
@@ -122,4 +306,3 @@ const CreateReviewLink: React.FC = () => {
 };
 
 export default CreateReviewLink;
-

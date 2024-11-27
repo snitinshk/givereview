@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CHANNEL_TYPE } from "@/constant";
@@ -10,7 +11,6 @@ import { mapChannels } from "@/mappers";
 import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
 import placeholder from "../../../images/placeholder.svg";
-
 import { useToast } from "@/hooks/use-toast";
 
 export default function AddNewChannel({
@@ -21,73 +21,88 @@ export default function AddNewChannel({
 
   const { toast } = useToast();
   const [newChannelName, setNewChannelName] = useState("");
-  const [newChannelLogo, setNewChannelLogo] = useState(placeholder);
-  const [newChannelLogoId, setNewChannelLogoId] = useState("");
-  const [channelFile, setChannelFile] = useState<File>();
+  const [newChannelLogo, setNewChannelLogo] = useState<string>(placeholder);
+  const [channelFile, setChannelFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleNewLogoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleNewLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewChannelLogo(reader.result as string);
-      };
+      reader.onloadend = () => setNewChannelLogo(reader.result as string);
       reader.readAsDataURL(file);
       setChannelFile(file);
+    } else {
+      toast({
+        title: "Error!",
+        description: "Invalid file. Please select a valid image file.",
+      });
     }
   };
 
   const handleCreateChannel = async () => {
-    if (newChannelName && channelFile) {
+    if (!newChannelName || !channelFile) {
+      toast({
+        title: "Error!",
+        description: "Please provide a channel name and logo.",
+      });
+      return;
+    }
+
+    try {
+      // Upload the file
       const uploadPath = `channels/${getFileName(channelFile)}`;
       const { data: uploadData, error: uploadError } = await uploadFile(
         channelFile,
         uploadPath
       );
 
-      if (!uploadError && uploadData?.fullPath && uploadData?.id) {
-        const fullPath = mediaUrl(uploadData?.fullPath);
-        const logoId = uploadData?.id;
-        setNewChannelLogoId(logoId);
-        setNewChannelLogo(fullPath);
+      if (uploadError || !uploadData?.fullPath || !uploadData?.id) {
+        throw new Error("Error uploading the logo. Please try again.");
       }
 
       const newChannelData = {
         channel_name: newChannelName,
-        channel_logo_url: newChannelLogo,
-        channel_logo_id: newChannelLogoId,
-        channel_type: CHANNEL_TYPE.WIDGET,
+        channel_logo_url: mediaUrl(uploadData.fullPath),
+        channel_logo_id: uploadData.id,
+        channel_type: CHANNEL_TYPE.REVIEW,
       };
 
+      // Add the new channel
       const { data: addedChannel, error: addChannelError } = await addChannel(
         newChannelData
       );
 
-      if (!addChannelError && !uploadError && addedChannel) {
-        const [newMappedChannel]: Channel[] = mapChannels(addedChannel);
-        setChannels([...channels, newMappedChannel]);
-        toast({
-          title: "Success!",
-          description: `Channel ${newMappedChannel?.name} added successfully`,
-        });
-      } else {
-        toast({
-          title: "Error!",
-          description: `Something went wrong, please try again later`,
-        });
+      if (addChannelError || !addedChannel) {
+        throw new Error("Error creating the channel. Please try again.");
       }
 
+      // Update the channels list
+      const [newMappedChannel]: Channel[] = mapChannels(addedChannel);
+      setChannels([...channels, newMappedChannel]);
+
+      toast({
+        title: "Success!",
+        description: `Channel "${newMappedChannel?.name}" added successfully!`,
+      });
+
+      // Reset form
       setNewChannelName("");
       setNewChannelLogo(placeholder);
+      setChannelFile(null);
       setIsAdding(false);
+      
+    } catch (error: any) {
+      toast({
+        title: "Error!",
+        description: error.message || "An unexpected error occurred.",
+      });
     }
   };
 
   return (
     <div className="flex w-[calc(50%-10px)] max-w-full items-center space-x-4">
+      {/* Logo Preview */}
       <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
         <Image
           src={newChannelLogo}
@@ -97,6 +112,8 @@ export default function AddNewChannel({
           className="rounded-sm"
         />
       </div>
+
+      {/* Upload Button */}
       <Button
         variant="outline"
         className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
@@ -105,6 +122,8 @@ export default function AddNewChannel({
         <UploadIcon className="h-4 w-4" />
         <span className="sr-only">Upload logo</span>
       </Button>
+
+      {/* Input Fields */}
       <div className="flex-grow flex items-center space-x-2">
         <Input
           value={newChannelName}
@@ -120,6 +139,8 @@ export default function AddNewChannel({
           accept="image/*"
         />
       </div>
+
+      {/* Action Buttons */}
       <div className="flex space-x-2">
         <Button
           disabled={!newChannelName || !channelFile}
