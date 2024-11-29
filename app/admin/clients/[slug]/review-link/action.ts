@@ -51,30 +51,6 @@ export const getChannels = async () => {
     return JSON.stringify(response)
 }
 
-export const saveReviewLinkSettings = async (settingsData: any) => {
-
-    const supabase = await createClient();
-
-    return await supabase
-        .from('setting_review_link_details')
-        .insert([
-            settingsData,
-        ])
-        .select('id').single();
-
-}
-
-export const saveReviewLinkPositivePage = async (positivePageData: any) => {
-
-    const supabase = await createClient();
-
-    return await supabase
-        .from('positive_review_link_details')
-        .insert(positivePageData)
-        .select('id')
-
-}
-
 export const deleteReviewLink = async (reviewLinkId: number) => {
     const supabase = await createClient()
     const response = await supabase
@@ -106,14 +82,55 @@ export const deletePositiveReviewLink = async (positiveReviewLinkId: number) => 
     return JSON.stringify(response);
 }
 
+export const saveReviewLinkSettings = async (settingsData: any) => {
+
+  const supabase = await createClient();
+
+  return await supabase
+      .from('setting_review_link_details')
+      .insert([
+          settingsData,
+      ])
+      .select('id').single();
+
+}
+
+export const saveReviewLinkPositivePage = async (positivePageData: any) => {
+
+const supabase = await createClient();
+
+return await supabase
+    .from('positive_review_link_details')
+    .insert(positivePageData)
+    .select('id')
+
+}
+
 export const saveReviewLinkNegativePage = async (negativePageData: any) => {
 
     const supabase = await createClient();
 
-    return await supabase
+    const response = supabase
         .from('negative_review_link_details')
         .insert(negativePageData)
         .select('id')
+
+    return JSON.stringify(response);
+
+}
+
+export const saveReviewLinkThankyouPage = async (thankyouPageData: any) => {
+
+  console.log(thankyouPageData);
+
+  const supabase = await createClient();
+
+  const response = await supabase
+      .from('thankyou_review_link_details')
+      .insert(thankyouPageData)
+      .select('id')
+
+  return JSON.stringify(response);
 
 }
 

@@ -7,6 +7,7 @@ import { ReviewLinkProvider } from "./review-link-context";
 import { ReviewLinkSettingsProvider } from "./review-link-settings.context";
 import { ReviewLinkPositiveProvider } from "./review-link-positive.context";
 import { ReviewLinkNegativeProvider } from "./review-link-negative.context";
+import { ReviewLinkThankyouProvider } from "./review-link-thankyou.context";
 
 export const ContextProvider = ({ children }: { children: ReactNode }) => (
   <ClientProvider>
@@ -14,7 +15,11 @@ export const ContextProvider = ({ children }: { children: ReactNode }) => (
       <ReviewLinkProvider>
         <ReviewLinkPositiveProvider>
           <ReviewLinkSettingsProvider>
-            <ReviewLinkNegativeProvider>{children}</ReviewLinkNegativeProvider>
+            <ReviewLinkNegativeProvider>
+              <ReviewLinkThankyouProvider>
+                {children}
+              </ReviewLinkThankyouProvider>
+            </ReviewLinkNegativeProvider>
           </ReviewLinkSettingsProvider>
         </ReviewLinkPositiveProvider>
       </ReviewLinkProvider>

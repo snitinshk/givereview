@@ -14,12 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 
 import {
   deleteReviewLink,
+  generateUniqueSlug,
   getReviewLinks,
   getReviewLinkSettings,
 } from "./action";
 import { DEFAULT_TEXTS, reviewLinkNegativeDefaultValue } from "@/constant";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
-import { mapPositivePageUIFormat, mapSettingsUIFormat } from "@/mappers";
+import {
+  mapNegativeLinkDefault,
+  mapPositivePageUIFormat,
+  mapSettingsUIFormat,
+} from "@/mappers";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
@@ -38,7 +43,7 @@ const ReviewLink: React.FC = (params) => {
 
   const { selectedClient } = useSelectedClient();
   const [reviewLinks, setReviewLinks] = useState([]);
-  
+
   const { slug } = useParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -52,7 +57,7 @@ const ReviewLink: React.FC = (params) => {
       if (selectedClient) {
         const response = await getReviewLinks(selectedClient?.id);
         const { data: reviewLink, error } = JSON.parse(response);
-  
+
         if (error) {
           toast({ description: "Error in fetching review links." });
         }
@@ -66,30 +71,9 @@ const ReviewLink: React.FC = (params) => {
    */
   const { setReviewLinkSettings } = useReviewLinkSettings();
   const { setReviewLinkPositive } = useReviewLinkPositive();
-  const { setReviewLinkNegative } =  useReviewLinkNegative()
+  const { setReviewLinkNegative } = useReviewLinkNegative();
 
   // Reset the settings when the component mounts to handle "add" mode cleanly
-
-  useEffect(() => {
-    
-    setReviewLinkSettings({
-      reviewLinkName: "",
-      reviewLinkSlug: slug as string,
-      reviewLinkHomeTitle: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
-      isSkipFirstPageEnabled: false,
-      ratingThresholdCount: 4,
-      isPoweredByEnabled: true,
-      imageFile: "",
-    });
-
-    setReviewLinkPositive({
-      reviewLinkPositiveTitle: DEFAULT_TEXTS?.positiveReviewTitle,
-      selectedChannels: [],
-    });
-
-    setReviewLinkNegative(reviewLinkNegativeDefaultValue);
-
-  }, [slug]);
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = async (
     event
@@ -98,8 +82,7 @@ const ReviewLink: React.FC = (params) => {
       "data-review-link-id"
     );
     if (reviewLinkId) {
-
-      fetchReviewLinkDataForEdit(parseInt(reviewLinkId));
+      await fetchReviewLinkDataForEdit(parseInt(reviewLinkId));
 
       if (reviewLinkId) {
         router.push(
@@ -110,7 +93,6 @@ const ReviewLink: React.FC = (params) => {
   };
 
   const fetchReviewLinkDataForEdit = async (reviewLinkId: number) => {
-    
     const response = await getReviewLinkSettings(reviewLinkId);
     const { error, data: reviewLink } = JSON.parse(response);
     if (error) {
@@ -134,8 +116,14 @@ const ReviewLink: React.FC = (params) => {
       selectedChannels: mapPositivePageUIFormat(positive_review_link_details),
     });
 
-    setReviewLinkSettings(mapSettingsUIFormat(reviewLink));
+    const negativePageReviewLink: any = mapNegativeLinkDefault(
+      negative_review_link_details
+    );
+    if (negativePageReviewLink) {
+      setReviewLinkNegative(negativePageReviewLink[0]);
+    }
 
+    setReviewLinkSettings(mapSettingsUIFormat(reviewLink));
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (
@@ -182,14 +170,38 @@ const ReviewLink: React.FC = (params) => {
     }
   };
 
+  const handleCreateLink = async () => {
+    const uniqueSlug = await generateUniqueSlug(slug as string);
+    setReviewLinkSettings((prev: any) => ({
+      reviewLinkName: "",
+      reviewLinkSlug: uniqueSlug,
+      reviewLinkHomeTitle: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
+      isSkipFirstPageEnabled: false,
+      ratingThresholdCount: 4,
+      isPoweredByEnabled: true,
+      imageFile: "",
+    }));
+
+    setReviewLinkPositive({
+      reviewLinkPositiveTitle: DEFAULT_TEXTS?.positiveReviewTitle,
+      selectedChannels: [],
+    });
+
+    setReviewLinkNegative(reviewLinkNegativeDefaultValue);
+
+    router.push(`/admin/clients/${slug}/review-link/manage`);
+
+  };
+
   return (
     <>
-      <Link
-        href={`/admin/clients/${slug}/review-link/manage`}
+      <Button
+        onClick={handleCreateLink}
+        // href={`/admin/clients/${slug}/review-link/manage`}
         className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
       >
         Create Link
-      </Link>
+      </Button>
 
       <div className="space-y-5">
         {reviewLinks.map((reviewLink: any) => (
@@ -228,7 +240,7 @@ const ReviewLink: React.FC = (params) => {
                   reviewLink.is_active ? "Active" : "Inactive"
                 )} !bottom-0 !shadow-none pointer-events-none px-4  h-7`}
               >
-                {reviewLink?.is_active === true ? 'Active': 'Inactive'}
+                {reviewLink?.is_active === true ? "Active" : "Inactive"}
               </Badge>
               <Button
                 data-review-link-id={reviewLink?.id}

@@ -18,6 +18,7 @@ import {
   saveReviewLinkNegativePage,
   saveReviewLinkPositivePage,
   saveReviewLinkSettings,
+  saveReviewLinkThankyouPage,
 } from "../action";
 import { useSelectedClient } from "@/app/context/selected-client-context";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -29,90 +30,14 @@ import {
 } from "@/mappers";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
-
-// {
-//   "defaultChannel": {
-//       "logo": "https://hwqcsflrmhlffnqlprib.supabase.co/storage/v1/object/public/media/static/google.svg",
-//       "enabled": true
-//   },
-//   "negativePageTitle": {
-//       "title": "Appears publicly on Google",
-//       "enabled": true
-//   },
-//   "negativePageDescription": "We want our customers to be 100% satisfied. Please let us know why you had a bad experience, so we can improve our service. Leave your email to be contacted.",
-//   "ratingCategories": [
-//       {
-//           "name": "Food",
-//           "enabled": true
-//       },
-//       {
-//           "name": "Service",
-//           "enabled": true
-//       },
-//       {
-//           "name": "Atmosphere",
-//           "enabled": true
-//       },
-//       {
-//           "name": "Noise",
-//           "enabled": false
-//       },
-//       {
-//           "name": "Price",
-//           "enabled": false
-//       },
-//       {
-//           "name": "Cleanliness",
-//           "enabled": false
-//       },
-//       {
-//           "name": "WaitTime",
-//           "enabled": false
-//       }
-//   ],
-//   "inputCategories": [
-//       {
-//           "placeholder": "Name",
-//           "type": "text",
-//           "enabled": true
-//       },
-//       {
-//           "placeholder": "Phone number",
-//           "type": "tel",
-//           "enabled": false
-//       },
-//       {
-//           "placeholder": "Email",
-//           "type": "email",
-//           "enabled": true
-//       }
-//   ],
-//   "textareaCategories": [
-//       {
-//           "placeholder": "Share information about how you experienced the place",
-//           "enabled": false
-//       },
-//       {
-//           "placeholder": "What was good about your visit?",
-//           "enabled": false
-//       },
-//       {
-//           "placeholder": "What was bad about your visit?",
-//           "enabled": true
-//       },
-//       {
-//           "placeholder": "Other comments"
-//       }
-//   ],
-//   "reviewLinkId": null,
-//   "uploadedFile": {}
-// }
+import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
 
 const CreateReviewLink: React.FC = () => {
   const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
   const { reviewLinkSettings } = useReviewLinkSettings();
   const { reviewLinkPositive } = useReviewLinkPositive();
   const { reviewLinkNegative } = useReviewLinkNegative();
+  const { reviewLinkThankyou } = useReviewLinkThankyou();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -127,6 +52,7 @@ const CreateReviewLink: React.FC = () => {
   const { selectedClient } = useSelectedClient();
 
   const handleSaveReviewLink = async () => {
+
     // Validate selected channels
     if (!reviewLinkPositive?.selectedChannels?.length) {
       toast({ description: "Please select at least one channel!" });
@@ -166,20 +92,36 @@ const CreateReviewLink: React.FC = () => {
         })
       );
 
-      const negativeReviewData = mapNegativePageDataToDbFormat({
+      const negativePageData = mapNegativePageDataToDbFormat({
         ...reviewLinkNegative,
         reviewLinkId: settings.id,
       });
 
+      // console.log(reviewLinkThankyou);
+      // uploadedFile
+      // return;
+
+      const thankyouBgImage = await uploadBgImage(reviewLinkThankyou?.uploadedFile);
+
+      const thankyouPageData = {
+        review_thankyou_title:reviewLinkThankyou?.title,
+        review_thankyou_bg_image: thankyouBgImage,
+        review_link_id: settings.id,
+      }
+
+      console.log(thankyouPageData);
+
       // Trigger both saves concurrently
-      const [positiveReviewLinkResult, negativeReviewLinkResult] =
+      const [positiveReviewLinkResult, negativeReviewLinkResult, thankyouReviewLinkResult] =
         await Promise.all([
           saveReviewLinkPositivePage(positivePageData),
-          saveReviewLinkNegativePage(negativeReviewData),
+          saveReviewLinkNegativePage(negativePageData),
+          saveReviewLinkThankyouPage(thankyouPageData),
         ]);
 
       const { error: positiveReviewLinkError } = positiveReviewLinkResult;
-      const { error: negativeReviewLinkError } = negativeReviewLinkResult;
+      const { error: negativeReviewLinkError } = JSON.parse(negativeReviewLinkResult);
+      const { error: thankyouReviewLinkError } = JSON.parse(thankyouReviewLinkResult);
 
       // Handle errors for either save
       if (positiveReviewLinkError) {
@@ -198,9 +140,17 @@ const CreateReviewLink: React.FC = () => {
         return;
       }
 
+      if (thankyouReviewLinkError) {
+        toast({
+          description:
+            "Error in saving thankyou review links, please try again later",
+        });
+        return;
+      }
       // Success toast and redirection
       toast({ description: "Review link created successfully!" });
       router.push(`/admin/clients/${slug}/review-link/`);
+
     } catch (err) {
       console.error("Unexpected error:", err);
       toast({

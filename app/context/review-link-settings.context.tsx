@@ -18,14 +18,20 @@ export const ReviewLinkSettingsProvider = ({
 }: {
   children: ReactNode;
 }) => {
+
   const { slug } = useParams();
-  const [uniqueSlug, setUniqueSlug] = useState<string>();
 
   useEffect(() => {
+    if(!slug){
+      return;
+    }
     (async () => {
       try {
         const uniqueSlug = await generateUniqueSlug(slug as string);
-        setUniqueSlug(uniqueSlug);
+        setReviewLinkSettings((prev: any) => ({
+          ...prev,
+          reviewLinkSlug: uniqueSlug,
+        }));
       } catch (error) {
         console.log(error);
       }
@@ -34,7 +40,7 @@ export const ReviewLinkSettingsProvider = ({
 
   const [reviewLinkSettings, setReviewLinkSettings] = useState<any>({
     reviewLinkName: "",
-    reviewLinkSlug: uniqueSlug,
+    reviewLinkSlug: "",
     reviewLinkHomeTitle: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
     isSkipFirstPageEnabled: false,
     ratingThresholdCount: 4,
@@ -42,14 +48,14 @@ export const ReviewLinkSettingsProvider = ({
     imageFile: "",
   });
 
-  React.useEffect(() => {
-    if (slug) {
-      setReviewLinkSettings((prev: any) => ({
-        ...prev,
-        reviewLinkSlug: slug,
-      }));
-    }
-  }, [slug]);
+  // React.useEffect(() => {
+  //   if (slug) {
+  //     setReviewLinkSettings((prev: any) => ({
+  //       ...prev,
+  //       reviewLinkSlug: uniqueSlug,
+  //     }));
+  //   }
+  // }, [slug]);
 
   return (
     <ReviewLinkSettingsContext.Provider

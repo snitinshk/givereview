@@ -38,6 +38,7 @@ interface Settings {
 export default function SettingTabs() {
   
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
+  
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );

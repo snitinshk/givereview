@@ -10,24 +10,26 @@ import EditableField from "./editable";
 import { useEffect, useRef, useState } from "react";
 import { UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
+import { updateReviewLink } from "../action";
+import { useToast } from "@/hooks/use-toast";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 
 const NegativeTabs: React.FC = () => {
-
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
+  console.log(reviewLinkNegative);
 
+  const { toast } = useToast();
   const [ratingCategories, setRatingCategories] = useState(
     reviewLinkNegative?.ratingCategories
   );
 
   useEffect(() => {
-    
     setDefaultChannel(reviewLinkNegative?.defaultChannel);
     setRatingCategories(reviewLinkNegative?.ratingCategories);
     setInputCategories(reviewLinkNegative?.inputCategories);
     setTextareaCategories(reviewLinkNegative?.textareaCategories);
     setNegativePageTitle(reviewLinkNegative?.negativePageTitle);
     setReviewDesc(reviewLinkNegative?.negativePageDescription);
-    
   }, [reviewLinkNegative]);
 
   const [inputCategories, setInputCategories] = useState(
@@ -51,24 +53,60 @@ const NegativeTabs: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [defaultChannel, setDefaultChannel] = useState(reviewLinkNegative?.defaultChannel);
+  const [defaultChannel, setDefaultChannel] = useState(
+    reviewLinkNegative?.defaultChannel
+  );
 
   const handleEditClick = () => {
     setIsEditing(true); // Enable editing mode when clicking "Edit"
   };
 
-  const handleNewLogoUpload = () => {
+  const handleNewLogoUpload = async () => {
     if (fileInputRef.current?.files) {
       const uploadedFile = fileInputRef.current.files[0];
       if (uploadedFile) {
         const previewUrl = URL.createObjectURL(uploadedFile);
+
         setReviewLinkNegative({
           ...reviewLinkNegative,
           uploadedFile,
-          previewUrl
+          previewUrl,
+        });
+
+        if (!reviewLinkNegative?.reviewLinkId) {
+          return;
+        }
+
+        const imageUrl = await uploadReviewLinkImage(uploadedFile);
+
+        handleUpdateReviewLink({
+          channel_logo: {
+            ...defaultChannel,
+            logo: imageUrl,
+          },
         });
       }
     }
+  };
+
+  const uploadReviewLinkImage = async (file: File) => {
+
+    const uploadPath = `reviewlinks/${getFileName(file)}`;
+    const { data: uploadData, error: uploadError } = await uploadFile(
+      file,
+      uploadPath
+    );
+  
+    
+  
+    if (uploadError) {
+      toast({
+        description: `Error in uploading image, please try again later`,
+      });
+    }
+  
+    return mediaUrl(uploadData?.fullPath as string);
+    
   };
 
   const renderEditableField = (
@@ -115,13 +153,35 @@ const NegativeTabs: React.FC = () => {
     }));
   };
 
+  const handleUpdateReviewLink = async (updateInfo: any) => {
+    // do nothing for add case;
+    if (!reviewLinkNegative?.negativeRLinkId) {
+      return;
+    }
+
+    const response = await updateReviewLink(
+      "negative_review_link_details",
+      updateInfo,
+      {
+        col: "id",
+        val: reviewLinkNegative?.negativeRLinkId,
+      }
+    );
+    const { error } = JSON.parse(response);
+
+    if (!error) {
+      toast({
+        description: "Field updated",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center w-80 max-w-full gap-3">
         <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
           <Image
-            src={reviewLinkNegative?.previewUrl || defaultChannel.logo}
+            src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
             alt="New channel logo"
             width={40}
             height={40}
@@ -147,26 +207,33 @@ const NegativeTabs: React.FC = () => {
             accept="image/*"
           />
         </div>
-        {!isEditing && <Button
-          variant="ghost"
-          className="text-green-600 font-semibold"
-          onClick={handleEditClick}
-        >
-          Edit
-        </Button>
-        }
-        <Switch 
-        checked={defaultChannel.enabled} 
-        onCheckedChange={()=>{
-          setReviewLinkNegative((prevState: any) => ({
-            ...prevState,
-            defaultChannel: {
-              ...prevState.defaultChannel,
-              enabled: !defaultChannel.enabled,
-            },
-          }));
-        }}
-        id="lgshow" 
+        {!isEditing && (
+          <Button
+            variant="ghost"
+            className="text-green-600 font-semibold"
+            onClick={handleEditClick}
+          >
+            Edit
+          </Button>
+        )}
+        <Switch
+          checked={defaultChannel?.enabled}
+          onCheckedChange={async () => {
+            setReviewLinkNegative((prevState: any) => ({
+              ...prevState,
+              defaultChannel: {
+                ...prevState.defaultChannel,
+                enabled: !defaultChannel.enabled,
+              },
+            }));
+            handleUpdateReviewLink({
+              channel_logo: {
+                ...defaultChannel,
+                enabled: !defaultChannel.enabled,
+              },
+            });
+          }}
+          id="lgshow"
         />
       </div>
 
@@ -189,6 +256,13 @@ const NegativeTabs: React.FC = () => {
                     title: newValue,
                   },
                 }));
+                handleUpdateReviewLink({
+                  negative_page_title: {
+                    ...negativePageTitle,
+                    title: newValue,
+                  },
+                });
+
                 setIsEditingPageTitle(false);
               },
               () => setIsEditingPageTitle(false)
@@ -197,15 +271,20 @@ const NegativeTabs: React.FC = () => {
           <Switch
             id="apshow"
             checked={negativePageTitle?.enabled}
-            onCheckedChange={() =>
+            onCheckedChange={() => {
               setReviewLinkNegative((prevState: any) => ({
                 ...prevState,
                 negativePageTitle: {
                   ...prevState.negativePageTitle,
                   enabled: !negativePageTitle?.enabled,
                 },
-              }))
-            }
+              }));
+
+              handleUpdateReviewLink({
+                ...negativePageTitle,
+                enabled: !negativePageTitle?.enabled,
+              });
+            }}
           />
         </div>
 
@@ -219,6 +298,9 @@ const NegativeTabs: React.FC = () => {
                 ...prevState,
                 negativePageDescription: newValue,
               }));
+              handleUpdateReviewLink({
+                reviewDesc: newValue,
+              });
               setIsEditingDesc(false);
             },
             () => setIsEditingDesc(false)
@@ -227,8 +309,11 @@ const NegativeTabs: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-5 mb-16">
-        {ratingCategories.map(
-          (category: { name: string; enabled: boolean }, index: number) => (
+        {ratingCategories?.map(
+          (
+            category: { name: string; dbField: string; enabled: boolean },
+            index: number
+          ) => (
             <div className="flex gap-8 items-center" key={index}>
               <p className="w-28">{category?.name}</p>
               <div className="flex gap-2 text-gray-300">
@@ -242,6 +327,9 @@ const NegativeTabs: React.FC = () => {
                 checked={category?.enabled}
                 onCheckedChange={() => {
                   updateRatingCategories(category?.name, !category?.enabled);
+                  handleUpdateReviewLink({
+                    [category.dbField]: !category?.enabled,
+                  });
                 }}
                 id={`${category?.name?.toLowerCase()}-switch`}
                 className="m-0"
@@ -251,9 +339,14 @@ const NegativeTabs: React.FC = () => {
         )}
       </div>
 
-      {inputCategories.map(
+      {inputCategories?.map(
         (
-          input: { placeholder: string; type: string; enabled: boolean },
+          input: {
+            placeholder: string;
+            dbField: string;
+            type: string;
+            enabled: boolean;
+          },
           index: number
         ) => (
           <div className="flex items-center gap-4" key={index}>
@@ -267,6 +360,9 @@ const NegativeTabs: React.FC = () => {
               checked={input?.enabled}
               onCheckedChange={() => {
                 updateInputCategories(input?.placeholder, !input?.enabled);
+                handleUpdateReviewLink({
+                  [input.dbField]: !input?.enabled,
+                });
               }}
               id={`${input?.placeholder
                 .toLowerCase()
@@ -277,9 +373,9 @@ const NegativeTabs: React.FC = () => {
         )
       )}
 
-      {textareaCategories.map(
+      {textareaCategories?.map(
         (
-          textarea: { placeholder: string; enabled: boolean },
+          textarea: { placeholder: string; dbField: string; enabled: boolean },
           index: number
         ) => (
           <div className="flex items-center gap-4" key={index}>
@@ -295,6 +391,9 @@ const NegativeTabs: React.FC = () => {
                   textarea?.placeholder,
                   !textarea?.enabled
                 );
+                handleUpdateReviewLink({
+                  [textarea.dbField]: !textarea?.enabled,
+                });
               }}
               id={`${textarea.placeholder
                 .toLowerCase()
