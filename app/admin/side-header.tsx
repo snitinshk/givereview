@@ -30,8 +30,11 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Reviews",
-    path: "/admin/analytics",
+    path: "/admin/reviews",
     icon: () => <IconWrapper src={RVIMG} alt="Reviews Icon" />,
+    submenu: [
+      { name: "Details", path: "/admin/reviews/details" },
+    ],
   },
   {
     name: "Settings",
@@ -55,7 +58,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   // useEffect(() => {
   //   setClientCount(clientsList?.length);
-    
+
   // }, [clientsList?.length]);
 
   // useEffect(() => {
@@ -112,11 +115,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
-                    selectedPath === item.path
+                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
                       ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
                       : ""
-                  }`}
+                    }`}
                   onClick={() =>
                     item.submenu
                       ? toggleSubmenu(item.path)
@@ -128,9 +130,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     {item.name}
                   </div>
                   <div className="flex items-center gap-4">
-                    { item.clientNumber && (
+                    {item.clientNumber && (
                       <span className="ml-auto w-6 h-6 bg-[#FF5630]/[0.16] text-[#B71D18] flex justify-center items-center rounded-md">
-                        { item.clientNumber }
+                        {item.clientNumber}
                       </span>
                     )}
                     {item.submenu &&
@@ -147,11 +149,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <li key={subItem.path}>
                         <Button
                           variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
-                            selectedPath === subItem.path
+                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
                               ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className="w-1 h-1 bg-gray-500 rounded"></span>
