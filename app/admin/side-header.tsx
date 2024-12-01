@@ -3,43 +3,56 @@
 import { useState, ReactNode, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, ChevronRight } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import Image, { StaticImageData } from "next/image";
-import Breadcrumb from "@/components/admin/breadcrum";
+import Breadcrumb from "../../components/admin/breadcrum";
 import { createClient } from "@/lib/supabase/supabase-client";
 import Logo from "@/app/images/logo.svg";
 import CLIMG from "@/app/images/clients-ico.svg";
 import RVIMG from "@/app/images/reviews-ico.svg";
 import STIMG from "@/app/images/settings-icon.svg";
 import USERICON from "@/app/images/user-ico.svg";
-import { MenuItem } from "@/interfaces/layout";
-import { Toaster } from "@/components/ui/toaster";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { useClients } from "../context/clients-context";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
 );
+
+export interface MenuItem {
+  name: string;
+  path: string;
+  icon?: ReactNode;
+  clientNumber?: number;
+  submenu?: MenuItem[];
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 const menuItems: MenuItem[] = [
   {
     name: "Clients",
     path: "/admin/clients",
     clientNumber: 0,
-    icon: () => <IconWrapper src={CLIMG} alt="Clients Icon" />,
+    icon: <IconWrapper src={CLIMG} alt="Clients Icon" />,
   },
   {
     name: "Reviews",
     path: "/admin/reviews",
-    icon: () => <IconWrapper src={RVIMG} alt="Reviews Icon" />,
-    submenu: [
-      { name: "Details", path: "/admin/reviews/details" },
-    ],
+    icon: <IconWrapper src={RVIMG} alt="Reviews Icon" />,
   },
   {
     name: "Settings",
     path: "/admin/settings/channels",
-    icon: () => <IconWrapper src={STIMG} alt="Settings Icon" />,
+    icon: <IconWrapper src={STIMG} alt="Settings Icon" />,
     submenu: [{ name: "Link Channels", path: "/admin/settings/channels" }],
   },
 ];
@@ -51,45 +64,45 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
-
   const { clients } = useClients();
-
-  menuItems[0].clientNumber = clients?.length;
-
-  // useEffect(() => {
-  //   setClientCount(clientsList?.length);
-
-  // }, [clientsList?.length]);
-
-  // useEffect(() => {
-  //   setClientCount(clientsList?.length);
-  //   menuItems[0].clientNumber = clientCount ?? clientsList?.length;
-  // }, [clientsList?.length]);
-
+  const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
 
-  if (slug) {
-    const dynamicMenu = {
-      name: capitalizeFirstLetter(slug as string),
-      path: `/admin/clients/${slug}/review-link`,
-      icon: () => <IconWrapper src={USERICON} alt="Clients Icon" />,
-      submenu: [
-        { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
-        { name: "Widget", path: `/admin/clients/${slug}/widget` },
-        { name: "Settings", path: `/admin/clients/${slug}/settings` },
-      ],
-    };
-    if (menuItems[1]?.name !== dynamicMenu?.name) {
-      menuItems.splice(1, 0, dynamicMenu);
+  useEffect(() => {
+    if (slug) fetchData();
+  }, [slug]);
+
+  useEffect(() => {
+    setIsLoading(false);
+    const handleRouteChangeStart = () => setIsLoading(true);
+    const handleRouteChangeComplete = () => setIsLoading(false);
+    const observer = new MutationObserver(handleRouteChangeComplete);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  useEffect(() => {
+    if (clients) menuItems[0].clientNumber = clients.length;
+  }, [clients]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-  } else if (menuItems?.length === 4) {
-    menuItems.splice(1, 1);
-  }
+  };
 
   const handleNavigation = (path: string) => {
     setSelectedPath(path);
+    setIsLoading(true);
     router.push(path);
   };
 
@@ -103,21 +116,44 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (!error) router.replace("/auth/login");
   };
 
+  const dynamicMenu = slug
+    ? {
+        name: capitalizeFirstLetter(slug as string),
+        path: `/admin/clients/${slug}/review-link`,
+        icon: <IconWrapper src={USERICON} alt="Clients Icon" />,
+        submenu: [
+          { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
+          { name: "Widget", path: `/admin/clients/${slug}/widget` },
+          { name: "Settings", path: `/admin/clients/${slug}/settings` },
+        ],
+      }
+    : null;
+
+  const finalMenuItems: MenuItem[] = slug
+    ? [...menuItems, dynamicMenu].filter(Boolean) as MenuItem[]
+    : menuItems;
+
   return (
     <div className="flex min-h-screen bg-white flex-wrap">
+      {isLoading && (
+        <div className="fixed backdrop-blur-sm inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9999999]">
+          <div className="loader border-t-transparent border-4 border-[#fff] w-12 h-12 rounded-full animate-spin"></div>
+        </div>
+      )}
+
       <aside className="w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
         <div className="flex justify-center mb-10">
           <Image src={Logo} alt="Logo" priority />
         </div>
         <nav>
           <ul>
-            {menuItems.map((item) => (
+            {finalMenuItems.map((item) => (
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
                   className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
-                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                      : ""
+                    ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                    : ""
                     }`}
                   onClick={() =>
                     item.submenu
@@ -126,7 +162,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   }
                 >
                   <div className="flex items-center gap-4">
-                    <item.icon />
+                    {item.icon}
                     {item.name}
                   </div>
                   <div className="flex items-center gap-4">
@@ -150,8 +186,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <Button
                           variant="ghost"
                           className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
-                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                              : ""
+                            ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                            : ""
                             }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
@@ -178,9 +214,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       <main className="w-[calc(100%-256px)] p-8">
         <Breadcrumb />
-        <Toaster />
-        {/* { alert?.visible && <CustomAlert uniqueIdenifier={Math.random()} type={alert?.type} title={alert?.title} message={alert?.message} />} */}
-        {children}
+        <div className="mt-5">{children}</div>
       </main>
     </div>
   );

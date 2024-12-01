@@ -14,8 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { LuCopy } from "react-icons/lu";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/hooks/use-toast";
 
 type SectionElement =
     | {
@@ -152,6 +151,7 @@ const SettingsTabs: React.FC = () => {
         "header-title": "What our guests say",
         "footer-title": "Powered by Us",
     });
+    const { toast } = useToast();
 
     const handleEdit = (id: string) => {
         setEditStates((prev) => ({ ...prev, [id]: true }));
@@ -171,25 +171,17 @@ const SettingsTabs: React.FC = () => {
     const copyToClipboard = async (text: string) => {
         try {
             await navigator.clipboard.writeText(text);
-            toast.success("Copied to clipboard!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "colored",
+            toast({
+                title: "Success",
+                description: "Copied to clipboard!",
+                variant: "default",
             });
         } catch (err) {
             console.error("Failed to copy text: ", err);
-            toast.error("Failed to copy!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "colored",
+            toast({
+                title: "Error",
+                description: "Failed to copy!",
+                variant: "destructive",
             });
         }
     };
@@ -271,18 +263,6 @@ const SettingsTabs: React.FC = () => {
                     })}
                 </div>
             ))}
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
         </div>
     );
 };
