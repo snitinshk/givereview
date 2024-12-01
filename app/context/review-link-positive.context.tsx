@@ -11,7 +11,7 @@ export const ReviewLinkPositiveProvider = ({
   children: ReactNode;
 }) => {
   const [reviewLinkPositive, setReviewLinkPositive] = useState<any>({
-    reviewLinkPositiveTitle: DEFAULT_TEXTS?.positiveReviewTitle,
+    title: DEFAULT_TEXTS?.positiveReviewTitle,
     selectedChannels: [],
   });
 

@@ -6,11 +6,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import EditableField from "./editable";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
+import { updateReviewLink } from "../action";
+import { useToast } from "@/hooks/use-toast";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 
 const ThankYouTabs: React.FC = () => {
   const { reviewLinkThankyou, setReviewLinkThankyou } = useReviewLinkThankyou();
+  const { toast } = useToast();
 
-  const [imagePreview, setImagePreview] = useState<string | null>(reviewLinkThankyou?.imagePreview);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    reviewLinkThankyou?.bgImage
+  );
   const [isEditingReview, setIsEditingReview] = useState(false);
   const [reviewLinkThankyouTitle, setReviewLinkThankyouTitle] = useState(
     reviewLinkThankyou?.title
@@ -19,11 +25,12 @@ const ThankYouTabs: React.FC = () => {
   useEffect(() => {
     setReviewLinkThankyou({
       ...reviewLinkThankyou,
-      reviewLinkThankyouTitle,
+      title: reviewLinkThankyouTitle,
+      bgImage: imagePreview,
     });
-  }, [reviewLinkThankyouTitle]);
+  }, [reviewLinkThankyouTitle, imagePreview]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -33,9 +40,54 @@ const ThankYouTabs: React.FC = () => {
       setReviewLinkThankyou({
         ...reviewLinkThankyou,
         uploadedFile: file,
-        imagePreview,
       });
 
+      if (!reviewLinkThankyou?.ThankyouRLId) {
+        return;
+      }
+      const imageUrl = await uploadBgImage(file);
+      handleUpdateReviewLinkThankyou({
+        review_thankyou_bg_image: imageUrl,
+      });
+    }
+  };
+
+  const uploadBgImage = async (file: File) => {
+    const uploadPath = `reviewlinks/${getFileName(file)}`;
+    const { data: uploadData, error: uploadError } = await uploadFile(
+      file,
+      uploadPath
+    );
+
+    if (uploadError) {
+      toast({
+        description: `Error in uploading image, please try again later`,
+      });
+    }
+
+    return mediaUrl(uploadData?.fullPath as string);
+  };
+
+  const handleUpdateReviewLinkThankyou = async (updateInfo: any) => {
+    // do nothing for add case;
+    if (!reviewLinkThankyou?.ThankyouRLId) {
+      return;
+    }
+
+    const response = await updateReviewLink(
+      "thankyou_review_link_details",
+      updateInfo,
+      {
+        col: "id",
+        val: reviewLinkThankyou?.ThankyouRLId,
+      }
+    );
+    const { error } = JSON.parse(response);
+
+    if (!error) {
+      toast({
+        description: "Field updated",
+      });
     }
   };
 
@@ -43,7 +95,7 @@ const ThankYouTabs: React.FC = () => {
     <>
       <div className="flex flex-col gap-3 mb-4">
         <div className="flex items-center gap-4 font-semibold text-gray-500">
-          {reviewLinkThankyou?.bgImage || imagePreview && (
+          {imagePreview && (
             <Button
               variant="ghost"
               className="text-green-600 font-semibold"
@@ -56,7 +108,7 @@ const ThankYouTabs: React.FC = () => {
         {imagePreview ? (
           <div className="relative w-96 h-36">
             <Image
-              src={reviewLinkThankyou?.bgImage || imagePreview}
+              src={imagePreview}
               alt="Preview"
               width={100}
               height={100}
@@ -88,6 +140,9 @@ const ThankYouTabs: React.FC = () => {
           value={reviewLinkThankyouTitle}
           onEdit={() => setIsEditingReview(true)}
           onSave={(newValue) => {
+            handleUpdateReviewLinkThankyou({
+              review_thankyou_title: newValue,
+            });
             setReviewLinkThankyouTitle(newValue);
             setIsEditingReview(false);
           }}

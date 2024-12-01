@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_TEXTS } from "@/constant";
+import { DEFAULT_TEXTS, reviewLinkThankyouDefaultValue } from "@/constant";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 const ReviewLinkThankyouContext = createContext<any>(null);
@@ -10,10 +10,7 @@ export const ReviewLinkThankyouProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [reviewLinkThankyou, setReviewLinkThankyou] = useState<any>({
-    title: DEFAULT_TEXTS?.thankyouPageTitle,
-    BgImage: "" 
-  });
+  const [reviewLinkThankyou, setReviewLinkThankyou] = useState<any>(reviewLinkThankyouDefaultValue);
 
   return (
     <ReviewLinkThankyouContext.Provider

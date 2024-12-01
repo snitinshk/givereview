@@ -41,7 +41,7 @@ export const ReviewLinkSettingsProvider = ({
   const [reviewLinkSettings, setReviewLinkSettings] = useState<any>({
     reviewLinkName: "",
     reviewLinkSlug: "",
-    reviewLinkHomeTitle: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
+    title: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
     isSkipFirstPageEnabled: false,
     ratingThresholdCount: 4,
     isPoweredByEnabled: true,

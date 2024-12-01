@@ -6,10 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Channel } from "@/interfaces/channels";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { isValidUrl } from "@/lib/utils";
-import { deletePositiveReviewLink, updateReviewLink } from "../action";
+import {
+  deletePositiveReviewLink,
+  deletePositiveReviewLinkByRLId,
+  saveReviewLinkPositivePage,
+  updateReviewLink,
+} from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers";
 
 export interface SelectedChannel {
   id: number;
@@ -28,12 +34,11 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   channels,
 }) => {
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
+
   const { reviewLinkSettings } = useReviewLinkSettings();
   const { toast } = useToast();
 
-  const [reviewLinkPositiveTitle, setReviewLinkPositiveTitle] = useState(
-    reviewLinkPositive?.reviewLinkPositiveTitle
-  );
+  const [title, settitle] = useState(reviewLinkPositive?.title);
   const [selectedChannels, setSelectedChannels] = useState<SelectedChannel[]>(
     reviewLinkPositive?.selectedChannels || []
   );
@@ -46,15 +51,14 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editingPositiveTitle, setEditingPositiveTitle] = useState(false);
   const [showMainContent, setShowMainContent] = useState(true);
-  const [loadingNewChannels, setLoadingNewChannels] = useState(false);
 
   // Update review link positive data in context
   useEffect(() => {
     setReviewLinkPositive({
-      reviewLinkPositiveTitle,
+      title,
       selectedChannels,
     });
-  }, [reviewLinkPositiveTitle, selectedChannels]);
+  }, [title, selectedChannels]);
 
   const handleEdit = (id: number, currentLink: string) => {
     setEditingItemId(id);
@@ -73,11 +77,11 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
 
     const itemToUpdate: any = selectedChannels.find((ch) => ch.id === id);
 
-    if (itemToUpdate?.positivePageId) {
+    if (itemToUpdate?.positiveRLId) {
       const response = await updateReviewLink(
         "positive_review_link_details",
         { channel_review_link: updatedLink },
-        { col: "id", val: itemToUpdate.positivePageId }
+        { col: "id", val: itemToUpdate.positiveRLId }
       );
       const { error } = JSON.parse(response);
       if (!error) {
@@ -87,14 +91,20 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   };
 
   const handleDelete = async (id: number) => {
+    // Find the channel to delete
+    const itemToDelete: any = selectedChannels.find((ch) => ch.id === id);
+
+    // Remove the channel from the selected list
     const remainingChannels = selectedChannels.filter((ch) => ch.id !== id);
     setSelectedChannels(remainingChannels);
 
-    const itemToDelete: any = selectedChannels.find((ch) => ch.id === id);
+    // Add the channel back to the new channels list
+    setNewChannels((prev) => [...prev, itemToDelete]);
 
-    if (itemToDelete?.positivePageId) {
+    if (itemToDelete?.positiveRLId) {
+      // Perform backend deletion
       const response = await deletePositiveReviewLink(
-        itemToDelete.positivePageId
+        itemToDelete.positiveRLId
       );
       const { error } = JSON.parse(response);
       if (!error) {
@@ -103,7 +113,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
     }
   };
 
-  const handleAddNewChannel = (channel: SelectedChannel) => {
+  const handleAddNewChannel = async (channel: SelectedChannel) => {
     const newLink = channelLinks[channel.id];
     if (!isValidUrl(newLink)) return;
 
@@ -111,11 +121,38 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
       ...selectedChannels,
       { ...channel, link: newLink },
     ];
+
     setSelectedChannels(updatedChannels);
     setNewChannels((prev) => prev.filter((ch) => ch.id !== channel.id));
     setShowMainContent(true);
     setIsMainDivVisible(true);
     setChannelLinks({});
+
+    //If Edit case, delete existing channels and add
+    if (reviewLinkSettings?.reviewLinkId) {
+      const response = await deletePositiveReviewLinkByRLId(
+        reviewLinkSettings?.reviewLinkId
+      );
+      const { error: deletePositiveRlErr } = JSON.parse(response);
+      if (!deletePositiveRlErr) {
+        const channelsWithReviewId = updatedChannels.map((channel) => {
+          return {
+            ...channel,
+            reviewLinkId: reviewLinkSettings?.reviewLinkId,
+          };
+        });
+        const response = await saveReviewLinkPositivePage(
+          mapPositivePageDBFormat(channelsWithReviewId)
+        );
+        const { error: addPositiveRlErr, data: positiveRLdata } = JSON.parse(response);
+        if (!addPositiveRlErr) {
+          
+          setSelectedChannels(mapPositivePageUIFormat(positiveRLdata));
+          toast({ description: "Channels updated" });
+          return;
+        }
+      }
+    }
   };
 
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
@@ -133,6 +170,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
     }
   };
 
+
   const handleLinkChange = (id: number, value: string) => {
     setChannelLinks((prev) => ({ ...prev, [id]: value }));
   };
@@ -144,19 +182,17 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
           <div className="max-w-xl">
             <EditableField
               isEditing={editingPositiveTitle}
-              value={reviewLinkPositiveTitle}
+              value={title}
               onEdit={() => setEditingPositiveTitle(true)}
               onSave={(newValue) => {
                 handleUpdateReviewLinkSettings({
                   review_link_positive_title: newValue,
                 });
-                setReviewLinkPositiveTitle(newValue);
+                settitle(newValue);
                 setEditingPositiveTitle(false);
               }}
               onCancel={() => setEditingPositiveTitle(false)}
-              renderValue={
-                <p className="text-black">{reviewLinkPositiveTitle}</p>
-              }
+              renderValue={<p className="text-black">{title}</p>}
             />
           </div>
 
@@ -231,19 +267,18 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
             ))}
           </div>
 
-          <Button
+          {newChannels?.length > 0 && <Button
             variant="ghost"
             className="flex items-center font-bold text-green-600 mt-5"
             onClick={() => {
-              setLoadingNewChannels(true);
               setShowMainContent(false);
               setIsMainDivVisible(false);
-              setLoadingNewChannels(false);
             }}
           >
             <PlusIcon className="h-4 w-4" />
             Add new channel
           </Button>
+          }
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-6">

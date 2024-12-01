@@ -36,9 +36,8 @@ interface Settings {
 }
 
 export default function SettingTabs() {
-  
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
-  
+
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );
@@ -52,34 +51,34 @@ export default function SettingTabs() {
 
   const { toast } = useToast();
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (reviewLinkSettings?.reviewLinkName) {
-      setReviewLinkName(reviewLinkSettings?.reviewLinkName);
-    }
-    if (reviewLinkSettings?.reviewLinkSlug) {
-      setReviewLinkSlug(reviewLinkSettings?.reviewLinkSlug);
-    }
-    if (reviewLinkSettings?.reviewLinkHomeTitle) {
-      setReviewLinkHomeTitle(reviewLinkSettings?.reviewLinkHomeTitle);
-    }
-    if (reviewLinkSettings?.isPoweredByEnabled) {
-      setIsPoweredByEnabled(reviewLinkSettings?.isPoweredByEnabled);
-    }
-    if (reviewLinkSettings?.isSkipFirstPageEnabled) {
-      setIsSkipFirstPageEnabled(reviewLinkSettings?.isSkipFirstPageEnabled);
-    }
-    if(reviewLinkSettings?.ratingThresholdCount){
-      setRatingThresholdCount(reviewLinkSettings?.ratingThresholdCount)
-    }
+  //   if (reviewLinkSettings?.reviewLinkName) {
+  //     setReviewLinkName(reviewLinkSettings?.reviewLinkName);
+  //   }
+  //   if (reviewLinkSettings?.reviewLinkSlug) {
+  //     setReviewLinkSlug(reviewLinkSettings?.reviewLinkSlug);
+  //   }
+  //   if (reviewLinkSettings?.title) {
+  //     settitle(reviewLinkSettings?.title);
+  //   }
+  //   if (reviewLinkSettings?.isPoweredByEnabled) {
+  //     setIsPoweredByEnabled(reviewLinkSettings?.isPoweredByEnabled);
+  //   }
+  //   if (reviewLinkSettings?.isSkipFirstPageEnabled) {
+  //     setIsSkipFirstPageEnabled(reviewLinkSettings?.isSkipFirstPageEnabled);
+  //   }
+  //   if(reviewLinkSettings?.ratingThresholdCount){
+  //     setRatingThresholdCount(reviewLinkSettings?.ratingThresholdCount)
+  //   }
 
-    if (reviewLinkSettings?.imageFile) {
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(reviewLinkSettings?.imageFile);
-    }
+  //   if (reviewLinkSettings?.imageFile) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => setImagePreview(reader.result as string);
+  //     reader.readAsDataURL(reviewLinkSettings?.imageFile);
+  //   }
 
-  }, [reviewLinkSettings]);
+  // }, [reviewLinkSettings]);
 
   const [editingName, setEditingName] = useState(false);
   const [reviewLinkName, setReviewLinkName] = useState<string>(
@@ -92,9 +91,7 @@ export default function SettingTabs() {
   );
 
   const [editingHomeTitle, setEditingHomeTitle] = useState(false);
-  const [reviewLinkHomeTitle, setReviewLinkHomeTitle] = useState<string>(
-    reviewLinkSettings?.reviewLinkHomeTitle
-  );
+  const [title, settitle] = useState<string>(reviewLinkSettings?.title);
 
   const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
     reviewLinkSettings?.isSkipFirstPageEnabled
@@ -114,7 +111,7 @@ export default function SettingTabs() {
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
       setDesktopBgImage(file);
-      if(!reviewLinkSettings?.reviewLinkId){
+      if (!reviewLinkSettings?.reviewLinkId) {
         return;
       }
       const imageUrl = await uploadBgImage(file);
@@ -130,7 +127,7 @@ export default function SettingTabs() {
       reviewLinkName,
       reviewLinkSlug,
       ratingThresholdCount,
-      reviewLinkHomeTitle,
+      title,
       isSkipFirstPageEnabled,
       desktopBgImage,
       isPoweredByEnabled,
@@ -138,7 +135,7 @@ export default function SettingTabs() {
   }, [
     reviewLinkName,
     reviewLinkSlug,
-    reviewLinkHomeTitle,
+    title,
     isSkipFirstPageEnabled,
     desktopBgImage,
     ratingThresholdCount,
@@ -163,10 +160,10 @@ export default function SettingTabs() {
 
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
     // do nothing for add case;
-    if(!reviewLinkSettings?.reviewLinkId){
+    if (!reviewLinkSettings?.reviewLinkId) {
       return;
     }
-    
+
     const response = await updateReviewLink(
       "setting_review_link_details",
       updateInfo,
@@ -246,17 +243,17 @@ export default function SettingTabs() {
         <div className="flex items-center gap-1 w-full">
           <EditableField
             isEditing={editingHomeTitle}
-            value={reviewLinkHomeTitle}
+            value={title}
             onEdit={() => setEditingHomeTitle(true)}
             onSave={(newValue) => {
               handleUpdateReviewLinkSettings({
                 review_link_positive_title: newValue,
               });
-              setReviewLinkHomeTitle(newValue);
+              settitle(newValue);
               setEditingHomeTitle(false);
             }}
             onCancel={() => setEditingHomeTitle(false)}
-            renderValue={<p>{reviewLinkHomeTitle}</p>}
+            renderValue={<p>{title}</p>}
           />
         </div>
       </div>
@@ -276,7 +273,7 @@ export default function SettingTabs() {
                 handleUpdateReviewLinkSettings({
                   skip_first_page_enabled: checked,
                 });
-                setIsSkipFirstPageEnabled(checked)
+                setIsSkipFirstPageEnabled(checked);
               }}
             />
           </div>
@@ -285,7 +282,7 @@ export default function SettingTabs() {
           <span>If stars bigger than</span>
           <Select
             onValueChange={(newValue) => {
-              setRatingThresholdCount(Number(newValue))
+              setRatingThresholdCount(Number(newValue));
               handleUpdateReviewLinkSettings({
                 rating_threshold_count: newValue,
               });
@@ -319,7 +316,7 @@ export default function SettingTabs() {
                 handleUpdateReviewLinkSettings({
                   powered_by_enabled: checked,
                 });
-                setIsPoweredByEnabled(checked)
+                setIsPoweredByEnabled(checked);
               }}
             />
           </div>

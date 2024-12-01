@@ -53,7 +53,7 @@ const CreateReviewLink: React.FC = () => {
 
   const handleSaveReviewLink = async () => {
 
-    // Validate selected channels
+    // Validate selected channels 
     if (!reviewLinkPositive?.selectedChannels?.length) {
       toast({ description: "Please select at least one channel!" });
       return;
@@ -69,7 +69,7 @@ const CreateReviewLink: React.FC = () => {
       const settingsData = mapSettingsDbFormat({
         ...reviewLinkSettings,
         clientId: selectedClient?.id,
-        reviewLinkPositiveTitle: reviewLinkPositive?.reviewLinkPositiveTitle,
+        title: reviewLinkPositive?.title,
         desktopBgImage,
       });
 
@@ -96,20 +96,18 @@ const CreateReviewLink: React.FC = () => {
         ...reviewLinkNegative,
         reviewLinkId: settings.id,
       });
-
-      // console.log(reviewLinkThankyou);
-      // uploadedFile
-      // return;
-
-      const thankyouBgImage = await uploadBgImage(reviewLinkThankyou?.uploadedFile);
-
+      
+      let thankyouBgImage;
+      if(reviewLinkThankyou?.uploadedFile){
+        thankyouBgImage = await uploadBgImage(reviewLinkThankyou?.uploadedFile);
+      }
+      
       const thankyouPageData = {
         review_thankyou_title:reviewLinkThankyou?.title,
-        review_thankyou_bg_image: thankyouBgImage,
+        review_thankyou_bg_image: thankyouBgImage ?? '',
         review_link_id: settings.id,
       }
-
-      console.log(thankyouPageData);
+  
 
       // Trigger both saves concurrently
       const [positiveReviewLinkResult, negativeReviewLinkResult, thankyouReviewLinkResult] =
@@ -118,8 +116,8 @@ const CreateReviewLink: React.FC = () => {
           saveReviewLinkNegativePage(negativePageData),
           saveReviewLinkThankyouPage(thankyouPageData),
         ]);
-
-      const { error: positiveReviewLinkError } = positiveReviewLinkResult;
+        
+      const { error: positiveReviewLinkError } = JSON.parse(positiveReviewLinkResult);
       const { error: negativeReviewLinkError } = JSON.parse(negativeReviewLinkResult);
       const { error: thankyouReviewLinkError } = JSON.parse(thankyouReviewLinkResult);
 

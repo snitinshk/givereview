@@ -16,8 +16,7 @@ import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 
 const NegativeTabs: React.FC = () => {
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
-  console.log(reviewLinkNegative);
-
+  
   const { toast } = useToast();
   const [ratingCategories, setRatingCategories] = useState(
     reviewLinkNegative?.ratingCategories
@@ -28,7 +27,7 @@ const NegativeTabs: React.FC = () => {
     setRatingCategories(reviewLinkNegative?.ratingCategories);
     setInputCategories(reviewLinkNegative?.inputCategories);
     setTextareaCategories(reviewLinkNegative?.textareaCategories);
-    setNegativePageTitle(reviewLinkNegative?.negativePageTitle);
+    settitle(reviewLinkNegative?.title);
     setReviewDesc(reviewLinkNegative?.negativePageDescription);
   }, [reviewLinkNegative]);
 
@@ -46,9 +45,7 @@ const NegativeTabs: React.FC = () => {
   );
 
   const [isEditingPageTitle, setIsEditingPageTitle] = useState(false);
-  const [negativePageTitle, setNegativePageTitle] = useState(
-    reviewLinkNegative?.negativePageTitle
-  );
+  const [title, settitle] = useState(reviewLinkNegative?.title);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,23 +87,19 @@ const NegativeTabs: React.FC = () => {
   };
 
   const uploadReviewLinkImage = async (file: File) => {
-
     const uploadPath = `reviewlinks/${getFileName(file)}`;
     const { data: uploadData, error: uploadError } = await uploadFile(
       file,
       uploadPath
     );
-  
-    
-  
+
     if (uploadError) {
       toast({
         description: `Error in uploading image, please try again later`,
       });
     }
-  
+
     return mediaUrl(uploadData?.fullPath as string);
-    
   };
 
   const renderEditableField = (
@@ -155,7 +148,7 @@ const NegativeTabs: React.FC = () => {
 
   const handleUpdateReviewLink = async (updateInfo: any) => {
     // do nothing for add case;
-    if (!reviewLinkNegative?.negativeRLinkId) {
+    if (!reviewLinkNegative?.negativeRLId) {
       return;
     }
 
@@ -164,11 +157,11 @@ const NegativeTabs: React.FC = () => {
       updateInfo,
       {
         col: "id",
-        val: reviewLinkNegative?.negativeRLinkId,
+        val: reviewLinkNegative?.negativeRLId,
       }
     );
     const { error } = JSON.parse(response);
-
+    console.log(error);
     if (!error) {
       toast({
         description: "Field updated",
@@ -246,19 +239,19 @@ const NegativeTabs: React.FC = () => {
           >
             {renderEditableField(
               isEditingPageTitle,
-              negativePageTitle?.title,
+              title?.title,
               () => setIsEditingPageTitle(true),
               (newValue) => {
                 setReviewLinkNegative((prevState: any) => ({
                   ...prevState,
-                  negativePageTitle: {
-                    ...prevState.negativePageTitle,
+                  title: {
+                    ...prevState.title,
                     title: newValue,
                   },
                 }));
                 handleUpdateReviewLink({
                   negative_page_title: {
-                    ...negativePageTitle,
+                    ...title,
                     title: newValue,
                   },
                 });
@@ -270,19 +263,21 @@ const NegativeTabs: React.FC = () => {
           </div>
           <Switch
             id="apshow"
-            checked={negativePageTitle?.enabled}
+            checked={title?.enabled}
             onCheckedChange={() => {
               setReviewLinkNegative((prevState: any) => ({
                 ...prevState,
-                negativePageTitle: {
-                  ...prevState.negativePageTitle,
-                  enabled: !negativePageTitle?.enabled,
+                title: {
+                  ...prevState.title,
+                  enabled: !title?.enabled,
                 },
               }));
 
               handleUpdateReviewLink({
-                ...negativePageTitle,
-                enabled: !negativePageTitle?.enabled,
+                negative_page_title: {
+                  ...title,
+                  enabled: !title?.enabled,
+                },
               });
             }}
           />
