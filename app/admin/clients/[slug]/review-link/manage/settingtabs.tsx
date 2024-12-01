@@ -41,7 +41,7 @@ export default function SettingTabs() {
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );
-  const [desktopBgImage, setDesktopBgImage] = useState<File>();
+  // const [desktopBgImage, setDesktopBgImage] = useState<File>();
 
   if (reviewLinkSettings?.imageFile) {
     const reader = new FileReader();
@@ -51,34 +51,9 @@ export default function SettingTabs() {
 
   const { toast } = useToast();
 
-  // useEffect(() => {
-
-  //   if (reviewLinkSettings?.reviewLinkName) {
-  //     setReviewLinkName(reviewLinkSettings?.reviewLinkName);
-  //   }
-  //   if (reviewLinkSettings?.reviewLinkSlug) {
-  //     setReviewLinkSlug(reviewLinkSettings?.reviewLinkSlug);
-  //   }
-  //   if (reviewLinkSettings?.title) {
-  //     settitle(reviewLinkSettings?.title);
-  //   }
-  //   if (reviewLinkSettings?.isPoweredByEnabled) {
-  //     setIsPoweredByEnabled(reviewLinkSettings?.isPoweredByEnabled);
-  //   }
-  //   if (reviewLinkSettings?.isSkipFirstPageEnabled) {
-  //     setIsSkipFirstPageEnabled(reviewLinkSettings?.isSkipFirstPageEnabled);
-  //   }
-  //   if(reviewLinkSettings?.ratingThresholdCount){
-  //     setRatingThresholdCount(reviewLinkSettings?.ratingThresholdCount)
-  //   }
-
-  //   if (reviewLinkSettings?.imageFile) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => setImagePreview(reader.result as string);
-  //     reader.readAsDataURL(reviewLinkSettings?.imageFile);
-  //   }
-
-  // }, [reviewLinkSettings]);
+  const [isActive, setIsActive] = useState<boolean>(
+    reviewLinkSettings?.isActive
+  );
 
   const [editingName, setEditingName] = useState(false);
   const [reviewLinkName, setReviewLinkName] = useState<string>(
@@ -91,7 +66,7 @@ export default function SettingTabs() {
   );
 
   const [editingHomeTitle, setEditingHomeTitle] = useState(false);
-  const [title, settitle] = useState<string>(reviewLinkSettings?.title);
+  const [title, setTitle] = useState<string>(reviewLinkSettings?.title);
 
   const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
     reviewLinkSettings?.isSkipFirstPageEnabled
@@ -106,11 +81,19 @@ export default function SettingTabs() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    
     if (file) {
+      
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
-      setDesktopBgImage(file);
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          uploadedFile: file,
+        };
+      });
+
       if (!reviewLinkSettings?.reviewLinkId) {
         return;
       }
@@ -122,25 +105,121 @@ export default function SettingTabs() {
   };
 
   useEffect(() => {
-    setReviewLinkSettings({
-      ...reviewLinkSettings,
-      reviewLinkName,
-      reviewLinkSlug,
-      ratingThresholdCount,
-      title,
-      isSkipFirstPageEnabled,
-      desktopBgImage,
-      isPoweredByEnabled,
-    });
+    if (reviewLinkName !== reviewLinkSettings?.reviewLinkName) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          reviewLinkName,
+        };
+      });
+    }
+
+    if (reviewLinkSlug !== reviewLinkSettings?.reviewLinkSlug) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          reviewLinkSlug,
+        };
+      });
+    }
+
+    if (title !== reviewLinkSettings?.title) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          title,
+        };
+      });
+    }
+
+    if (isPoweredByEnabled !== reviewLinkSettings?.isPoweredByEnabled) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          isPoweredByEnabled,
+        };
+      });
+    }
+
+    if (isSkipFirstPageEnabled !== reviewLinkSettings?.isSkipFirstPageEnabled) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          isSkipFirstPageEnabled,
+        };
+      });
+    }
+
+    if (ratingThresholdCount !== reviewLinkSettings?.ratingThresholdCount) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          ratingThresholdCount,
+        };
+      });
+    }
+
+    if (isActive !== reviewLinkSettings?.isActive) {
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          isActive,
+        };
+      });
+    }
+
+    if(imagePreview){
+      setReviewLinkSettings((prevState: any) => {
+        return {
+          ...prevState,
+          desktopBgImage:imagePreview,
+        };
+      });
+    }
+
+    //Image upload check
+
+    // if (reviewLinkSettings?.imageFile) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => setImagePreview(reader.result as string);
+    //   reader.readAsDataURL(reviewLinkSettings?.imageFile);
+    // }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     reviewLinkName,
     reviewLinkSlug,
     title,
-    isSkipFirstPageEnabled,
-    desktopBgImage,
-    ratingThresholdCount,
     isPoweredByEnabled,
+    isSkipFirstPageEnabled,
+    ratingThresholdCount,
+    isActive,
+    imagePreview
   ]);
+
+  // useEffect(() => {
+  //   setReviewLinkSettings({
+  //     ...reviewLinkSettings,
+  //     reviewLinkName,
+  //     reviewLinkSlug,
+  //     ratingThresholdCount,
+  //     title,
+  //     isSkipFirstPageEnabled,
+  //     desktopBgImage,
+  //     isPoweredByEnabled,
+  //     isActive,
+  //   });
+  // }, [
+  //   reviewLinkName,
+  //   reviewLinkSlug,
+  //   title,
+  //   isSkipFirstPageEnabled,
+  //   desktopBgImage,
+  //   ratingThresholdCount,
+  //   isPoweredByEnabled,
+  //   isActive,
+  //   reviewLinkSettings
+  // ]);
 
   const uploadBgImage = async (file: File) => {
     const uploadPath = `reviewlinks/${getFileName(file)}`;
@@ -184,14 +263,23 @@ export default function SettingTabs() {
   return (
     <div className="flex flex-col gap-5 items-start">
       {/* Active/Inactive Switch */}
-      {/* <div className="flex items-center space-x-2">
-        <Label htmlFor="active-toggle">{isActive ? "Active" : "Inactive"}</Label>
-        <Switch
-          id="active-toggle"
-          checked={isActive}
-          onCheckedChange={() => setIsActive(!isActive)}
-        />
-      </div> */}
+      {reviewLinkSettings?.reviewLinkId && (
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="active-toggle">
+            {isActive ? "Active" : "Inactive"}
+          </Label>
+          <Switch
+            id="active-toggle"
+            checked={isActive}
+            onCheckedChange={(checked) => {
+              setIsActive(!isActive)
+              handleUpdateReviewLinkSettings({
+                is_active: checked,
+              });
+            }}
+          />
+        </div>
+      )}
 
       {/* Editable Name Field */}
       {!reviewLinkSettings?.reviewLinkId ? (
@@ -249,7 +337,7 @@ export default function SettingTabs() {
               handleUpdateReviewLinkSettings({
                 review_link_positive_title: newValue,
               });
-              settitle(newValue);
+              setTitle(newValue);
               setEditingHomeTitle(false);
             }}
             onCancel={() => setEditingHomeTitle(false)}

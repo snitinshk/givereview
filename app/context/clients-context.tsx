@@ -26,14 +26,17 @@ const ClientsContext = createContext<ClientsContextProps | undefined>(
 
 export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const [clients, setClients] = useState<Client[]>([]);
-
   useEffect(() => {
-    (async () => {
-      const clientsList = await fetcher("/api/admin/clients");
-      const mappedClients = mapClients(clientsList);
-      setClients(mappedClients);
-    })();
-  }, []);
+    if(!clients?.length){
+      fetchClients();
+    }
+  }, [clients?.length]);
+
+  const fetchClients = async()=>{
+    const clientsList = await fetcher("/api/admin/clients");
+    const mappedClients = mapClients(clientsList);
+    setClients(mappedClients);
+  }
 
   return (
     <ClientsContext.Provider value={{ clients, setClients }}>

@@ -23,11 +23,20 @@ const ThankYouTabs: React.FC = () => {
   );
 
   useEffect(() => {
-    setReviewLinkThankyou({
-      ...reviewLinkThankyou,
-      title: reviewLinkThankyouTitle,
-      bgImage: imagePreview,
+    setReviewLinkThankyou((prevState: any) => {
+      if (
+        prevState.title !== reviewLinkThankyouTitle ||
+        prevState.bgImage !== imagePreview
+      ) {
+        return {
+          ...prevState,
+          title: reviewLinkThankyouTitle,
+          bgImage: imagePreview,
+        };
+      }
+      return prevState; // No changes needed
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewLinkThankyouTitle, imagePreview]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

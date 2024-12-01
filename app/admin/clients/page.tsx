@@ -21,12 +21,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import CampLogo from "@/app/images/logo-12.png";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { IoSearch } from "react-icons/io5";
 import Link from "next/link";
-import useSWR from "swr";
-import { mapClients } from "@/mappers";
 import { useRouter } from "next/navigation";
 import { capitalizeFirstLetter, fetcher, getSlug } from "@/lib/utils";
 import { deleteClient } from "./action";
@@ -49,7 +45,6 @@ const ClientTable: React.FC = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  // const [clients, setClients] = useState<Client[]>([]);
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");

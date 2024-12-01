@@ -62,7 +62,7 @@ const CreateReviewLink: React.FC = () => {
     try {
       // Upload desktop background image
       const desktopBgImage = await uploadBgImage(
-        reviewLinkSettings?.desktopBgImage
+        reviewLinkSettings?.uploadedFile
       );
 
       // Prepare and save settings data
@@ -185,9 +185,9 @@ const CreateReviewLink: React.FC = () => {
   useEffect(() => {
     const reviewLinkName = reviewLinkSettings?.reviewLinkName == "";
     const reviewLinkBgImage =
-      typeof reviewLinkSettings?.desktopBgImage === "object";
+      typeof reviewLinkSettings?.uploadedFile === "object";
     setIsDisabled(reviewLinkName || !reviewLinkBgImage);
-  }, [reviewLinkSettings?.desktopBgImage, reviewLinkSettings?.reviewLinkName]);
+  }, [reviewLinkSettings?.uploadedFile, reviewLinkSettings?.reviewLinkName]);
 
   return (
     <>
