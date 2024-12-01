@@ -35,11 +35,11 @@ export const mapSettingsDbFormat = (reviewLinkSettings: any) => {
         review_link_name: reviewLinkSettings?.reviewLinkName,
         review_link_slug: reviewLinkSettings?.reviewLinkSlug,
         rating_threshold_count: reviewLinkSettings?.ratingThresholdCount,
-        review_link_home_title: reviewLinkSettings?.reviewLinkHomeTitle,
+        review_link_home_title: reviewLinkSettings?.title,
         skip_first_page_enabled: reviewLinkSettings?.isSkipFirstPageEnabled,
         powered_by_enabled: reviewLinkSettings?.isPoweredByEnabled,
         desktop_bg_image: reviewLinkSettings?.desktopBgImage,
-        review_link_positive_title: reviewLinkSettings?.reviewLinkPositiveTitle
+        review_link_positive_title: reviewLinkSettings?.title
     };
 }
 
@@ -57,7 +57,7 @@ export const mapNegativePageDataToDbFormat = (reviewLinkNegative: any) => {
     return {
         review_link_id: reviewLinkNegative?.reviewLinkId,
         channel_logo: reviewLinkNegative?.defaultChannel,
-        negative_page_title: reviewLinkNegative?.negativePageTitle,
+        negative_page_title: reviewLinkNegative?.title,
         negative_page_description: reviewLinkNegative?.negativePageDescription,
 
         is_food_review_enabled: getCategoryEnabled('is_food_review_enabled'),
@@ -83,10 +83,11 @@ export const mapNegativePageDataToDbFormat = (reviewLinkNegative: any) => {
 export const mapSettingsUIFormat = (reviewLinkSettings: any) => {
     return {
         reviewLinkId: reviewLinkSettings?.id,
+        isActive: (reviewLinkSettings?.is_active),
         reviewLinkName: reviewLinkSettings?.review_link_name,
         reviewLinkSlug: reviewLinkSettings?.review_link_slug,
         ratingThresholdCount: reviewLinkSettings?.rating_threshold_count,
-        reviewLinkHomeTitle: reviewLinkSettings?.review_link_home_title,
+        title: reviewLinkSettings?.review_link_home_title,
         isSkipFirstPageEnabled: reviewLinkSettings?.skip_first_page_enabled,
         isPoweredByEnabled: reviewLinkSettings?.powered_by_enabled,
         desktopBgImage: reviewLinkSettings?.desktop_bg_image,
@@ -97,7 +98,7 @@ export const mapPositivePageUIFormat = (positivePageData: any) => {
 
     return positivePageData?.map((client: any) => {
         return {
-            positivePageId: client?.id,
+            positiveRLId: client?.id,
             id: client?.channel_id,
             name: client?.channels?.channel_name,
             logo: client?.channels?.channel_logo_url,
@@ -109,9 +110,9 @@ export const mapPositivePageUIFormat = (positivePageData: any) => {
 export const mapNegativeLinkDefault = (data: any) => {
     if (!data || !Array.isArray(data)) return null;
     return data.map((item) => ({
-        negativeRLinkId: item.id,
+        negativeRLId: item.id,
         defaultChannel: item.channel_logo,
-        negativePageTitle: item.negative_page_title,
+        title: item.negative_page_title,
         negativePageDescription: item.negative_page_description,
         ratingCategories: [
             {
@@ -193,5 +194,24 @@ export const mapNegativeLinkDefault = (data: any) => {
             },
         ],
         reviewLinkId: item.review_link_id,
-    }));
+    }))[0];
 };
+
+export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {
+    console.log(reviewLinkPositive);
+    return reviewLinkPositive.map(
+        (channel: any) => ({
+            channel_id: channel.id,
+            channel_review_link: channel.link,
+            review_link_id: channel.reviewLinkId,
+        }))
+
+}
+
+export const mapThankyouUIFormat = (reviewLinkThankyou: any) => {
+    return reviewLinkThankyou?.map((item: any) => ({
+        ThankyouRLId: item.id,
+        bgImage: item?.review_thankyou_bg_image,
+        title: item?.review_thankyou_title
+    }))[0]
+}

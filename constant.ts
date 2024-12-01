@@ -30,9 +30,27 @@ export const DEFAULT_TEXTS = {
     reviewSiteBaseUrl: 'https://placereview.se/',
     homeReviewTitle: 'How was your experience with ',
     positiveReviewTitle: 'Leave us a review, it will help us grow and better serve our customers like you.',
-    negativePageTitle: 'Appears publicly on Google',
+    title: 'Appears publicly on Google',
     negativePageDescription: 'We want our customers to be 100% satisfied. Please let us know why you had a bad experience, so we can improve our service. Leave your email to be contacted.',
     thankyouPageTitle: 'Thank you for your review'
+}
+
+export const reviewLinkPositiveDefaultValue = {
+    title: DEFAULT_TEXTS?.positiveReviewTitle,
+    selectedChannels: [],
+}
+
+export const reviewLinkSettingsDefaultValue = {
+    reviewLinkName: "",
+    isSkipFirstPageEnabled: false,
+    ratingThresholdCount: 4,
+    isPoweredByEnabled: true,
+    imageFile: "",
+}
+
+export const reviewLinkThankyouDefaultValue = {
+    title: DEFAULT_TEXTS?.thankyouPageTitle,
+    bgImage: ""
 }
 
 export const reviewLinkNegativeDefaultValue = {
@@ -40,7 +58,7 @@ export const reviewLinkNegativeDefaultValue = {
         logo: "https://hwqcsflrmhlffnqlprib.supabase.co/storage/v1/object/public/media/static/google.svg",
         enabled: true,
     },
-    negativePageTitle: {
+    title: {
         title: "Appears publicly on Google",
         enabled: true,
     },
