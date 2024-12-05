@@ -129,9 +129,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       }
     : null;
 
-  const finalMenuItems: MenuItem[] = slug
-    ? [...menuItems, dynamicMenu].filter(Boolean) as MenuItem[]
+    const finalMenuItems: MenuItem[] = slug
+    ? (() => {
+        const updatedMenuItems = [...menuItems]; // Create a copy of menuItems
+        if (dynamicMenu) {
+          updatedMenuItems.splice(1, 0, dynamicMenu); // Insert dynamicMenu at the second index
+        }
+        return updatedMenuItems;
+      })()
     : menuItems;
+  
 
   return (
     <div className="flex min-h-screen bg-white flex-wrap">

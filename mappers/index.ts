@@ -209,9 +209,9 @@ export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {
 }
 
 export const mapThankyouUIFormat = (reviewLinkThankyou: any) => {
-    return reviewLinkThankyou?.map((item: any) => ({
-        ThankyouRLId: item.id,
-        bgImage: item?.review_thankyou_bg_image,
-        title: item?.review_thankyou_title
-    }))[0]
+    return {
+        ThankyouRLId: reviewLinkThankyou.id,
+        bgImage: reviewLinkThankyou?.review_thankyou_bg_image,
+        title: reviewLinkThankyou?.review_thankyou_title
+    }
 }

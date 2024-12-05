@@ -41,8 +41,6 @@ const ReviewLink: React.FC = (params) => {
     }
   };
 
-  const searchParams = useSearchParams();
-
   const { selectedClient } = useSelectedClient();
   const [reviewLinks, setReviewLinks] = useState([]);
 
@@ -66,6 +64,7 @@ const ReviewLink: React.FC = (params) => {
         setReviewLinks(reviewLink);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClient]);
 
   /**
@@ -75,8 +74,6 @@ const ReviewLink: React.FC = (params) => {
   const { setReviewLinkPositive } = useReviewLinkPositive();
   const { setReviewLinkNegative } = useReviewLinkNegative();
   const { setReviewLinkThankyou } = useReviewLinkThankyou();
-
-  // Reset the settings when the component mounts to handle "add" mode cleanly
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = async (
     event
@@ -142,6 +139,8 @@ const ReviewLink: React.FC = (params) => {
       "data-review-link-id"
     );
 
+    toast({description: "This action cannot be undone."});
+
     toast({
       title: "Are you sure you want to delete?",
       description: "This action cannot be undone.",
@@ -180,21 +179,22 @@ const ReviewLink: React.FC = (params) => {
   };
 
   const handleCreateLink = async () => {
-
-    const uniqueSlug = await generateUniqueSlug(slug as string);
-    
-    setReviewLinkSettings({
-      ...reviewLinkSettingsDefaultValue,
-      reviewLinkSlug: uniqueSlug,
-      title: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
+    // Navigate immediately to provide a responsive user experience
+    router.push(`/admin/clients/${slug}/review-link/manage`);
+  
+    // Perform the asynchronous operation in the background
+    generateUniqueSlug(slug as string).then((uniqueSlug) => {
+      setReviewLinkSettings({
+        ...reviewLinkSettingsDefaultValue,
+        reviewLinkSlug: uniqueSlug,
+        title: `${DEFAULT_TEXTS.homeReviewTitle} ${slug}`,
+      });
     });
-
+  
+    // Update other state values immediately
     setReviewLinkPositive(reviewLinkPositiveDefaultValue);
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
     setReviewLinkThankyou(reviewLinkThankyouDefaultValue);
-
-    router.push(`/admin/clients/${slug}/review-link/manage`);
-
   };
 
   return (
