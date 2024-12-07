@@ -274,7 +274,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
       </div>
 
       {/* Restaurant Image */}
-      <div className="hidden md:block">
+      <div className="hidden h-screen sticky top-0 md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
           alt="Restaurant Interior"

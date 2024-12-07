@@ -53,7 +53,7 @@ export default function PositiveFeedback({ reviewLink }: any) {
         </div>
       </div>
 
-      <div className="hidden md:block">
+      <div className="hidden h-screen md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
           alt="Restaurant Interior"

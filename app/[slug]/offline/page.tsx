@@ -18,7 +18,7 @@ export default function OfflinePage() {
       </div>
 
       {/* Restaurant Image */}
-      <div className="hidden md:block">
+      <div className="hidden h-screen md:block">
         <Image
           src="/restaurant-interior.jpg"
           alt="Restaurant Interior"

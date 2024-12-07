@@ -26,7 +26,7 @@ export default function Home({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
@@ -53,11 +53,10 @@ export default function Home({
               {[1, 2, 3, 4, 5].map((star) => (
                 <div key={star} className="relative">
                   <Star
-                    className={`w-12 h-12 cursor-pointer ${
-                      star <= rating
+                    className={`w-12 h-12 cursor-pointer ${star <= rating
                         ? "text-yellow-400 fill-yellow-400"
                         : "text-gray-300 stroke-gray-300"
-                    }`}
+                      }`}
                     onClick={() => handleSelectRating(star)}
                   />
                 </div>
@@ -68,7 +67,7 @@ export default function Home({
       </div>
 
       {/* Restaurant Image */}
-      <div className="hidden md:block">
+      <div className="hidden h-screen md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
           alt="Restaurant Interior"
