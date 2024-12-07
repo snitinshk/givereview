@@ -147,11 +147,12 @@ const NegativeTabs: React.FC = () => {
   };
 
   const handleUpdateReviewLink = async (updateInfo: any) => {
+    
     // do nothing for add case;
     if (!reviewLinkNegative?.negativeRLId) {
       return;
     }
-
+    console.log(updateInfo);
     const response = await updateReviewLink(
       "negative_review_link_details",
       updateInfo,

@@ -107,48 +107,48 @@ export const mapPositivePageUIFormat = (positivePageData: any) => {
     })
 }
 
-export const mapNegativeLinkDefault = (data: any) => {
-    if (!data || !Array.isArray(data)) return null;
-    return data.map((item) => ({
-        negativeRLId: item.id,
-        defaultChannel: item.channel_logo,
-        title: item.negative_page_title,
-        negativePageDescription: item.negative_page_description,
+export const mapNegativeLinkDefault = (negativeReviewLink: any) => {
+
+    return {
+        negativeRLId: negativeReviewLink.id,
+        defaultChannel: negativeReviewLink.channel_logo,
+        title: negativeReviewLink.negative_page_title,
+        negativePageDescription: negativeReviewLink.negative_page_description,
         ratingCategories: [
             {
                 name: "Food",
                 dbField: "is_food_review_enabled",
-                enabled: item.is_food_review_enabled,
+                enabled: negativeReviewLink.is_food_review_enabled,
             },
             {
                 name: "Service",
                 dbField: "is_service_review_enabled",
-                enabled: item.is_service_review_enabled,
+                enabled: negativeReviewLink.is_service_review_enabled,
             },
             {
                 name: "Atmosphere",
                 dbField: "is_atmosphere_review_enabled",
-                enabled: item.is_atmosphere_review_enabled,
+                enabled: negativeReviewLink.is_atmosphere_review_enabled,
             },
             {
                 name: "Noise",
                 dbField: "is_noise_review_enabled",
-                enabled: item.is_noise_review_enabled,
+                enabled: negativeReviewLink.is_noise_review_enabled,
             },
             {
                 name: "Price",
                 dbField: "is_price_review_enabled",
-                enabled: item.is_price_review_enabled,
+                enabled: negativeReviewLink.is_price_review_enabled,
             },
             {
                 name: "Cleanliness",
                 dbField: "is_cleanliness_review_enabled",
-                enabled: item.is_cleanliness_review_enabled,
+                enabled: negativeReviewLink.is_cleanliness_review_enabled,
             },
             {
                 name: "WaitTime",
                 dbField: "is_wait_time_review_enabled",
-                enabled: item.is_wait_time_review_enabled,
+                enabled: negativeReviewLink.is_wait_time_review_enabled,
             },
         ],
         inputCategories: [
@@ -156,45 +156,45 @@ export const mapNegativeLinkDefault = (data: any) => {
                 placeholder: "Name",
                 dbField: "is_input_name_enabled",
                 type: "text",
-                enabled: item.is_input_name_enabled,
+                enabled: negativeReviewLink.is_input_name_enabled,
             },
             {
                 placeholder: "Phone number",
                 dbField: "is_input_phone_enabled",
                 type: "tel",
-                enabled: item.is_input_phone_enabled,
+                enabled: negativeReviewLink.is_input_phone_enabled,
             },
             {
                 placeholder: "Email",
                 dbField: "is_input_email_enabled",
                 type: "email",
-                enabled: item.is_input_email_enabled,
+                enabled: negativeReviewLink.is_input_email_enabled,
             },
         ],
         textareaCategories: [
             {
                 placeholder: "Share information about how you experienced the place",
                 dbField: "is_input_place_experience_enabled",
-                enabled: item.is_input_place_experience_enabled,
+                enabled: negativeReviewLink.is_input_place_experience_enabled,
             },
             {
                 placeholder: "What was good about your visit?",
                 dbField: "is_input_visit_highlights_enabled",
-                enabled: item.is_input_visit_highlights_enabled,
+                enabled: negativeReviewLink.is_input_visit_highlights_enabled,
             },
             {
                 placeholder: "What was bad about your visit?",
                 dbField: "is_input_visit_drawbacks_enabled",
-                enabled: item.is_input_visit_drawbacks_enabled,
+                enabled: negativeReviewLink.is_input_visit_drawbacks_enabled,
             },
             {
                 placeholder: "Other comments",
                 dbField: "is_input_other_comments_enabled",
-                enabled: item.is_input_other_comments_enabled,
+                enabled: negativeReviewLink.is_input_other_comments_enabled,
             },
         ],
-        reviewLinkId: item.review_link_id,
-    }))[0];
+        reviewLinkId: negativeReviewLink.review_link_id,
+    };
 };
 
 export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {

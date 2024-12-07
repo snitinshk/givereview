@@ -9,15 +9,48 @@ import { useToast } from "@/hooks/use-toast";
 import { RatingItem } from "./rating";
 
 export default function NegativeFeedback({ reviewLink }: any) {
-  const { cliens: client, negative_review_link_details } = reviewLink;
+  const { clients: client, negative_review_link_details } = reviewLink;
+  const {
+    channel_logo,
+    negative_page_title,
+    negative_page_description,
+    is_input_name_enabled,
+    is_input_email_enabled,
+    is_input_phone_enabled,
+    is_food_review_enabled,
+    is_noise_review_enabled,
+    is_price_review_enabled,
+    is_service_review_enabled,
+    is_wait_time_review_enabled,
+    is_atmosphere_review_enabled,
+    is_cleanliness_review_enabled,
+    is_input_other_comments_enabled,
+    is_input_visit_drawbacks_enabled,
+    is_input_place_experience_enabled,
+    is_input_visit_highlights_enabled,
+  } = negative_review_link_details;
 
   const [ratings, setRatings] = useState({
     Food: 0,
     Service: 0,
     Atmosphere: 0,
+    "Noise Level": 0,
+    Price: 0,
+    Cleanliness: 0,
+    "Waiting time": 0,
   });
+
+  //Inputs
   const [name, setName] = useState("");
-  const [review, setReview] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+
+  //Textareas
+  const [placeExperience, setPlaceExperience] = useState("");
+  const [visitHighlights, setVisitHighlights] = useState("");
+  const [visitDrawbacks, setDrawbacks] = useState("");
+  const [otherComments, setOtherComments] = useState("");
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { toast } = useToast();
 
@@ -37,8 +70,8 @@ export default function NegativeFeedback({ reviewLink }: any) {
     if (name.trim() === "") {
       newErrors.name = "Name is required";
     }
-    if (review.trim() === "") {
-      newErrors.review = "Review is required";
+    if (placeExperience.trim() === "") {
+      newErrors.placeExperience = "Place Experience is required";
     }
 
     setErrors(newErrors);
@@ -48,15 +81,23 @@ export default function NegativeFeedback({ reviewLink }: any) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log({ ratings, name, review });
+      console.log({ ratings, name, placeExperience });
       toast({
         title: "Feedback Submitted",
         description: "Thank you for your feedback!",
       });
       // Reset form
-      setRatings({ Food: 0, Service: 0, Atmosphere: 0 });
+      setRatings({
+        Food: 0,
+        Service: 0,
+        Atmosphere: 0,
+        "Noise Level": 0,
+        Price: 0,
+        Cleanliness: 0,
+        "Waiting time": 0,
+      });
       setName("");
-      setReview("");
+      setPlaceExperience("");
     }
   };
 
@@ -89,18 +130,22 @@ export default function NegativeFeedback({ reviewLink }: any) {
             </p>
           </div>
 
-          {/* Google Review Indicator */}
+          {/* Google placeExperience Indicator */}
           <div className="flex items-center gap-2 mb-6">
-            <Image
-              src="/placeholder.svg"
-              alt="Google"
-              width={20}
-              height={20}
-              className="w-5 h-5"
-            />
-            <span className="text-sm text-gray-600">
-              Appears publicly on Google
-            </span>
+            {channel_logo?.enabled && (
+              <Image
+                src={channel_logo?.logo}
+                alt="Google"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+            )}
+            {negative_page_title?.enabled && (
+              <span className="text-sm text-gray-600">
+                {negative_page_title?.title}
+              </span>
+            )}
           </div>
 
           {/* Rating Form */}
@@ -138,22 +183,89 @@ export default function NegativeFeedback({ reviewLink }: any) {
                 )}
               </div>
               <div>
-                <Textarea
-                  placeholder="Review"
-                  className="min-h-[100px] border-gray-300"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  aria-invalid={errors.review ? "true" : "false"}
+                <Input
+                  placeholder="Phone no"
+                  className="border-gray-300"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  aria-invalid={errors.phone ? "true" : "false"}
                 />
-                {errors.review && (
-                  <p className="text-red-500 text-sm">{errors.review}</p>
+                {errors.phone && (
+                  <p className="text-red-500 text-sm">{errors.phone}</p>
+                )}
+              </div>
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  className="border-gray-300"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={errors.email ? "true" : "false"}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
+              </div>
+              <div>
+                <Textarea
+                  placeholder="Share information about how you experienced the place"
+                  className="min-h-[100px] border-gray-300"
+                  value={placeExperience}
+                  onChange={(e) => setPlaceExperience(e.target.value)}
+                  aria-invalid={errors.placeExperience ? "true" : "false"}
+                />
+                {errors.placeExperience && (
+                  <p className="text-red-500 text-sm">
+                    {errors.placeExperience}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Textarea
+                  placeholder="What was good about your visit?"
+                  className="min-h-[100px] border-gray-300"
+                  value={visitHighlights}
+                  onChange={(e) => setVisitHighlights(e.target.value)}
+                  aria-invalid={errors.visitHighlights ? "true" : "false"}
+                />
+                {errors.visitHighlights && (
+                  <p className="text-red-500 text-sm">
+                    {errors.visitHighlights}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Textarea
+                  placeholder="Other comments"
+                  className="min-h-[100px] border-gray-300"
+                  value={otherComments}
+                  onChange={(e) => setOtherComments(e.target.value)}
+                  aria-invalid={errors.otherComments ? "true" : "false"}
+                />
+                {errors.otherComments && (
+                  <p className="text-red-500 text-sm">{errors.otherComments}</p>
+                )}
+              </div>
+              <div>
+                <Textarea
+                  placeholder="What was bad about your visit?"
+                  className="min-h-[100px] border-gray-300"
+                  value={visitDrawbacks}
+                  onChange={(e) => setDrawbacks(e.target.value)}
+                  aria-invalid={errors.visitDrawbacks ? "true" : "false"}
+                />
+                {errors.visitDrawbacks && (
+                  <p className="text-red-500 text-sm">
+                    {errors.visitDrawbacks}
+                  </p>
                 )}
               </div>
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white"
+              className="w-half bg-black hover:bg-gray-800 text-white"
             >
               Send
             </Button>
@@ -164,7 +276,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
       {/* Restaurant Image */}
       <div className="hidden md:block">
         <Image
-          src="/placeholder.svg"
+          src={reviewLink?.desktop_bg_image}
           alt="Restaurant Interior"
           width={800}
           height={1000}
