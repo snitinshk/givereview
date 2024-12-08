@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RatingItem } from "./rating";
+import { Heart } from "lucide-react";
 
 export default function NegativeFeedback({ reviewLink }: any) {
   const { clients: client, negative_review_link_details } = reviewLink;
@@ -103,7 +104,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
-      <div className="flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-7">
           {/* Logo */}
           <div className="flex justify-center mb-6">
@@ -267,6 +268,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
             </div>
           </form>
         </div>
+        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
       </div>
 
       {/* Restaurant Image */}

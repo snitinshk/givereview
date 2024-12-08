@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import { useState } from "react";
 
 export default function Home({
@@ -27,7 +27,7 @@ export default function Home({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
-      <div className="flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="flex justify-center">
@@ -64,6 +64,7 @@ export default function Home({
             </div>
           </div>
         </div>
+        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
       </div>
 
       {/* Restaurant Image */}
