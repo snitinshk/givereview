@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import EditableField from "../../review-link/manage/editable";
+import EditableField from "../../review-link/editable";
 import {
     Select,
     SelectContent,

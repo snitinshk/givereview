@@ -128,7 +128,7 @@ const CreateClient: React.FC = () => {
               placeholder="Client name"
               className="h-12"
             />
-
+            
             <Select onValueChange={setClienType}>
               <SelectTrigger className="w-full h-12 mt-2">
                 <SelectValue placeholder="Type" />
@@ -144,7 +144,6 @@ const CreateClient: React.FC = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-
             <div>
               <label className="text-sm text-gray-700 font-semibold">
                 Logo

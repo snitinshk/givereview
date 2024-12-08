@@ -27,7 +27,7 @@ export enum CLIENT_TYPE {
 export const BUCKET_NAME = 'media'
 
 export const DEFAULT_TEXTS = {
-    reviewSiteBaseUrl: 'https://placereview.se/',
+    reviewSiteBaseUrl: 'http://localhost:3000/',
     homeReviewTitle: 'How was your experience with ',
     positiveReviewTitle: 'Leave us a review, it will help us grow and better serve our customers like you.',
     title: 'Appears publicly on Google',

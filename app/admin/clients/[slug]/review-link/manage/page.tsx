@@ -69,7 +69,7 @@ const CreateReviewLink: React.FC = () => {
       const settingsData = mapSettingsDbFormat({
         ...reviewLinkSettings,
         clientId: selectedClient?.id,
-        title: reviewLinkPositive?.title,
+        positivePageTitle: reviewLinkPositive?.title,
         desktopBgImage,
       });
 

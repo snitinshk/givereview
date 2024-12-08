@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import EditableField from "./editable";
+import EditableField from "../editable";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Channel } from "@/interfaces/channels";
@@ -36,6 +36,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
 
   const { reviewLinkSettings } = useReviewLinkSettings();
+
   const { toast } = useToast();
 
   const [title, settitle] = useState(reviewLinkPositive?.title);
@@ -58,6 +59,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
       title,
       selectedChannels,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, selectedChannels]);
 
   const handleEdit = (id: number, currentLink: string) => {
@@ -66,6 +68,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   };
 
   const handleSave = async (id: number) => {
+    
     const updatedLink = channelLinks[id];
     const updatedChannels = selectedChannels.map((ch) =>
       ch.id === id ? { ...ch, link: updatedLink } : ch

@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 
 export default function PositiveFeedback({ reviewLink }: any) {
-  const {
-    positive_review_link_details: positiveRL,
-    negative_review_link_details,
-    clients: client,
-  } = reviewLink;
+  const { positive_review_link_details: positiveRL, clients: client } =
+    reviewLink;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
@@ -44,13 +41,21 @@ export default function PositiveFeedback({ reviewLink }: any) {
                     height={20}
                     className="w-5 h-5"
                   />
-                  <div className="flex-1 text-center font-MOSTR font-bold text-sm">{reviewLink?.channels?.channel_name}</div>
+                  <div className="flex-1 text-center font-MOSTR font-bold text-sm">
+                    {reviewLink?.channels?.channel_name}
+                  </div>
                 </Link>
               </Button>
             ))}
           </div>
         </div>
-        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
+        {reviewLink?.powered_by_enabled && (
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+            booster
+          </div>
+        )}
       </div>
 
       <div className="hidden h-screen md:block">

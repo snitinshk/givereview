@@ -27,3 +27,14 @@ export async function deleteClient(clientId: number) {
     return JSON.stringify(response)
 
 }
+
+export const updateClient = async (update: any, condition: any) => {
+
+    const supabase = await createClient()
+    const response = await supabase
+      .from('clients')
+      .update(update)
+      .eq(condition?.col, condition?.val)
+  
+    return JSON.stringify(response);
+  }

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import EditableField from "./editable";
+import EditableField from "../editable";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";

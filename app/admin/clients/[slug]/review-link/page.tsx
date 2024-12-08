@@ -235,6 +235,7 @@ const ReviewLink: React.FC = (params) => {
                 href={
                   DEFAULT_TEXTS.reviewSiteBaseUrl + reviewLink?.review_link_slug
                 }
+                target="_blank"
                 className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
               >
                 <BiLinkExternal /> Link

@@ -39,7 +39,7 @@ export const mapSettingsDbFormat = (reviewLinkSettings: any) => {
         skip_first_page_enabled: reviewLinkSettings?.isSkipFirstPageEnabled,
         powered_by_enabled: reviewLinkSettings?.isPoweredByEnabled,
         desktop_bg_image: reviewLinkSettings?.desktopBgImage,
-        review_link_positive_title: reviewLinkSettings?.title
+        review_link_positive_title: reviewLinkSettings?.positivePageTitle
     };
 }
 
