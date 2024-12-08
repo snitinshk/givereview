@@ -11,8 +11,8 @@ export function RatingItem({ name, rating, onRatingChange }: RatingItemProps) {
   const [hover, setHover] = useState(0);
 
   return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-base text-gray-700">{name}</span>
+    <div className="flex items-center justify-between py-2 max-w-80">
+      <span className="text-base text-gray-700 font-medium">{name}</span>
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star

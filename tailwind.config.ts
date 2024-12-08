@@ -18,6 +18,7 @@ const config: Config = {
 			fontFamily: {
 				PUBSAN: ["Public Sans", "sans-serif"],
 				POPFN: ["Poppins", "sans-serif"],
+				MOSTR: ["Montserrat", "sans-serif"]
 			},
 			animation: {
 				"caret-blink": "caret-blink 1.25s ease-out infinite",

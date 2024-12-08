@@ -41,8 +41,8 @@ export default function Home({
           </div>
 
           {/* Rating Section */}
-          <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-medium text-gray-800">
+          <div className="space-y-7 text-center">
+            <h1 className="text-3xl font-semibold text-gray-800 font-MOSTR">
               How was your
               <br />
               experience with Silvis ?

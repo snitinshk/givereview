@@ -12,7 +12,7 @@ export default function PositiveFeedback({ reviewLink }: any) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-8">
           <div className="flex justify-center mb-6">
             <Image
               src={client?.client_logo}
@@ -23,18 +23,16 @@ export default function PositiveFeedback({ reviewLink }: any) {
             />
           </div>
 
-          <div className="text-center mb-8">
-            <p className="text-gray-700">
-              {reviewLink?.review_link_positive_title}
-            </p>
-          </div>
+          <p className="text-gray-700 font-MOSTR font-light max-w-80 mx-auto">
+            {reviewLink?.review_link_positive_title}
+          </p>
 
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-72 mx-auto">
             {positiveRL?.map((reviewLink: any, index: number) => (
               <Button
                 key={index}
                 variant="outline"
-                className="w-full h-12 text-base flex items-center gap-2"
+                className="w-full h-12 text-base flex items-center justify-start px-6 gap-2"
                 asChild
               >
                 <Link href={reviewLink?.channel_review_link}>
@@ -45,7 +43,7 @@ export default function PositiveFeedback({ reviewLink }: any) {
                     height={20}
                     className="w-5 h-5"
                   />
-                  {reviewLink?.channels?.channel_name}
+                  <div className="flex-1 text-center font-MOSTR font-bold text-sm">{reviewLink?.channels?.channel_name}</div>
                 </Link>
               </Button>
             ))}

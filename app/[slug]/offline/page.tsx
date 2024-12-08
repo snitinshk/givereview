@@ -1,17 +1,17 @@
 import Image from "next/image"
-import { AlertTriangle } from 'lucide-react'
+import { TbAlertTriangleFilled } from "react-icons/tb";
 
 export default function OfflinePage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-6 text-center">
-          <AlertTriangle className="w-16 h-16 mx-auto text-red-500" />
-          <div className="space-y-2">
-            <p className="text-2xl font-medium text-gray-800">
+          <TbAlertTriangleFilled className="w-12 h-12 mx-auto text-red-500" />
+          <div className="space-y-2 font-MOSTR font-medium">
+            <p className="text-2xl text-gray-800">
               The site is offline, contact
               <br />
-              <span className="text-gray-600">&lt;client name&gt;</span>
+              <span>&lt;client name&gt;</span>
             </p>
           </div>
         </div>

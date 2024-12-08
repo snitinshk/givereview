@@ -104,7 +104,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-7">
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <Image
@@ -117,21 +117,15 @@ export default function NegativeFeedback({ reviewLink }: any) {
           </div>
 
           {/* Description */}
-          <div className="text-center mb-8 space-y-2">
-            <p className="text-gray-700">
-              We want our customers to be 100% satisfied.
-            </p>
-            <p className="text-gray-700">
-              Please let us know why you had a bad experience,
-              <br />
-              so we can improve our service. Leave your email
-              <br />
-              to be contacted.
-            </p>
+          <div className="text-center mb-8 space-y-2 font-MOSTR font-light text-gray-700 text-base max-w-[394px] mx-auto">
+            We want our customers to be 100% satisfied.
+            Please let us know why you had a bad experience,
+            so we can improve our service. Leave your email
+            to be contacted.
           </div>
 
           {/* Google placeExperience Indicator */}
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-3 mb-6 font-MOSTR font-light text-black text-base">
             {channel_logo?.enabled && (
               <Image
                 src={channel_logo?.logo}
@@ -142,14 +136,14 @@ export default function NegativeFeedback({ reviewLink }: any) {
               />
             )}
             {negative_page_title?.enabled && (
-              <span className="text-sm text-gray-600">
+              <span className="text-sm">
                 {negative_page_title?.title}
               </span>
             )}
           </div>
 
           {/* Rating Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 font-MOSTR">
             <div className="space-y-2">
               {Object.entries(ratings).map(([category, rating]) => (
                 <RatingItem
@@ -169,11 +163,11 @@ export default function NegativeFeedback({ reviewLink }: any) {
               )}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 !mt-10">
               <div>
                 <Input
                   placeholder="Your name"
-                  className="border-gray-300"
+                  className="border-gray-300 max-w-80 h-12"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   aria-invalid={errors.name ? "true" : "false"}
@@ -185,7 +179,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
               <div>
                 <Input
                   placeholder="Phone no"
-                  className="border-gray-300"
+                  className="border-gray-300 max-w-80 h-12"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   aria-invalid={errors.phone ? "true" : "false"}
@@ -198,7 +192,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
                 <Input
                   type="email"
                   placeholder="Email"
-                  className="border-gray-300"
+                  className="border-gray-300 max-w-80 h-12"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   aria-invalid={errors.email ? "true" : "false"}
@@ -210,7 +204,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
               <div>
                 <Textarea
                   placeholder="Share information about how you experienced the place"
-                  className="min-h-[100px] border-gray-300"
+                  className="min-h-[100px] border-gray-300 resize-none"
                   value={placeExperience}
                   onChange={(e) => setPlaceExperience(e.target.value)}
                   aria-invalid={errors.placeExperience ? "true" : "false"}
@@ -224,7 +218,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
               <div>
                 <Textarea
                   placeholder="What was good about your visit?"
-                  className="min-h-[100px] border-gray-300"
+                  className="min-h-[100px] border-gray-300 resize-none"
                   value={visitHighlights}
                   onChange={(e) => setVisitHighlights(e.target.value)}
                   aria-invalid={errors.visitHighlights ? "true" : "false"}
@@ -238,7 +232,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
               <div>
                 <Textarea
                   placeholder="Other comments"
-                  className="min-h-[100px] border-gray-300"
+                  className="min-h-[100px] border-gray-300 resize-none"
                   value={otherComments}
                   onChange={(e) => setOtherComments(e.target.value)}
                   aria-invalid={errors.otherComments ? "true" : "false"}
@@ -250,7 +244,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
               <div>
                 <Textarea
                   placeholder="What was bad about your visit?"
-                  className="min-h-[100px] border-gray-300"
+                  className="min-h-[100px] border-gray-300 resize-none"
                   value={visitDrawbacks}
                   onChange={(e) => setDrawbacks(e.target.value)}
                   aria-invalid={errors.visitDrawbacks ? "true" : "false"}
@@ -263,12 +257,14 @@ export default function NegativeFeedback({ reviewLink }: any) {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-half bg-black hover:bg-gray-800 text-white"
-            >
-              Send
-            </Button>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                className="w-half bg-black hover:bg-gray-800 text-white px-10 font-semibold"
+              >
+                Send
+              </Button>
+            </div>
           </form>
         </div>
       </div>
