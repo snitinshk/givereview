@@ -72,17 +72,17 @@ export const reviewLinkNegativeDefaultValue = {
             dbField: "is_atmosphere_review_enabled",
             enabled: true,
         },
-        { name: "Noise", dbField: "is_noise_review_enabled", enabled: false },
-        { name: "Price", dbField: "is_price_review_enabled", enabled: false },
+        { name: "Noise", dbField: "is_noise_review_enabled", enabled: true },
+        { name: "Price", dbField: "is_price_review_enabled", enabled: true },
         {
             name: "Cleanliness",
             dbField: "is_cleanliness_review_enabled",
-            enabled: false,
+            enabled: true,
         },
         {
             name: "WaitTime",
             dbField: "is_wait_time_review_enabled",
-            enabled: false,
+            enabled: true,
         },
     ],
     inputCategories: [
@@ -114,7 +114,7 @@ export const reviewLinkNegativeDefaultValue = {
         {
             placeholder: "What was good about your visit?",
             dbField: "is_input_visit_highlights_enabled",
-            enabled: false,
+            enabled: true,
         },
         {
             placeholder: "What was bad about your visit?",
@@ -124,7 +124,7 @@ export const reviewLinkNegativeDefaultValue = {
         {
             placeholder: "Other comments",
             dbField: "is_input_other_comments_enabled",
-            enabled: false,
+            enabled: true,
         },
     ],
 
