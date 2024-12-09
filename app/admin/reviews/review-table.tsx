@@ -167,6 +167,7 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
           </Select>
         </div>
         <p>
+          
           Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
           {Math.min(currentPage * rowsPerPage, reviews.length)} of {reviews.length}
         </p>

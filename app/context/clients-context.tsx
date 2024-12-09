@@ -13,6 +13,7 @@ import React, {
   useEffect,
 } from "react";
 import useSWR from "swr";
+import { useLoader } from "./loader.context";
 
 interface ClientsContextProps {
   clients: Client[];
@@ -26,6 +27,7 @@ const ClientsContext = createContext<ClientsContextProps | undefined>(
 
 export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const [clients, setClients] = useState<Client[]>([]);
+  const { setIsLoading } = useLoader();
   useEffect(() => {
     if(!clients?.length){
       fetchClients();
@@ -33,7 +35,9 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
   }, [clients?.length]);
 
   const fetchClients = async()=>{
+    setIsLoading(true)
     const clientsList = await fetcher("/api/admin/clients");
+    setIsLoading(false)
     const mappedClients = mapClients(clientsList);
     setClients(mappedClients);
   }

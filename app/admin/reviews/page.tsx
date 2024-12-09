@@ -89,8 +89,8 @@ const ReviewPage: React.FC = () => {
               "All",
               ...clients?.map((client) => client?.name),
             ])}
-            {filteredClient !== "All" &&
-              renderSelect("Review link", ["All", "ACTIVE", "INACTIVE"])}
+            {/* {filteredClient !== "All" &&
+              renderSelect("Review link", ["All", "ACTIVE", "INACTIVE"])} */}
           </div>
           <ReviewTable reviews={filteredReviews} />
         </TabsContent>
