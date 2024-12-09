@@ -27,7 +27,7 @@ import {
   mapChannels,
   mapNegativePageDataToDbFormat,
   mapSettingsDbFormat,
-} from "@/mappers";
+} from "@/mappers/index-mapper";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";

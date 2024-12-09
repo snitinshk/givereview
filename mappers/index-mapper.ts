@@ -198,7 +198,7 @@ export const mapNegativeLinkDefault = (negativeReviewLink: any) => {
 };
 
 export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {
-    console.log(reviewLinkPositive);
+    
     return reviewLinkPositive.map(
         (channel: any) => ({
             channel_id: channel.id,

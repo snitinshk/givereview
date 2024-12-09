@@ -71,34 +71,34 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
 
-  useEffect(() => {
-    if (slug) fetchData();
-  }, [slug]);
+  // useEffect(() => {
+  //   if (slug) fetchData();
+  // }, [slug]);
 
-  useEffect(() => {
-    setIsLoading(false);
-    const handleRouteChangeStart = () => setIsLoading(true);
-    const handleRouteChangeComplete = () => setIsLoading(false);
-    const observer = new MutationObserver(handleRouteChangeComplete);
-    observer.observe(document.body, { childList: true, subtree: true });
+  // useEffect(() => {
+  //   setIsLoading(false);
+  //   const handleRouteChangeStart = () => setIsLoading(true);
+  //   const handleRouteChangeComplete = () => setIsLoading(false);
+  //   const observer = new MutationObserver(handleRouteChangeComplete);
+  //   observer.observe(document.body, { childList: true, subtree: true });
 
-    return () => observer.disconnect();
-  }, [pathname]);
+  //   return () => observer.disconnect();
+  // }, [pathname]);
+
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (clients) menuItems[0].clientNumber = clients.length;
   }, [clients]);
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleNavigation = (path: string) => {
     setSelectedPath(path);

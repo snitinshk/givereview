@@ -7,7 +7,7 @@ import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import { mapChannels } from "@/mappers";
+import { mapChannels } from "@/mappers/index-mapper";
 import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
 import placeholder from "../../../images/placeholder.svg";

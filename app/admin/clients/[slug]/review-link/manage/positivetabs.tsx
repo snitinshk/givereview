@@ -15,7 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers";
+import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers/index-mapper";
 
 export interface SelectedChannel {
   id: number;

@@ -1,8 +1,8 @@
 "use client";
 
-import { Client, ClientDB } from "@/interfaces/clients";
+import { Client } from "@/interfaces/clients";
 import { fetcher } from "@/lib/utils";
-import { mapClients } from "@/mappers";
+import { mapClients } from "@/mappers/index-mapper";
 import React, {
   createContext,
   useContext,

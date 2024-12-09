@@ -25,7 +25,7 @@ import {
   mapPositivePageUIFormat,
   mapSettingsUIFormat,
   mapThankyouUIFormat,
-} from "@/mappers";
+} from "@/mappers/index-mapper";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";

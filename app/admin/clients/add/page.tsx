@@ -18,7 +18,7 @@ import { fetcher, getFileName, getSlug, mediaUrl, uploadFile } from "@/lib/utils
 import { useToast } from "@/hooks/use-toast";
 import { addClient } from "../action";
 import { useRouter } from 'next/navigation'
-import { mapClients } from "@/mappers";
+import { mapClients } from "@/mappers/index-mapper";
 import { useClients } from "@/app/context/clients-context";
 // import { IoMdInformationCircle } from "react-icons/io";
 

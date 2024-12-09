@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import ChannelCard from "./channel-card";
 import AddNewChannel from "./add-new-channel";
 import { updateChannel } from "./action";
-import { mapChannels } from "@/mappers";
+import { mapChannels } from "@/mappers/index-mapper";
 import { Channel, EditChannelData } from "@/interfaces/channels";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";

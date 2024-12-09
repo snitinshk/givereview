@@ -162,7 +162,7 @@ const NegativeTabs: React.FC = () => {
       }
     );
     const { error } = JSON.parse(response);
-    console.log(error);
+    
     if (!error) {
       toast({
         description: "Field updated",
