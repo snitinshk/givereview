@@ -34,7 +34,7 @@ const Widget: React.FC = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
-  
+
   const clients: Client[] = [
     {
       id: "1",
@@ -61,14 +61,14 @@ const Widget: React.FC = () => {
       status: "Pending",
     },
   ];
-    
+
   const { slug } = useParams()
 
   return (
     <>
       <Link
         href={`/admin/clients/${slug}/widget/create`}
-        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
+        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12 max-sm:mt-0"
       >
         Create widget
       </Link>
@@ -77,9 +77,9 @@ const Widget: React.FC = () => {
         {clients.map((client) => (
           <div
             key={client.id}
-            className="flex items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
+            className="flex flex-wrap items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md gap-4"
           >
-            <div className="flex space-x-4">
+            <div className="flex items-center space-x-4 w-full sm:w-auto">
               {client.images.map((image, index) => (
                 <Image
                   key={index}
@@ -90,15 +90,14 @@ const Widget: React.FC = () => {
                   className="rounded-md"
                 />
               ))}
-              <p className="text-ftClor text-sm font-semibold mt-2">
+              <p className="text-ftClor text-sm font-semibold mt-2 sm:mt-0">
                 {client.description}
               </p>
             </div>
-            <div className="flex items-center space-x-6 mt-2">
+
+            <div className="flex items-center space-x-6 mt-2 w-full sm:w-auto">
               <Badge
-                className={`${getStatusColor(
-                  client.status
-                )} !bottom-0 !shadow-none pointer-events-none px-4  h-7`}
+                className={`${getStatusColor(client.status)} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
               >
                 {client.status}
               </Badge>

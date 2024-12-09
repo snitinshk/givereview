@@ -42,7 +42,7 @@ const ReviewCampo: React.FC = () => {
           {/* Nagativetbs Content */}
           <TabsContent value="Nagativetbs">
             <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-              <div className="w-1/5">
+              <div className="w-1/5 max-lg:w-1/2">
                 <Select>
                   <SelectTrigger className="h-12">
                     <SelectValue placeholder="Client" />
@@ -55,7 +55,7 @@ const ReviewCampo: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="w-1/5">
+              <div className="w-1/5 max-lg:w-1/2">
                 <Select>
                   <SelectTrigger className="h-12">
                     <SelectValue placeholder="Review link" />
@@ -74,7 +74,7 @@ const ReviewCampo: React.FC = () => {
 
           <TabsContent value="Streamtbs">
             <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-              <div className="w-1/5">
+              <div className="w-1/5 max-lg:w-1/2">
                 <Select>
                   <SelectTrigger className="h-12">
                     <SelectValue placeholder="Stream" />

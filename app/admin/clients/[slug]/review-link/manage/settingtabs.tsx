@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { CheckIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
+import PPIMG from "@/app/images/image_1.png";
+import { Heart, Star } from "lucide-react";
 
 import {
   Select,
@@ -72,7 +73,7 @@ export default function SettingTabs() {
     reviewLinkSettings?.isSkipFirstPageEnabled
   );
   const [isPoweredByEnabled, setIsPoweredByEnabled] = useState(
-    reviewLinkSettings?.isPoweredByEnabled
+    !reviewLinkSettings?.isPoweredByEnabled
   );
 
   const [ratingThresholdCount, setRatingThresholdCount] = useState<number>(
@@ -81,9 +82,9 @@ export default function SettingTabs() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    
+
     if (file) {
-      
+
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -168,11 +169,11 @@ export default function SettingTabs() {
       });
     }
 
-    if(imagePreview){
+    if (imagePreview) {
       setReviewLinkSettings((prevState: any) => {
         return {
           ...prevState,
-          desktopBgImage:imagePreview,
+          desktopBgImage: imagePreview,
         };
       });
     }
@@ -185,7 +186,7 @@ export default function SettingTabs() {
     //   reader.readAsDataURL(reviewLinkSettings?.imageFile);
     // }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     reviewLinkName,
     reviewLinkSlug,
@@ -261,200 +262,228 @@ export default function SettingTabs() {
   };
 
   return (
-    <div className="flex flex-col gap-5 items-start">
-      {/* Active/Inactive Switch */}
-      {reviewLinkSettings?.reviewLinkId && (
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="active-toggle">
-            {isActive ? "Active" : "Inactive"}
-          </Label>
-          <Switch
-            id="active-toggle"
-            checked={isActive}
-            onCheckedChange={(checked) => {
-              setIsActive(!isActive)
-              handleUpdateReviewLinkSettings({
-                is_active: checked,
-              });
-            }}
-          />
-        </div>
-      )}
-
-      {/* Editable Name Field */}
-      {!reviewLinkSettings?.reviewLinkId ? (
-        <Input
-          value={reviewLinkName}
-          onChange={(e) => setReviewLinkName(e.target.value)}
-          autoFocus
-          className="h-12 w-full"
-        />
-      ) : (
-        <EditableField
-          fieldName="name"
-          isEditing={editingName}
-          value={reviewLinkName}
-          onEdit={() => setEditingName(true)}
-          onSave={(newValue) => {
-            handleUpdateReviewLinkSettings({
-              review_link_name: newValue,
-            });
-            setReviewLinkName(newValue);
-            setEditingName(false);
-          }}
-          onCancel={() => setEditingName(false)}
-          renderValue={<p className="text-gray-700">{reviewLinkName}</p>}
-        />
-      )}
-
-      {/* Editable URL Field */}
-      <EditableField
-        isEditing={editingSlug}
-        value={reviewLinkSlug}
-        onEdit={() => setEditingSlug(true)}
-        onSave={(newValue) => {
-          handleUpdateReviewLinkSettings({
-            review_link_slug: newValue,
-          });
-          setReviewLinkSlug(newValue);
-          setEditingSlug(false);
-        }}
-        onCancel={() => setEditingSlug(false)}
-        renderValue={
-          <p>
-            {DEFAULT_TEXTS.reviewSiteBaseUrl}
-            <span className="text-black">{reviewLinkSlug}</span>
-          </p>
-        }
-      />
-      <div className="flex flex-col gap-5 items-start w-full">
-        <div className="flex items-center gap-1 w-full">
-          <EditableField
-            isEditing={editingHomeTitle}
-            value={title}
-            onEdit={() => setEditingHomeTitle(true)}
-            onSave={(newValue) => {
-              handleUpdateReviewLinkSettings({
-                review_link_positive_title: newValue,
-              });
-              setTitle(newValue);
-              setEditingHomeTitle(false);
-            }}
-            onCancel={() => setEditingHomeTitle(false)}
-            renderValue={<p>{title}</p>}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-5 items-start">
-        {/* Skip First Page Toggle */}
-        <div className="flex items-center gap-4 font-semibold">
-          <span>Skip first page and go to positive page</span>
+    <div className="flex flex-wrap gap-8">
+      {/* Left Section */}
+      <div className="flex flex-col gap-5 items-start w-full md:w-1/2">
+        {/* Active/Inactive Switch */}
+        {reviewLinkSettings?.reviewLinkId && (
           <div className="flex items-center space-x-2">
-            <Label htmlFor="skip-page-toggle">
-              {isSkipFirstPageEnabled ? "Enable" : "Disable"}
+            <Label htmlFor="active-toggle">
+              {isActive ? "Active" : "Inactive"}
             </Label>
             <Switch
-              id="skip-page-toggle"
-              checked={isSkipFirstPageEnabled}
+              id="active-toggle"
+              checked={isActive}
               onCheckedChange={(checked) => {
+                setIsActive(!isActive);
                 handleUpdateReviewLinkSettings({
-                  skip_first_page_enabled: checked,
+                  is_active: checked,
                 });
-                setIsSkipFirstPageEnabled(checked);
               }}
             />
-          </div>
-        </div>
-        <div className="flex items-center gap-4 font-semibold">
-          <span>If stars bigger than</span>
-          <Select
-            onValueChange={(newValue) => {
-              setRatingThresholdCount(Number(newValue));
-              handleUpdateReviewLinkSettings({
-                rating_threshold_count: newValue,
-              });
-            }}
-            value={ratingThresholdCount.toString()}
-          >
-            <SelectTrigger className="min-w-14 w-auto">
-              <SelectValue placeholder="number" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="4">4</SelectItem>
-            </SelectContent>
-          </Select>
-          <span>go to positive page else go to negative page</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>
-            <strong>Show</strong> Powered with love by place booster
-          </span>
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="skip-page-toggle">
-              {isPoweredByEnabled ? "Enable" : "Disable"}
-            </Label>
-            <Switch
-              id="skip-page-toggle"
-              checked={isPoweredByEnabled}
-              onCheckedChange={(checked) => {
-                handleUpdateReviewLinkSettings({
-                  powered_by_enabled: checked,
-                });
-                setIsPoweredByEnabled(checked);
-              }}
-            />
-          </div>
-        </div>
-      </div>
-      {/* Image Upload */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-4 font-semibold text-gray-500">
-          Desktop background image
-          {imagePreview ? (
-            <Button
-              variant="ghost"
-              className="text-green-600 font-semibold"
-              onClick={() => setImagePreview(null)}
-            >
-              <MdEdit /> Edit
-            </Button>
-          ) : (
-            ""
-          )}
-        </div>
-        {imagePreview ? (
-          <div className="relative w-96 h-36">
-            <Image
-              src={imagePreview}
-              alt="Preview"
-              width={150}
-              height={150}
-              objectFit="cover"
-              className="rounded-2xl"
-            />
-          </div>
-        ) : (
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Input
-              id="image-upload"
-              type="file"
-              className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
-              onChange={handleImageUpload}
-            />
-            <Label
-              htmlFor="image-upload"
-              className="flex flex-col gap-1 rounded-2xl text-gray-500 text-center items-center justify-center border-dashed border border-gray-200 bg-gray-100 w-96 h-28"
-            >
-              <FaCloudUploadAlt className="text-4xl" />
-              Upload file
-            </Label>
           </div>
         )}
+
+        {/* Editable Name Field */}
+        {!reviewLinkSettings?.reviewLinkId ? (
+          <Input
+            value={reviewLinkName}
+            onChange={(e) => setReviewLinkName(e.target.value)}
+            autoFocus
+            className="h-12 w-full max-w-80"
+          />
+        ) : (
+          <EditableField
+            fieldName="name"
+            isEditing={editingName}
+            value={reviewLinkName}
+            onEdit={() => setEditingName(true)}
+            onSave={(newValue) => {
+              handleUpdateReviewLinkSettings({
+                review_link_name: newValue,
+              });
+              setReviewLinkName(newValue);
+              setEditingName(false);
+            }}
+            onCancel={() => setEditingName(false)}
+            renderValue={<p className="text-gray-700">{reviewLinkName}</p>}
+          />
+        )}
+
+        {/* Editable URL Field */}
+        <EditableField
+          isEditing={editingSlug}
+          value={reviewLinkSlug}
+          onEdit={() => setEditingSlug(true)}
+          onSave={(newValue) => {
+            handleUpdateReviewLinkSettings({
+              review_link_slug: newValue,
+            });
+            setReviewLinkSlug(newValue);
+            setEditingSlug(false);
+          }}
+          onCancel={() => setEditingSlug(false)}
+          renderValue={
+            <p>
+              {DEFAULT_TEXTS.reviewSiteBaseUrl}
+              <span className="text-black">{reviewLinkSlug}</span>
+            </p>
+          }
+        />
+
+        {/* Editable Home Title Field */}
+        <div className="flex flex-col gap-5 items-start w-full">
+          <div className="flex items-center gap-1 w-full">
+            <EditableField
+              isEditing={editingHomeTitle}
+              value={title}
+              onEdit={() => setEditingHomeTitle(true)}
+              onSave={(newValue) => {
+                handleUpdateReviewLinkSettings({
+                  review_link_positive_title: newValue,
+                });
+                setTitle(newValue);
+                setEditingHomeTitle(false);
+              }}
+              onCancel={() => setEditingHomeTitle(false)}
+              renderValue={<p>{title}</p>}
+            />
+          </div>
+        </div>
+
+        {/* Skip First Page Toggle */}
+        <div className="flex flex-col gap-5 items-start w-full">
+          <div className="flex items-center gap-4 font-semibold">
+            <span>Skip first page and go to positive page</span>
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="skip-page-toggle">
+                {isSkipFirstPageEnabled ? "Enable" : "Disable"}
+              </Label>
+              <Switch
+                id="skip-page-toggle"
+                checked={isSkipFirstPageEnabled}
+                onCheckedChange={(checked) => {
+                  handleUpdateReviewLinkSettings({
+                    skip_first_page_enabled: checked,
+                  });
+                  setIsSkipFirstPageEnabled(checked);
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 font-semibold">
+            <span>If stars bigger than</span>
+            <Select
+              onValueChange={(newValue) => {
+                setRatingThresholdCount(Number(newValue));
+                handleUpdateReviewLinkSettings({
+                  rating_threshold_count: newValue,
+                });
+              }}
+              value={ratingThresholdCount.toString()}
+            >
+              <SelectTrigger className="min-w-14 w-auto">
+                <SelectValue placeholder="number" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>go to positive page else go to negative page</span>
+          </div>
+
+          {/* Powered By Section */}
+          <div className="flex items-center gap-4">
+            <span>
+              <strong>Show</strong> Powered with love by place booster
+            </span>
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="powered-by-toggle">
+                {isPoweredByEnabled ? "Enable" : "Disable"}
+              </Label>
+              <Switch
+                id="powered-by-toggle"
+                checked={isPoweredByEnabled}
+                onCheckedChange={(checked) => {
+                  handleUpdateReviewLinkSettings({
+                    powered_by_enabled: checked,
+                  });
+                  setIsPoweredByEnabled(checked);
+                }}
+              />
+            </div>
+          </div>
+
+        </div>
+
+        {/* Image Upload */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-4 font-semibold text-gray-500">
+            Desktop background image
+            {imagePreview ? (
+              <Button
+                variant="ghost"
+                className="text-green-600 font-semibold"
+                onClick={() => setImagePreview(null)}
+              >
+                <MdEdit /> Edit
+              </Button>
+            ) : (
+              ""
+            )}
+          </div>
+          {imagePreview ? (
+            <div className="relative w-full max-w-xs h-36">
+              <Image
+                src={imagePreview}
+                alt="Preview"
+                width={150}
+                height={150}
+                objectFit="cover"
+                className="rounded-2xl"
+              />
+            </div>
+          ) : (
+            <div className="grid w-96 max-w-full items-center gap-1.5">
+              <Input
+                id="image-upload"
+                type="file"
+                className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
+                onChange={handleImageUpload}
+              />
+              <Label
+                htmlFor="image-upload"
+                className="flex flex-col gap-1 rounded-2xl text-gray-500 text-center items-center justify-center border-dashed border border-gray-200 bg-gray-100 w-full max-w-xs h-28"
+              >
+                <FaCloudUploadAlt className="text-4xl" />
+                Upload file
+              </Label>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Section */}
+      <div className=" relative w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+        <p className="max-w-96 text-center mx-auto">{title}</p>
+        <div className="flex gap-3">
+          {Array.from({ length: 5 }, (_, index) => (
+            <Star
+              key={index}
+              className={`text-3xl ${index < ratingThresholdCount ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                }`}
+            />
+          ))}
+        </div>
+        {isPoweredByEnabled &&
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
+        }
       </div>
     </div>
+
   );
 }

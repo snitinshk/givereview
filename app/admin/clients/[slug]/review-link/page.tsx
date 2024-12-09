@@ -64,7 +64,7 @@ const ReviewLink: React.FC = (params) => {
         setReviewLinks(reviewLink);
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClient]);
 
   /**
@@ -121,13 +121,13 @@ const ReviewLink: React.FC = (params) => {
     const negativePageReviewLink: any = mapNegativeLinkDefault(
       negative_review_link_details
     );
-    
+
     if (negativePageReviewLink) {
       setReviewLinkNegative(negativePageReviewLink);
     }
 
     const thankyouPageReviewLink = mapThankyouUIFormat(thankyou_review_link_details)
-    
+
     setReviewLinkThankyou(thankyouPageReviewLink);
 
   };
@@ -139,7 +139,7 @@ const ReviewLink: React.FC = (params) => {
       "data-review-link-id"
     );
 
-    toast({description: "This action cannot be undone."});
+    toast({ description: "This action cannot be undone." });
 
     toast({
       title: "Are you sure you want to delete?",
@@ -181,7 +181,7 @@ const ReviewLink: React.FC = (params) => {
   const handleCreateLink = async () => {
     // Navigate immediately to provide a responsive user experience
     router.push(`/admin/clients/${slug}/review-link/manage`);
-  
+
     // Perform the asynchronous operation in the background
     generateUniqueSlug(slug as string).then((uniqueSlug) => {
       setReviewLinkSettings({
@@ -190,7 +190,7 @@ const ReviewLink: React.FC = (params) => {
         title: `${DEFAULT_TEXTS.homeReviewTitle} ${slug}`,
       });
     });
-  
+
     // Update other state values immediately
     setReviewLinkPositive(reviewLinkPositiveDefaultValue);
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
@@ -202,7 +202,7 @@ const ReviewLink: React.FC = (params) => {
       <Button
         onClick={handleCreateLink}
         // href={`/admin/clients/${slug}/review-link/manage`}
-        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
+        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto block font-bold mb-8 -mt-12 max-sm:mt-0"
       >
         Create Link
       </Button>
@@ -211,9 +211,9 @@ const ReviewLink: React.FC = (params) => {
         {reviewLinks.map((reviewLink: any) => (
           <div
             key={reviewLink.id}
-            className="flex items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
+            className="flex flex-col lg:flex-row items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
           >
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 mb-4 lg:mb-0 max-sm:w-full">
               {reviewLink?.positive_review_link_details.map(
                 (item: any, index: number) => (
                   <Image
@@ -226,15 +226,14 @@ const ReviewLink: React.FC = (params) => {
                   />
                 )
               )}
-              <p className="text-ftClor text-sm font-semibold mt-2">
+              <p className="text-ftClor text-sm font-semibold mt-2 lg:mt-0 max-sm:flex-grow">
                 {reviewLink?.review_link_name}
               </p>
             </div>
-            <div className="flex items-center space-x-6 mt-2">
+
+            <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
               <Link
-                href={
-                  DEFAULT_TEXTS.reviewSiteBaseUrl + reviewLink?.review_link_slug
-                }
+                href={DEFAULT_TEXTS.reviewSiteBaseUrl + reviewLink?.review_link_slug}
                 className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
               >
                 <BiLinkExternal /> Link
@@ -242,7 +241,7 @@ const ReviewLink: React.FC = (params) => {
               <Badge
                 className={`${getStatusColor(
                   reviewLink.is_active ? "Active" : "Inactive"
-                )} !bottom-0 !shadow-none pointer-events-none px-4  h-7`}
+                )} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
               >
                 {reviewLink?.is_active === true ? "Active" : "Inactive"}
               </Badge>

@@ -115,16 +115,16 @@ const ClientTable: React.FC = () => {
     <>
       <Link
         href={"/admin/clients/add"}
-        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
+        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12 max-sm:mt-0"
       >
         New Client
       </Link>
 
       <div className="bg-white rounded-lg shadow-lg mb-5">
-        <div className="px-6 pt-6 flex justify-between items-center mb-4 gap-4">
-          <div className="w-1/5">
+        <div className="px-6 pt-6 flex flex-col lg:flex-row items-center mb-4 gap-4">
+          <div className="w-full lg:w-1/5 mb-4 lg:mb-0">
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="h-12">
+              <SelectTrigger className="h-12 w-full">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -139,9 +139,9 @@ const ClientTable: React.FC = () => {
             </Select>
           </div>
 
-          <div className="w-1/5">
+          <div className="w-full lg:w-1/5 mb-4 lg:mb-0">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-12">
+              <SelectTrigger className="h-12 w-full">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -152,7 +152,7 @@ const ClientTable: React.FC = () => {
             </Select>
           </div>
 
-          <div className="flex-grow relative">
+          <div className="w-full lg:w-2/5 relative mb-4 lg:mb-0">
             <IoSearch className="absolute left-3 top-4" />
             <Input
               placeholder="Search..."
@@ -227,26 +227,27 @@ const ClientTable: React.FC = () => {
           </TableBody>
         </Table>
 
-        <div className="flex justify-end gap-3 border-t border-gray-200 items-center p-4">
-          <Select
-            value={rowsPerPage.toString()}
-            onValueChange={(value) => setRowsPerPage(Number(value))}
-          >
-            <SelectTrigger className="w-24">
-              <SelectValue placeholder="Rows per page" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex justify-between lg:justify-end gap-3 border-t border-gray-200 items-center p-4">
+          <div className="w-full lg:w-24">
+            <Select
+              value={rowsPerPage.toString()}
+              onValueChange={(value) => setRowsPerPage(Number(value))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Rows per page" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <p>
-            {`Showing ${Math.min(rowsPerPage, filteredClients?.length)} of ${
-              filteredClients?.length
-            }`}
+          <p className="text-sm text-nowrap">
+            {`Showing ${Math.min(rowsPerPage, filteredClients?.length)} of ${filteredClients?.length
+              }`}
           </p>
         </div>
       </div>

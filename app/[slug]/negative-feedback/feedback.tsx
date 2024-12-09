@@ -127,7 +127,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
 
           {/* Google placeExperience Indicator */}
           <div className="flex items-center gap-3 mb-6 font-MOSTR font-light text-black text-base">
-            {channel_logo?.enabled && (
+            {!channel_logo?.enabled && (
               <Image
                 src={channel_logo?.logo}
                 alt="Google"
@@ -136,7 +136,7 @@ export default function NegativeFeedback({ reviewLink }: any) {
                 className="w-5 h-5"
               />
             )}
-            {negative_page_title?.enabled && (
+            {!negative_page_title?.enabled && (
               <span className="text-sm">
                 {negative_page_title?.title}
               </span>

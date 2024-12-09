@@ -98,7 +98,7 @@ export default function ChannelCard({
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 max-sm:space-x-0 max-sm:flex-wrap">
       <div className="bg-gray-100 w-14 h-14 rounded-sm p-3">
         <Image
           src={isEditing ? editedLogo : channel.logo}
@@ -111,14 +111,14 @@ export default function ChannelCard({
       {isEditing && (
         <Button
           variant="outline"
-          className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
+          className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300 max-sm:!ml-2 max-sm:!mr-2"
           onClick={() => fileInputRef.current?.click()}
         >
           <UploadIcon className="h-4 w-4" />
           <span className="sr-only">Upload new logo</span>
         </Button>
       )}
-      <div className="flex-grow">
+      <div className="flex-grow max-sm:w-full max-sm:order-4 max-sm:mt-3">
         {isEditing ? (
           <div className="flex items-center space-x-2">
             <Input
@@ -140,7 +140,7 @@ export default function ChannelCard({
           </span>
         )}
       </div>
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 max-sm:space-x-1 max-sm:!ml-auto">
         {isEditing ? (
           <>
             <Button
@@ -148,7 +148,7 @@ export default function ChannelCard({
               className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold"
               onClick={handleSave}
             >
-              <CheckIcon className="h-4 w-4" /> Save
+              <CheckIcon className="h-4 w-4" /> <span className="max-sm:hidden">Save</span>
               <span className="sr-only">Save changes for {channel.name}</span>
             </Button>
             <Button
@@ -156,7 +156,7 @@ export default function ChannelCard({
               className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"
               onClick={handleCancel}
             >
-              <XIcon className="h-4 w-4" /> Cancel
+              <XIcon className="h-4 w-4" />  <span className="max-sm:hidden">Cancel</span>
               <span className="sr-only">Cancel editing {channel.name}</span>
             </Button>
           </>
@@ -164,18 +164,18 @@ export default function ChannelCard({
           <>
             <Button
               variant="ghost"
-              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold"
+              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold max-sm:order-2"
               onClick={() => setIsEditing(true)}
             >
-              <PencilIcon className="h-4 w-4" /> Edit
+              <PencilIcon className="h-4 w-4" /> <span className="max-sm:hidden">Edit</span>
               <span className="sr-only">Edit {channel.name}</span>
             </Button>
             <Button
               variant="ghost"
-              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"
+              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold max-sm:order-3"
               onClick={handleDelete}
             >
-              <TrashIcon className="h-4 w-4" /> Delete
+              <TrashIcon className="h-4 w-4" /> <span className="max-sm:hidden">Delete</span>
               <span className="sr-only">Delete {channel.name}</span>
             </Button>
           </>

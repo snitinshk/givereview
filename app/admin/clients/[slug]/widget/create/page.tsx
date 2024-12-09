@@ -8,10 +8,10 @@ import ChannelsTabs from "./ChannelsTabs";
 import SettingstTabs from "./settingstTabs";
 
 const WidgetCreate: React.FC = () => {
-   
+
     return (
         <>
-            <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
+            <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5 max-sm:mt-0">
                 <Button className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">Cancel</Button>
                 <Button className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold">Save</Button>
             </div>

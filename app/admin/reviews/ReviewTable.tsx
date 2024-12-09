@@ -95,10 +95,12 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
 
   return (
     <>
-      <Table>
+      <Table className="min-w-[1000px]">
         <TableHeader>
           <TableRow className="bg-gray-100 text-[#637381]">
-            {showImage && <TableHead className="py-5 px-8">Image</TableHead>}
+            {showImage && (
+              <TableHead className="py-5 px-8 hidden sm:table-cell">Image</TableHead>
+            )}
             <TableHead className={`py-5 ${!showImage ? "px-8" : ""}`}>Date</TableHead>
             <TableHead>Client</TableHead>
             <TableHead>Stars</TableHead>
@@ -109,9 +111,9 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
         </TableHeader>
         <TableBody>
           {paginatedReviews.map((review) => (
-            <TableRow key={review.id}>
+            <TableRow key={review.id} className="hover:bg-gray-50">
               {showImage && (
-                <TableCell className={`py-4 ${showImage ? "px-8" : ""}`}>
+                <TableCell className="py-4 px-8 hidden sm:table-cell">
                   <Image
                     src={review.image || placeholder}
                     alt={`${review.name}'s review`}
@@ -121,7 +123,9 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
                   />
                 </TableCell>
               )}
-              <TableCell className={`py-4 ${!showImage ? "px-8" : ""}`}>{review.date}</TableCell>
+              <TableCell className={`py-4 ${!showImage ? "px-8" : ""}`}>
+                {review.date}
+              </TableCell>
               <TableCell className="py-4">{review.client}</TableCell>
               <TableCell className="py-4">
                 <div className="flex gap-1 text-lg">{renderStars(review.stars)}</div>
@@ -135,7 +139,7 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
                   <Button
                     size="sm"
                     className="bg-gray-200 text-black font-bold hover:text-white"
-                    onClick={() => handleReadMore(review.id)} 
+                    onClick={() => handleReadMore(review.id)}
                   >
                     Read more
                   </Button>
@@ -145,6 +149,7 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
           ))}
         </TableBody>
       </Table>
+
       <div className="flex justify-end text-sm gap-3 border-t border-gray-200 items-center p-4">
         <div className="flex items-center gap-4">
           <p>Rows per page:</p>

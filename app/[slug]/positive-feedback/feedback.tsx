@@ -24,7 +24,7 @@ export default function PositiveFeedback({ reviewLink }: any) {
             />
           </div>
 
-          <p className="text-gray-700 font-MOSTR font-light max-w-80 mx-auto">
+          <p className="text-gray-700 font-MOSTR font-light text-center max-w-96 mx-auto">
             {reviewLink?.review_link_positive_title}
           </p>
 

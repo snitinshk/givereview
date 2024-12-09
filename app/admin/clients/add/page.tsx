@@ -104,7 +104,7 @@ const CreateClient: React.FC = () => {
 
   return (
     <>
-      <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
+      <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5 max-sm:mt-0">
         <Button onClick={()=>{ router.back() }} className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
           Cancel
         </Button>

@@ -32,7 +32,7 @@ const ChannelsTabs: React.FC = () => {
     };
     return (
         <>
-            <div className="border border-gray-200 rounded-3xl p-6 shadow-lg max-w-xl">
+            <div className="border border-gray-200 rounded-3xl p-6 shadow-lg max-w-xl w-full">
                 <div className="mb-7">
                     <label className="text-[#637381] uppercase font-bold text-xs mb-2 block">Widget name</label>
                     <Input type="text" placeholder="Name" className="h-12" />
@@ -42,7 +42,7 @@ const ChannelsTabs: React.FC = () => {
                     <Input type="text" placeholder="Name" className="h-12" />
                 </div>
             </div>
-            <div className="mt-14 grid grid-cols-3 gap-10 max-xl:grid-cols-2 max-lg:grid-cols-1">
+            <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {channels.map((channel) => (
                     <ChannelCard
                         key={channel.id}
@@ -55,6 +55,7 @@ const ChannelsTabs: React.FC = () => {
                     />
                 ))}
             </div>
+
             <TestimonialCompo />
         </>
     );

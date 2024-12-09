@@ -39,7 +39,7 @@ const TestimonialCompo: React.FC = () => {
         What our guests say
       </h2>
       <Tabs defaultValue="all">
-        <TabsList className="w-full flex-wrap rounded-b-none gap-4 justify-start p-0 pt-3 border-b h-auto border-gray-200 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none">
+        <TabsList className="w-full flex-wrap rounded-b-none gap-4 justify-start p-0 pt-3 border-b h-auto border-gray-200 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none max-sm:px-3 max-sm:overflow-x-scroll max-sm:flex-nowrap">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.value}

@@ -16,6 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers";
+import { FaRegStar } from "react-icons/fa";
+import PPIMG from "@/app/images/image_1.png";
+import Link from "next/link";
+import GLGIMG from "@/app/images/google.svg";
 
 export interface SelectedChannel {
   id: number;
@@ -25,12 +29,11 @@ export interface SelectedChannel {
 }
 
 interface PositiveTabsProps {
-  setIsMainDivVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  //setIsMainDivVisible: React.Dispatch<React.SetStateAction<boolean>>;
   channels: Channel[];
 }
 
 const PositiveTabs: React.FC<PositiveTabsProps> = ({
-  setIsMainDivVisible,
   channels,
 }) => {
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
@@ -51,6 +54,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editingPositiveTitle, setEditingPositiveTitle] = useState(false);
   const [showMainContent, setShowMainContent] = useState(true);
+  const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
 
   // Update review link positive data in context
   useEffect(() => {
@@ -146,7 +150,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
         );
         const { error: addPositiveRlErr, data: positiveRLdata } = JSON.parse(response);
         if (!addPositiveRlErr) {
-          
+
           setSelectedChannels(mapPositivePageUIFormat(positiveRLdata));
           toast({ description: "Channels updated" });
           return;
@@ -176,10 +180,10 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   };
 
   return (
-    <>
+    <div className="flex flex-wrap gap-8">
       {showMainContent ? (
-        <div className="flex flex-col gap-5 items-start">
-          <div className="max-w-xl">
+        <div className="flex flex-col gap-5 items-start md:w-1/2 w-full">
+          <div className="max-w-xl w-full">
             <EditableField
               isEditing={editingPositiveTitle}
               value={title}
@@ -267,21 +271,22 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
             ))}
           </div>
 
-          {newChannels?.length > 0 && <Button
-            variant="ghost"
-            className="flex items-center font-bold text-green-600 mt-5"
-            onClick={() => {
-              setShowMainContent(false);
-              setIsMainDivVisible(false);
-            }}
-          >
-            <PlusIcon className="h-4 w-4" />
-            Add new channel
-          </Button>
-          }
+          {newChannels?.length > 0 && (
+            <Button
+              variant="ghost"
+              className="flex items-center font-bold text-green-600 mt-5"
+              onClick={() => {
+                setShowMainContent(false);
+                setIsMainDivVisible(false);
+              }}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add new channel
+            </Button>
+          )}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {newChannels.map((channel) => (
             <div key={channel.id} className="flex flex-col gap-4 items-start">
               <div className="bg-gray-100 w-full h-14 rounded-lg p-3 flex items-center">
@@ -314,7 +319,35 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
           ))}
         </div>
       )}
-    </>
+
+      {isMainDivVisible && (
+        <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+          <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+          <p className="max-w-96 text-center mx-auto">{title}</p>
+          <div className="space-y-4 max-w-72 mx-auto w-full">
+            {selectedChannels.map((channel) => (
+              <div
+                key={channel.id}
+                className="flex gap-5 items-center flex-wrap rounded-md"
+              >
+                <div className="bg-gray-100 w-80 h-14 rounded-lg p-3 flex items-center">
+                  <Image
+                    src={channel.logo}
+                    alt={`${channel.name} logo`}
+                    width={40}
+                    height={40}
+                    className="rounded-sm"
+                  />
+                  <span className="flex-grow text-center font-semibold">
+                    {channel.name}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

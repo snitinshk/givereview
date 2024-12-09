@@ -34,11 +34,11 @@ export default function Breadcrumb() {
 
     return (
         <>
-            <h1 className="text-3xl font-bold mb-6">{currentPageHeading}</h1>
+            <h1 className="text-3xl font-bold mb-6 max-md:text-2xl">{currentPageHeading}</h1>
             <nav aria-label="breadcrumb" className='mb-5'>
-                <ol className="flex space-x-2 text-gray-500">
+                <ol className="flex space-x-2 text-gray-500 max-md:text-sm max-md:flex-wrap">
                     {breadcrumbItems.map((item, index) => (
-                        <li key={index} className="flex items-center gap-3 mr-1">
+                        <li key={index} className="flex items-center gap-3 mr-1 ">
                             {index === breadcrumbItems.length - 1 ? (
                                 <span className="text-gray-500">{item.label}</span>
                             ) : (
