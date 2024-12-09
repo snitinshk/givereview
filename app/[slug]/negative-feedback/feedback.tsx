@@ -139,10 +139,12 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
       wait_time_review: ratings["Waiting time"] ?? null,
       average_rating: averageRating,
       review_link_id: reviewLink?.id,
+      client_id: client?.id
     };
 
     const { error } = await saveNegativeReview(negativeReviewData);
-    
+    console.log(error);
+
     if (!error) {
       router.push(`/${reviewLink?.review_link_slug}/thank-you`);
     }
