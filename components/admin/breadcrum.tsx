@@ -12,15 +12,17 @@ function capitalize(str: string) {
 }
 
 export default function Breadcrumb() {
+    
     const pathname = usePathname()
     const [breadcrumbItems, setBreadcrumbItems] = useState<BreadcrumbItem[]>([])
 
     useEffect(() => {
         if (pathname) {
             const pathSegments = pathname.split('/').filter(Boolean)
+            pathSegments.shift();
             const items = pathSegments.map((segment, index) => {
                 const path = `/${pathSegments.slice(0, index + 1).join('/')}`
-                const label = index === 0 ? "Dashboard" : capitalize(segment.replace(/-/g, ' '))
+                const label = capitalize(segment.replace(/-/g, ' '))
                 return { label, path }
             })
             setBreadcrumbItems(items)
@@ -42,7 +44,7 @@ export default function Breadcrumb() {
                             {index === breadcrumbItems.length - 1 ? (
                                 <span className="text-gray-500">{item.label}</span>
                             ) : (
-                                <Link href={item.path} className="text-black hover:underline">
+                                <Link href={`/admin${item.path}`} className="text-black hover:underline">
                                     {item.label}
                                 </Link>
                             )}

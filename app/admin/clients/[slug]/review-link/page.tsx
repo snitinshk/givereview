@@ -18,7 +18,13 @@ import {
   getReviewLinks,
   getReviewLinkSettings,
 } from "./action";
-import { DEFAULT_TEXTS, reviewLinkNegativeDefaultValue, reviewLinkPositiveDefaultValue, reviewLinkSettingsDefaultValue, reviewLinkThankyouDefaultValue } from "@/constant";
+import {
+  DEFAULT_TEXTS,
+  reviewLinkNegativeDefaultValue,
+  reviewLinkPositiveDefaultValue,
+  reviewLinkSettingsDefaultValue,
+  reviewLinkThankyouDefaultValue,
+} from "@/constant";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import {
   mapNegativeLinkDefault,
@@ -30,8 +36,14 @@ import { ToastAction } from "@radix-ui/react-toast";
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
+// import Loading from "@/components/loader/loading";
+import { useLoader } from "@/app/context/loader.context";
 
 const ReviewLink: React.FC = (params) => {
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { setIsLoading } = useLoader();
+  const [hasData, setHasData] = useState<boolean>(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Active":
@@ -53,18 +65,20 @@ const ReviewLink: React.FC = (params) => {
    */
 
   useEffect(() => {
+    // setIsLoading(true);
     (async () => {
       if (selectedClient) {
+        setIsLoading(true);
         const response = await getReviewLinks(selectedClient?.id);
         const { data: reviewLink, error } = JSON.parse(response);
-
         if (error) {
           toast({ description: "Error in fetching review links." });
         }
+        setIsLoading(false);
         setReviewLinks(reviewLink);
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClient]);
 
   /**
@@ -81,6 +95,7 @@ const ReviewLink: React.FC = (params) => {
     const reviewLinkId = event.currentTarget.getAttribute(
       "data-review-link-id"
     );
+    setIsLoading(true);
     if (reviewLinkId) {
       await fetchReviewLinkDataForEdit(parseInt(reviewLinkId));
 
@@ -121,15 +136,16 @@ const ReviewLink: React.FC = (params) => {
     const negativePageReviewLink: any = mapNegativeLinkDefault(
       negative_review_link_details
     );
-    
+
     if (negativePageReviewLink) {
       setReviewLinkNegative(negativePageReviewLink);
     }
 
-    const thankyouPageReviewLink = mapThankyouUIFormat(thankyou_review_link_details)
-    
-    setReviewLinkThankyou(thankyouPageReviewLink);
+    const thankyouPageReviewLink = mapThankyouUIFormat(
+      thankyou_review_link_details
+    );
 
+    setReviewLinkThankyou(thankyouPageReviewLink);
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (
@@ -139,7 +155,7 @@ const ReviewLink: React.FC = (params) => {
       "data-review-link-id"
     );
 
-    toast({description: "This action cannot be undone."});
+    toast({ description: "This action cannot be undone." });
 
     toast({
       title: "Are you sure you want to delete?",
@@ -179,9 +195,10 @@ const ReviewLink: React.FC = (params) => {
   };
 
   const handleCreateLink = async () => {
+    setIsLoading(true);
     // Navigate immediately to provide a responsive user experience
     router.push(`/admin/clients/${slug}/review-link/manage`);
-  
+
     // Perform the asynchronous operation in the background
     generateUniqueSlug(slug as string).then((uniqueSlug) => {
       setReviewLinkSettings({
@@ -190,18 +207,25 @@ const ReviewLink: React.FC = (params) => {
         title: `${DEFAULT_TEXTS.homeReviewTitle} ${slug}`,
       });
     });
-  
+
     // Update other state values immediately
     setReviewLinkPositive(reviewLinkPositiveDefaultValue);
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
     setReviewLinkThankyou(reviewLinkThankyouDefaultValue);
   };
 
+  // if (!hasData) {
+  //   return (
+  //     <div className="flex items-center justify-center p-10">
+  //       <p className="text-gray-500 text-xl">No Review links</p>
+  //     </div>
+  //   );
+  // }
+
   return (
     <>
       <Button
         onClick={handleCreateLink}
-        // href={`/admin/clients/${slug}/review-link/manage`}
         className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
       >
         Create Link
@@ -243,7 +267,7 @@ const ReviewLink: React.FC = (params) => {
               <Badge
                 className={`${getStatusColor(
                   reviewLink.is_active ? "Active" : "Inactive"
-                )} !bottom-0 !shadow-none pointer-events-none px-4  h-7`}
+                )} !bottom-0 !shadow-none pointer-events-none justify-center px-4 min-w-24  h-7`}
               >
                 {reviewLink?.is_active === true ? "Active" : "Inactive"}
               </Badge>

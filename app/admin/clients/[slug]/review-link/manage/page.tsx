@@ -31,8 +31,12 @@ import {
 import { useReviewLinkPositive } from "@/app/context/review-link-positive.context";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
+import { useLoader } from "@/app/context/loader.context";
 
 const CreateReviewLink: React.FC = () => {
+  const { setIsLoading } = useLoader();
+  setIsLoading(false);
+  
   const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
   const { reviewLinkSettings } = useReviewLinkSettings();
   const { reviewLinkPositive } = useReviewLinkPositive();

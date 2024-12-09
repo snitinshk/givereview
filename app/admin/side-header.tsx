@@ -14,6 +14,8 @@ import STIMG from "@/app/images/settings-icon.svg";
 import USERICON from "@/app/images/user-ico.svg";
 import { useClients } from "../context/clients-context";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import Loading from "@/components/loader/loading";
+import { useLoader } from "../context/loader.context";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -66,10 +68,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const { clients } = useClients();
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
+  const { isLoading } = useLoader();
 
   // useEffect(() => {
   //   if (slug) fetchData();
@@ -102,7 +104,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleNavigation = (path: string) => {
     setSelectedPath(path);
-    setIsLoading(true);
     router.push(path);
   };
 
@@ -129,7 +130,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       }
     : null;
 
-    const finalMenuItems: MenuItem[] = slug
+  const finalMenuItems: MenuItem[] = slug
     ? (() => {
         const updatedMenuItems = [...menuItems]; // Create a copy of menuItems
         if (dynamicMenu) {
@@ -138,15 +139,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         return updatedMenuItems;
       })()
     : menuItems;
-  
 
   return (
     <div className="flex min-h-screen bg-white flex-wrap">
-      {isLoading && (
-        <div className="fixed backdrop-blur-sm inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9999999]">
-          <div className="loader border-t-transparent border-4 border-[#fff] w-12 h-12 rounded-full animate-spin"></div>
-        </div>
-      )}
 
       <aside className="w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
         <div className="flex justify-center mb-10">
@@ -158,10 +153,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
-                    ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                    : ""
-                    }`}
+                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
+                    selectedPath === item.path
+                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                      : ""
+                  }`}
                   onClick={() =>
                     item.submenu
                       ? toggleSubmenu(item.path)
@@ -192,10 +188,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <li key={subItem.path}>
                         <Button
                           variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
-                            ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                            : ""
-                            }`}
+                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
+                            selectedPath === subItem.path
+                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                              : ""
+                          }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className="w-1 h-1 bg-gray-500 rounded"></span>
@@ -219,8 +216,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </Button>
       </aside>
 
-      <main className="w-[calc(100%-256px)] p-8">
+      <main className="w-[calc(100%-256px)] p-8 relative">
         <Breadcrumb />
+        {isLoading && <Loading />}
         <div className="mt-5">{children}</div>
       </main>
     </div>
