@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 
 import { DEFAULT_TEXTS } from "@/constant";
-import EditableField from "./editable";
+import EditableField from "../editable";
 import { useReviewLink } from "@/app/context/review-link-context";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { updateReviewLink } from "../action";
@@ -340,7 +340,7 @@ export default function SettingTabs() {
               onEdit={() => setEditingHomeTitle(true)}
               onSave={(newValue) => {
                 handleUpdateReviewLinkSettings({
-                  review_link_positive_title: newValue,
+                  review_link_home_title: newValue,
                 });
                 setTitle(newValue);
                 setEditingHomeTitle(false);

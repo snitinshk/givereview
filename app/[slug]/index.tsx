@@ -3,17 +3,13 @@
 import Home from "./home";
 import PositiveFeedback from "./positive-feedback/feedback";
 import NegativeFeedback from "./negative-feedback/feedback";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function IndexPage({ reviewLink }: any) {
-
-  const [isHomeVisible, setIsHomeVisible] = useState(true);
-  const [isPositivePageVisible, setIsPositivePageVisible] = useState(false);
+  const [isHomeVisible, setIsHomeVisible] = useState(!reviewLink?.skip_first_page_enabled);
+  const [isPositivePageVisible, setIsPositivePageVisible] = useState(reviewLink?.skip_first_page_enabled);
   const [isNegativePageVisible, setIsNegativePageVisible] = useState(false);
-
-
-
-  // console.log(reviewLink);
+  const [averageRating, setAverageRating] = useState(0);
 
   return (
     <>
@@ -24,6 +20,8 @@ export default function IndexPage({ reviewLink }: any) {
             setIsPositivePageVisible={setIsPositivePageVisible}
             setIsHomeVisible={setIsHomeVisible}
             reviewLink={reviewLink}
+            averageRating={averageRating}
+            setAverageRating={setAverageRating}
           />
         </>
       )}
@@ -34,7 +32,7 @@ export default function IndexPage({ reviewLink }: any) {
       )}
       {isNegativePageVisible && (
         <>
-          <NegativeFeedback reviewLink={reviewLink} />
+          <NegativeFeedback averageRating={averageRating} reviewLink={reviewLink} />
         </>
       )}
     </>

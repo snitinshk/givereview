@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import EditableField from "./editable";
+import EditableField from "../editable";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Channel } from "@/interfaces/channels";
@@ -15,11 +15,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers";
-import { FaRegStar } from "react-icons/fa";
 import PPIMG from "@/app/images/image_1.png";
-import Link from "next/link";
-import GLGIMG from "@/app/images/google.svg";
+import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers/index-mapper";
 
 export interface SelectedChannel {
   id: number;
@@ -39,6 +36,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
 
   const { reviewLinkSettings } = useReviewLinkSettings();
+
   const { toast } = useToast();
 
   const [title, settitle] = useState(reviewLinkPositive?.title);
@@ -62,6 +60,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
       title,
       selectedChannels,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, selectedChannels]);
 
   const handleEdit = (id: number, currentLink: string) => {
@@ -70,6 +69,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   };
 
   const handleSave = async (id: number) => {
+    
     const updatedLink = channelLinks[id];
     const updatedChannels = selectedChannels.map((ch) =>
       ch.id === id ? { ...ch, link: updatedLink } : ch

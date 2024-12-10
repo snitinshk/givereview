@@ -16,24 +16,28 @@ import { FaStar } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import placeholder from "../../images/placeholder.svg";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
+import { TransformedReview } from "@/interfaces/i-reviews";
+import { useSelectedReview } from "@/app/context/selected-negative-review-context";
 
-type Review = {
-  id: string;
-  date: string;
-  client: string;
-  stars: number;
-  name: string;
-  review: string;
-  image?: string;
-};
+// type Review = {
+//   id: string;
+//   date: string;
+//   client: string;
+//   stars: number;
+//   name: string;
+//   review: string;
+//   image?: string;
+// };
 
 interface ReviewTableProps {
-  reviews: Review[];
+  reviews: TransformedReview[];
   showImage?: boolean;
   showAction?: boolean;
 }
 
 const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, showAction = false }) => {
+
+  const { setSelectedReview } = useSelectedReview(); 
   const router = useRouter(); // Initialize the router
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,14 +47,12 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
   const totalPages = Math.ceil(reviews.length / rowsPerPage);
 
   useEffect(() => {
-    // Simulate data loading with a timeout
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setHasData(reviews.length > 0);
-      setIsLoading(false);
-    }, 1000); // Simulated loading time: 1 second
-
-    return () => clearTimeout(timer);
+    setIsLoading(false);
+    if(!reviews?.length){
+      setHasData(false)
+    }else{
+      setHasData(true)
+    }
   }, [reviews]);
 
   const paginatedReviews = reviews.slice(
@@ -72,8 +74,12 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
     setCurrentPage(1);
   };
 
+  
+
   const handleReadMore = (id: string) => {
     // Navigate to the review detail page
+    const selectedReview = reviews?.find(review => review.id === id)
+    setSelectedReview(selectedReview as TransformedReview);
     router.push(`/admin/reviews/${id}`);
   };
 
@@ -166,6 +172,7 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
           </Select>
         </div>
         <p>
+          
           Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
           {Math.min(currentPage * rowsPerPage, reviews.length)} of {reviews.length}
         </p>

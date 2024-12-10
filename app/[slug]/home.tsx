@@ -9,20 +9,22 @@ export default function Home({
   setIsNegativePageVisible,
   setIsPositivePageVisible,
   setIsHomeVisible,
-  set,
+  averageRating,
+  setAverageRating,
 }: any) {
   const { clients: client } = reviewLink;
-  const [rating, setRating] = useState(0);
+
+  // const [rating, setRating] = useState(averageRating);
 
   const handleSelectRating = (star: number) => {
-    if (star > 3) {
+    if (star >= reviewLink?.rating_threshold_count) {
       setIsPositivePageVisible(true);
       setIsHomeVisible(false);
     } else {
       setIsNegativePageVisible(true);
       setIsHomeVisible(false);
     }
-    setRating(star);
+    setAverageRating(star);
   };
 
   return (
@@ -53,10 +55,11 @@ export default function Home({
               {[1, 2, 3, 4, 5].map((star) => (
                 <div key={star} className="relative">
                   <Star
-                    className={`w-12 h-12 cursor-pointer ${star <= rating
+                    className={`w-12 h-12 cursor-pointer ${
+                      star <= averageRating
                         ? "text-yellow-400 fill-yellow-400"
                         : "text-gray-300 stroke-gray-300"
-                      }`}
+                    }`}
                     onClick={() => handleSelectRating(star)}
                   />
                 </div>
@@ -64,7 +67,13 @@ export default function Home({
             </div>
           </div>
         </div>
-        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
+        {reviewLink?.powered_by_enabled && (
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+            booster
+          </div>
+        )}
       </div>
 
       {/* Restaurant Image */}

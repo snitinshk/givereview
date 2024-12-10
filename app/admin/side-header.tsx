@@ -14,6 +14,8 @@ import STIMG from "@/app/images/settings-icon.svg";
 import USERICON from "@/app/images/user-ico.svg";
 import { useClients } from "../context/clients-context";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import Loading from "@/components/loader/loading";
+import { useLoader } from "../context/loader.context";
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -66,44 +68,43 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const { clients } = useClients();
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isLoading } = useLoader();
 
-  useEffect(() => {
-    if (slug) fetchData();
-  }, [slug]);
+  // useEffect(() => {
+  //   if (slug) fetchData();
+  // }, [slug]);
 
-  useEffect(() => {
-    setIsLoading(false);
-    const handleRouteChangeStart = () => setIsLoading(true);
-    const handleRouteChangeComplete = () => setIsLoading(false);
-    const observer = new MutationObserver(handleRouteChangeComplete);
-    observer.observe(document.body, { childList: true, subtree: true });
+  // useEffect(() => {
+  //   setIsLoading(false);
+  //   const handleRouteChangeStart = () => setIsLoading(true);
+  //   const handleRouteChangeComplete = () => setIsLoading(false);
+  //   const observer = new MutationObserver(handleRouteChangeComplete);
+  //   observer.observe(document.body, { childList: true, subtree: true });
 
-    return () => observer.disconnect();
-  }, [pathname]);
+  //   return () => observer.disconnect();
+  // }, [pathname]);
+
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (clients) menuItems[0].clientNumber = clients.length;
   }, [clients]);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleNavigation = (path: string) => {
     setSelectedPath(path);
-    setIsLoading(true);
     router.push(path);
   };
 
@@ -143,12 +144,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white flex-wrap">
-      {isLoading && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-20 flex items-center justify-center z-[9999999]">
-          <div className="loader border-t-transparent border-4 border-[#fff] w-12 h-12 rounded-full animate-spin"></div>
-        </div>
-      )}
-
       {/* Mobile Hamburger Menu */}
       <div className="flex lg:hidden justify-between items-center p-4 bg-white shadow-md">
         <Image src={Logo} alt="Logo" priority />
@@ -187,10 +182,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
-                    ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                    : ""
-                    }`}
+                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
+                    selectedPath === item.path
+                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                      : ""
+                  }`}
                   onClick={() =>
                     item.submenu
                       ? toggleSubmenu(item.path)
@@ -221,10 +217,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <li key={subItem.path}>
                         <Button
                           variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
-                            ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                            : ""
-                            }`}
+                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
+                            selectedPath === subItem.path
+                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                              : ""
+                          }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className="w-1 h-1 bg-gray-500 rounded"></span>
@@ -249,8 +246,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen">
+      <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen relative">
         <Breadcrumb />
+        {isLoading && <Loading />}
         <div className="mt-5">{children}</div>
       </main>
     </div>

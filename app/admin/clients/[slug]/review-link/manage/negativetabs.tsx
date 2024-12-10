@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { FaStar } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import EditableField from "./editable";
+import EditableField from "../editable";
 import { useEffect, useRef, useState } from "react";
 import { Star, UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
@@ -198,7 +198,7 @@ const NegativeTabs: React.FC = () => {
       }
     );
     const { error } = JSON.parse(response);
-    console.log(error);
+    
     if (!error) {
       toast({
         description: "Field updated",

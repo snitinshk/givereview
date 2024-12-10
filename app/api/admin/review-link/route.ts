@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
 
         // Retrieve clientId from query parameters
         const clientId = request.nextUrl.searchParams.get('clientId');
+        // const detailType = request.nextUrl.searchParams.get('detailType');
 
         if (!clientId) {
             return NextResponse.json(
@@ -16,17 +17,12 @@ export async function GET(request: NextRequest) {
             );
         }
 
+        const query = `setting_review_link_details(id)`;
+
         // Query the database
-        const { data: reviewLinkDetail, error } = await supabase.from('clients')
-            .select(`
-          *,
-          setting_review_link_details (
-            *,
-            negative_review_link_details (*),
-            thankyou_review_link_details (*)
-          )`
-            )
-            .eq('id', clientId)
+        const { data: reviewLinkDetail, error } = await supabase.from('setting_review_link_details')
+            .select(query)
+            .eq('client_id', clientId)
             .single(); // Use `.single()` if you expect exactly one result
 
         if (error) {
