@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CiSettings } from "react-icons/ci";
-import { FaRegStar } from "react-icons/fa";
-import Image from "next/image";
-import PPIMG from "@/app/images/image_1.png";
 import SettingTabs from "./settingtabs";
 import PositiveTabs from "./positivetabs";
 import NegativeTabs from "./negativetabs";
@@ -48,7 +45,7 @@ const CreateReviewLink: React.FC = () => {
   const { toast } = useToast();
 
   const reviewLinkId = searchParams.get("review-link");
-  
+
   const { slug } = useParams();
 
   const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
@@ -100,18 +97,18 @@ const CreateReviewLink: React.FC = () => {
         ...reviewLinkNegative,
         reviewLinkId: settings.id,
       });
-      
+
       let thankyouBgImage;
-      if(reviewLinkThankyou?.uploadedFile){
+      if (reviewLinkThankyou?.uploadedFile) {
         thankyouBgImage = await uploadBgImage(reviewLinkThankyou?.uploadedFile);
       }
-      
+
       const thankyouPageData = {
-        review_thankyou_title:reviewLinkThankyou?.title,
+        review_thankyou_title: reviewLinkThankyou?.title,
         review_thankyou_bg_image: thankyouBgImage ?? '',
         review_link_id: settings.id,
       }
-  
+
 
       // Trigger both saves concurrently
       const [positiveReviewLinkResult, negativeReviewLinkResult, thankyouReviewLinkResult] =
@@ -120,7 +117,7 @@ const CreateReviewLink: React.FC = () => {
           saveReviewLinkNegativePage(negativePageData),
           saveReviewLinkThankyouPage(thankyouPageData),
         ]);
-        
+
       const { error: positiveReviewLinkError } = JSON.parse(positiveReviewLinkResult);
       const { error: negativeReviewLinkError } = JSON.parse(negativeReviewLinkResult);
       const { error: thankyouReviewLinkError } = JSON.parse(thankyouReviewLinkResult);
@@ -196,7 +193,7 @@ const CreateReviewLink: React.FC = () => {
   return (
     <>
       {!reviewLinkSettings?.reviewLinkId && (
-        <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5">
+        <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5 max-sm:mt-0">
           <Button
             onClick={() => router.back()}
             className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold"
@@ -212,9 +209,9 @@ const CreateReviewLink: React.FC = () => {
           </Button>
         </div>
       )}
-      <div className="flex flex-wrap gap-8">
-        <Tabs defaultValue="settings" className="flex-grow">
-          <TabsList className="bg-transparent p-0 mb-4 gap-10 [&>button]:px-0 [&>button]:pb-2 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none">
+      <div className="flex flex-wrap gap-8 w-full">
+        <Tabs defaultValue="settings" className="flex-grow max-w-full">
+          <TabsList className="bg-transparent p-0 mb-4 gap-10 [&>button]:px-0 [&>button]:pb-2 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none max-md:px-3 max-md:overflow-x-scroll max-md:flex-nowrap max-md:w-full max-md:gap-4 max-md:justify-start">
             <TabsTrigger value="settings">
               <CiSettings className="text-2xl mr-1" />
               1-Settings
@@ -229,7 +226,6 @@ const CreateReviewLink: React.FC = () => {
           <TabsContent value="positivepg">
             <PositiveTabs
               channels={mapChannels(channelList)}
-              setIsMainDivVisible={setIsMainDivVisible}
             />
           </TabsContent>
           <TabsContent value="negativepg">
@@ -239,19 +235,6 @@ const CreateReviewLink: React.FC = () => {
             <ThankYouTabs />
           </TabsContent>
         </Tabs>
-        {isMainDivVisible && ( // Conditional rendering
-          <div className="mt-14 w-1/2 min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-            <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
-            <p>How was your experience with Silvis?</p>
-            <div className="flex gap-3">
-              <FaRegStar className="text-3xl" />
-              <FaRegStar className="text-3xl" />
-              <FaRegStar className="text-3xl" />
-              <FaRegStar className="text-3xl" />
-              <FaRegStar className="text-3xl" />
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

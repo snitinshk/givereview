@@ -35,7 +35,7 @@ export default function EditableField({
   return (
     <>
       {!isEditing ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-md:flex-wrap">
           {renderValue}
           <Button
             variant="ghost"
@@ -46,7 +46,7 @@ export default function EditableField({
           </Button>
         </div>
       ) : (
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-full max-sm:flex-wrap">
           <Input
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}

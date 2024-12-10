@@ -1,22 +1,58 @@
 import Image from "next/image";
-import GLGIMG from "@/app/images/google.svg";
 import { Button } from "@/components/ui/button";
-import { MdEdit } from "react-icons/md";
 import { Switch } from "@/components/ui/switch";
 import { FaStar } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EditableField from "../editable";
 import { useEffect, useRef, useState } from "react";
-import { UploadIcon } from "lucide-react";
+import { Star, UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import PPIMG from "@/app/images/image_1.png";
+import GLGIMG from "@/app/images/google.svg";
+
+type HoverStates = {
+  [key: string]: number;
+};
+
+
+interface RatingCategory {
+  name: string;
+  dbField: string;
+  enabled: boolean;
+}
+
+interface InputCategory {
+  placeholder: string;
+  dbField: string;
+  type: string;
+  enabled: boolean;
+}
+
+interface TextareaCategory {
+  placeholder: string;
+  dbField: string;
+  enabled: boolean;
+}
 
 const NegativeTabs: React.FC = () => {
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
-  
+
+  const categories = ["Food", "Service", "Atmosphere", "Noise", "Price", "Cleanliness", "WaitTime"];
+
+  const [hoverStates, setHoverStates] = useState<HoverStates>({});
+
+  const handleMouseEnter = (category: string, star: number) => {
+    setHoverStates((prev) => ({ ...prev, [category]: star }));
+  };
+
+  const handleMouseLeave = (category: string) => {
+    setHoverStates((prev) => ({ ...prev, [category]: 0 }));
+  };
+
   const { toast } = useToast();
   const [ratingCategories, setRatingCategories] = useState(
     reviewLinkNegative?.ratingCategories
@@ -147,7 +183,7 @@ const NegativeTabs: React.FC = () => {
   };
 
   const handleUpdateReviewLink = async (updateInfo: any) => {
-    
+
     // do nothing for add case;
     if (!reviewLinkNegative?.negativeRLId) {
       return;
@@ -170,164 +206,228 @@ const NegativeTabs: React.FC = () => {
     }
   };
 
+
+  const enabledRatingCategories = ratingCategories.filter(
+    (category: { enabled: any; }) => category.enabled
+  );
+
+  const enabledInputCategories = inputCategories.filter(
+    (input: { enabled: any; }) => input.enabled
+  );
+
+  const enabledTextareaCategories = textareaCategories.filter(
+    (textarea: { enabled: any; }) => textarea.enabled
+  );
+
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center w-80 max-w-full gap-3">
-        <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
-          <Image
-            src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
-            alt="New channel logo"
-            width={40}
-            height={40}
-            className="rounded-sm"
-          />
-        </div>
-        <div className="flex gap-3 items-center">
-          {isEditing && (
+    <div className="flex flex-wrap gap-8">
+      <div className="flex flex-col gap-5 w-full md:w-1/2">
+        {/* Channel Logo Section */}
+        <div className="flex items-center w-full sm:w-80 max-w-full gap-3">
+          <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
+            <Image
+              src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
+              alt="New channel logo"
+              width={40}
+              height={40}
+              className="rounded-sm"
+            />
+          </div>
+          <div className="flex gap-3 items-center">
+            {isEditing && (
+              <Button
+                variant="outline"
+                className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <UploadIcon className="h-4 w-4" />
+                <span className="sr-only">Upload logo</span>
+              </Button>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleNewLogoUpload}
+              className="hidden"
+              accept="image/*"
+            />
+          </div>
+          {!isEditing && (
             <Button
-              variant="outline"
-              className="bg-gray-100 w-14 h-14 border border-dashed border-gray-300"
-              onClick={() => fileInputRef.current?.click()}
+              variant="ghost"
+              className="text-green-600 font-semibold"
+              onClick={handleEditClick}
             >
-              <UploadIcon className="h-4 w-4" />
-              <span className="sr-only">Upload logo</span>
+              Edit
             </Button>
           )}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleNewLogoUpload}
-            className="hidden"
-            accept="image/*"
+          <Switch
+            checked={defaultChannel?.enabled}
+            onCheckedChange={async () => {
+              setReviewLinkNegative((prevState: any) => ({
+                ...prevState,
+                defaultChannel: {
+                  ...prevState.defaultChannel,
+                  enabled: !defaultChannel.enabled,
+                },
+              }));
+              handleUpdateReviewLink({
+                channel_logo: {
+                  ...defaultChannel,
+                  enabled: !defaultChannel.enabled,
+                },
+              });
+            }}
+            id="lgshow"
           />
         </div>
-        {!isEditing && (
-          <Button
-            variant="ghost"
-            className="text-green-600 font-semibold"
-            onClick={handleEditClick}
-          >
-            Edit
-          </Button>
-        )}
-        <Switch
-          checked={defaultChannel?.enabled}
-          onCheckedChange={async () => {
-            setReviewLinkNegative((prevState: any) => ({
-              ...prevState,
-              defaultChannel: {
-                ...prevState.defaultChannel,
-                enabled: !defaultChannel.enabled,
-              },
-            }));
-            handleUpdateReviewLink({
-              channel_logo: {
-                ...defaultChannel,
-                enabled: !defaultChannel.enabled,
-              },
-            });
-          }}
-          id="lgshow"
-        />
-      </div>
 
-      <div className="flex flex-col gap-5 max-w-xl">
-        <div className="flex items-center max-w-full gap-2">
-          <div
-            className={`flex items-center gap-2 ${
-              isEditingPageTitle ? "flex-grow" : ""
-            }`}
-          >
-            {renderEditableField(
-              isEditingPageTitle,
-              title?.title,
-              () => setIsEditingPageTitle(true),
-              (newValue) => {
+        {/* Title and Description Section */}
+        <div className="flex flex-col gap-5 max-w-full sm:max-w-xl">
+          <div className="flex items-center w-full gap-2">
+            <div className={`flex items-center gap-2 ${isEditingPageTitle ? "flex-grow" : ""}`}>
+              {renderEditableField(
+                isEditingPageTitle,
+                title?.title,
+                () => setIsEditingPageTitle(true),
+                (newValue) => {
+                  setReviewLinkNegative((prevState: any) => ({
+                    ...prevState,
+                    title: {
+                      ...prevState.title,
+                      title: newValue,
+                    },
+                  }));
+                  handleUpdateReviewLink({
+                    negative_page_title: {
+                      ...title,
+                      title: newValue,
+                    },
+                  });
+
+                  setIsEditingPageTitle(false);
+                },
+                () => setIsEditingPageTitle(false)
+              )}
+            </div>
+            <Switch
+              id="apshow"
+              checked={title?.enabled}
+              onCheckedChange={() => {
                 setReviewLinkNegative((prevState: any) => ({
                   ...prevState,
                   title: {
                     ...prevState.title,
-                    title: newValue,
+                    enabled: !title?.enabled,
                   },
                 }));
+
                 handleUpdateReviewLink({
                   negative_page_title: {
                     ...title,
-                    title: newValue,
+                    enabled: !title?.enabled,
                   },
                 });
+              }}
+            />
+          </div>
 
-                setIsEditingPageTitle(false);
+          <div className="flex items-start mb-20">
+            {renderEditableField(
+              isEditingDesc,
+              reviewDesc,
+              () => setIsEditingDesc(true),
+              (newValue) => {
+                setReviewLinkNegative((prevState: any) => ({
+                  ...prevState,
+                  negativePageDescription: newValue,
+                }));
+                handleUpdateReviewLink({
+                  reviewDesc: newValue,
+                });
+                setIsEditingDesc(false);
               },
-              () => setIsEditingPageTitle(false)
+              () => setIsEditingDesc(false)
             )}
           </div>
-          <Switch
-            id="apshow"
-            checked={title?.enabled}
-            onCheckedChange={() => {
-              setReviewLinkNegative((prevState: any) => ({
-                ...prevState,
-                title: {
-                  ...prevState.title,
-                  enabled: !title?.enabled,
-                },
-              }));
-
-              handleUpdateReviewLink({
-                negative_page_title: {
-                  ...title,
-                  enabled: !title?.enabled,
-                },
-              });
-            }}
-          />
         </div>
 
-        <div className="flex items-start mb-20">
-          {renderEditableField(
-            isEditingDesc,
-            reviewDesc,
-            () => setIsEditingDesc(true),
-            (newValue) => {
-              setReviewLinkNegative((prevState: any) => ({
-                ...prevState,
-                negativePageDescription: newValue,
-              }));
-              handleUpdateReviewLink({
-                reviewDesc: newValue,
-              });
-              setIsEditingDesc(false);
-            },
-            () => setIsEditingDesc(false)
+        {/* Rating Categories Section */}
+        <div className="flex flex-col gap-5 mb-16">
+          {ratingCategories?.map(
+            (category: { name: string; dbField: string; enabled: boolean }, index: number) => (
+              <div className="flex gap-8 items-center" key={index}>
+                <p className="w-28">{category?.name}</p>
+                <div className="flex gap-2 text-gray-300">
+                  {Array(5)
+                    .fill(null)
+                    .map((_, starIndex) => (
+                      <FaStar className="text-3xl" key={starIndex} />
+                    ))}
+                </div>
+                <Switch
+                  checked={category?.enabled}
+                  onCheckedChange={() => {
+                    updateRatingCategories(category?.name, !category?.enabled);
+                    handleUpdateReviewLink({
+                      [category.dbField]: !category?.enabled,
+                    });
+                  }}
+                  id={`${category?.name?.toLowerCase()}-switch`}
+                  className="m-0"
+                />
+              </div>
+            )
           )}
         </div>
-      </div>
 
-      <div className="flex flex-col gap-5 mb-16">
-        {ratingCategories?.map(
-          (
-            category: { name: string; dbField: string; enabled: boolean },
-            index: number
-          ) => (
-            <div className="flex gap-8 items-center" key={index}>
-              <p className="w-28">{category?.name}</p>
-              <div className="flex gap-2 text-gray-300">
-                {Array(5)
-                  .fill(null)
-                  .map((_, starIndex) => (
-                    <FaStar className="text-3xl" key={starIndex} />
-                  ))}
-              </div>
+        {/* Input Categories Section */}
+        {inputCategories?.map(
+          (input: { placeholder: string; dbField: string; type: string; enabled: boolean }, index: number) => (
+            <div className="flex items-center gap-4" key={index}>
+              <Input
+                disabled={true}
+                type={input?.type}
+                placeholder={input?.placeholder}
+                className="h-12 shadow-none max-w-xs sm:max-w-md"
+              />
               <Switch
-                checked={category?.enabled}
+                checked={input?.enabled}
                 onCheckedChange={() => {
-                  updateRatingCategories(category?.name, !category?.enabled);
+                  updateInputCategories(input?.placeholder, !input?.enabled);
                   handleUpdateReviewLink({
-                    [category.dbField]: !category?.enabled,
+                    [input.dbField]: !input?.enabled,
                   });
                 }}
-                id={`${category?.name?.toLowerCase()}-switch`}
+                id={`${input?.placeholder
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}-switch`}
+                className="m-0"
+              />
+            </div>
+          )
+        )}
+
+        {/* Textarea Categories Section */}
+        {textareaCategories?.map(
+          (textarea: { placeholder: string; dbField: string; enabled: boolean }, index: number) => (
+            <div className="flex items-center gap-4" key={index}>
+              <Textarea
+                disabled={true}
+                placeholder={textarea.placeholder}
+                className="max-w-md h-20 resize-none"
+              />
+              <Switch
+                checked={textarea?.enabled}
+                onCheckedChange={() => {
+                  updateTextareaCategories(textarea?.placeholder, !textarea?.enabled);
+                  handleUpdateReviewLink({
+                    [textarea.dbField]: !textarea?.enabled,
+                  });
+                }}
+                id={`${textarea.placeholder
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}-switch`}
                 className="m-0"
               />
             </div>
@@ -335,70 +435,75 @@ const NegativeTabs: React.FC = () => {
         )}
       </div>
 
-      {inputCategories?.map(
-        (
-          input: {
-            placeholder: string;
-            dbField: string;
-            type: string;
-            enabled: boolean;
-          },
-          index: number
-        ) => (
-          <div className="flex items-center gap-4" key={index}>
-            <Input
-              disabled={true}
-              type={input?.type}
-              placeholder={input?.placeholder}
-              className="h-12 shadow-none max-w-80"
-            />
-            <Switch
-              checked={input?.enabled}
-              onCheckedChange={() => {
-                updateInputCategories(input?.placeholder, !input?.enabled);
-                handleUpdateReviewLink({
-                  [input.dbField]: !input?.enabled,
-                });
-              }}
-              id={`${input?.placeholder
-                .toLowerCase()
-                .replace(/\s+/g, "-")}-switch`}
-              className="m-0"
-            />
-          </div>
-        )
-      )}
+      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10">
+        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+        <p className="max-w-96 text-center mx-auto">{reviewDesc}</p>
 
-      {textareaCategories?.map(
-        (
-          textarea: { placeholder: string; dbField: string; enabled: boolean },
-          index: number
-        ) => (
-          <div className="flex items-center gap-4" key={index}>
-            <Textarea
-              disabled={true}
-              placeholder={textarea.placeholder}
-              className="max-w-md h-20 resize-none"
+        <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40">
+          {defaultChannel?.enabled &&
+            <Image
+              src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
+              alt="Google"
+              width={20}
+              height={20}
+              className="w-5 h-5"
             />
-            <Switch
-              checked={textarea?.enabled}
-              onCheckedChange={() => {
-                updateTextareaCategories(
-                  textarea?.placeholder,
-                  !textarea?.enabled
-                );
-                handleUpdateReviewLink({
-                  [textarea.dbField]: !textarea?.enabled,
-                });
-              }}
-              id={`${textarea.placeholder
-                .toLowerCase()
-                .replace(/\s+/g, "-")}-switch`}
-              className="m-0"
-            />
+          }
+          {title?.enabled &&
+            <span className="text-sm">
+              {title?.title}
+            </span>
+          }
+        </div>
+        <div className="flex flex-col gap-8 w-96">
+          <div className="space-y-1 max-w-80 w-full">
+            {enabledRatingCategories.map((category: any) => (
+              <div
+                key={category.name}
+                className="flex items-center justify-between py-2 w-full"
+              >
+                <span className="text-base text-gray-700 font-medium">
+                  {category.name}
+                </span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={`${category.name}-${star}`}
+                      className="w-6 h-6 cursor-pointer transition-colors text-gray-300"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        )
-      )}
+
+          <div className="space-y-4 max-w-96 w-full">
+            {enabledInputCategories.map((input: any) => (
+              <div key={input.placeholder}>
+                <Input
+                  placeholder={input.placeholder}
+                  className="border-gray-300 max-w-80 h-12 bg-white"
+                  aria-invalid="false"
+                  disabled={false}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4 max-w-96 w-full">
+            {enabledTextareaCategories.map((textarea: any) => (
+              <div key={textarea.placeholder}>
+                <Textarea
+                  placeholder={textarea.placeholder}
+                  className="min-h-[100px] border-gray-300 resize-none bg-white"
+                  aria-invalid="false"
+                  disabled={false}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

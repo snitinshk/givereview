@@ -9,6 +9,7 @@ import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.contex
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import PPIMG from "@/app/images/image_1.png";
 
 const ThankYouTabs: React.FC = () => {
   const { reviewLinkThankyou, setReviewLinkThankyou } = useReviewLinkThankyou();
@@ -101,65 +102,72 @@ const ThankYouTabs: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-3 mb-4">
-        <div className="flex items-center gap-4 font-semibold text-gray-500">
-          {imagePreview && (
-            <Button
-              variant="ghost"
-              className="text-green-600 font-semibold"
-              onClick={() => setImagePreview(null)}
-            >
-              Edit
-            </Button>
+    <div className="flex flex-wrap gap-8">
+      <div className="w-full md:w-1/2">
+        <div className="flex flex-col gap-3 mb-4 w-full">
+          <div className="flex items-center gap-4 font-semibold text-gray-500">
+            {imagePreview && (
+              <Button
+                variant="ghost"
+                className="text-green-600 font-semibold"
+                onClick={() => setImagePreview(null)}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+          {imagePreview ? (
+            <div className="relative w-full sm:w-96 h-36 max-w-full">
+              <Image
+                src={imagePreview}
+                alt="Preview"
+                width={100}
+                height={100}
+                objectFit="cover"
+                className="rounded-2xl"
+              />
+            </div>
+          ) : (
+            <div className="grid w-full sm:w-96 max-w-sm items-center gap-1.5">
+              <Input
+                id="image-upload"
+                type="file"
+                className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
+                onChange={handleImageUpload}
+              />
+              <Label
+                htmlFor="image-upload"
+                className="flex flex-col gap-1 rounded-2xl text-gray-500 text-center items-center justify-center border-dashed border border-gray-200 bg-gray-100 w-full sm:w-96 h-28 max-w-full"
+              >
+                <FaCloudUploadAlt className="text-4xl" />
+                Upload file
+              </Label>
+            </div>
           )}
         </div>
-        {imagePreview ? (
-          <div className="relative w-96 h-36">
-            <Image
-              src={imagePreview}
-              alt="Preview"
-              width={100}
-              height={100}
-              objectFit="cover"
-              className="rounded-2xl"
-            />
-          </div>
-        ) : (
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Input
-              id="image-upload"
-              type="file"
-              className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
-              onChange={handleImageUpload}
-            />
-            <Label
-              htmlFor="image-upload"
-              className="flex flex-col gap-1 rounded-2xl text-gray-500 text-center items-center justify-center border-dashed border border-gray-200 bg-gray-100 w-96 h-28"
-            >
-              <FaCloudUploadAlt className="text-4xl" />
-              Upload file
-            </Label>
-          </div>
-        )}
+
+        <div className="flex items-center gap-4">
+          <EditableField
+            isEditing={isEditingReview}
+            value={reviewLinkThankyouTitle}
+            onEdit={() => setIsEditingReview(true)}
+            onSave={(newValue) => {
+              handleUpdateReviewLinkThankyou({
+                review_thankyou_title: newValue,
+              });
+              setReviewLinkThankyouTitle(newValue);
+              setIsEditingReview(false);
+            }}
+            onCancel={() => setIsEditingReview(false)}
+            renderValue={<span>{reviewLinkThankyouTitle}</span>}
+          />
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <EditableField
-          isEditing={isEditingReview}
-          value={reviewLinkThankyouTitle}
-          onEdit={() => setIsEditingReview(true)}
-          onSave={(newValue) => {
-            handleUpdateReviewLinkThankyou({
-              review_thankyou_title: newValue,
-            });
-            setReviewLinkThankyouTitle(newValue);
-            setIsEditingReview(false);
-          }}
-          onCancel={() => setIsEditingReview(false)}
-          renderValue={<span>{reviewLinkThankyouTitle}</span>}
-        />
+      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+        <p className="max-w-96 text-center mx-auto">{reviewLinkThankyouTitle}</p>
       </div>
-    </>
+    </div>
   );
 };
 

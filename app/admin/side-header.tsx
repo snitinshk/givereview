@@ -71,6 +71,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { slug } = useParams();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isLoading } = useLoader();
 
   // useEffect(() => {
@@ -119,31 +120,59 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const dynamicMenu = slug
     ? {
-        name: capitalizeFirstLetter(slug as string),
-        path: `/admin/clients/${slug}/review-link`,
-        icon: <IconWrapper src={USERICON} alt="Clients Icon" />,
-        submenu: [
-          { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
-          { name: "Widget", path: `/admin/clients/${slug}/widget` },
-          { name: "Settings", path: `/admin/clients/${slug}/settings` },
-        ],
-      }
+      name: capitalizeFirstLetter(slug as string),
+      path: `/admin/clients/${slug}/review-link`,
+      icon: <IconWrapper src={USERICON} alt="Clients Icon" />,
+      submenu: [
+        { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
+        { name: "Widget", path: `/admin/clients/${slug}/widget` },
+        { name: "Settings", path: `/admin/clients/${slug}/settings` },
+      ],
+    }
     : null;
 
   const finalMenuItems: MenuItem[] = slug
     ? (() => {
-        const updatedMenuItems = [...menuItems]; // Create a copy of menuItems
-        if (dynamicMenu) {
-          updatedMenuItems.splice(1, 0, dynamicMenu); // Insert dynamicMenu at the second index
-        }
-        return updatedMenuItems;
-      })()
+      const updatedMenuItems = [...menuItems]; // Create a copy of menuItems
+      if (dynamicMenu) {
+        updatedMenuItems.splice(1, 0, dynamicMenu); // Insert dynamicMenu at the second index
+      }
+      return updatedMenuItems;
+    })()
     : menuItems;
 
-  return (
-    <div className="flex min-h-screen bg-white flex-wrap">
 
-      <aside className="w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2">
+  return (
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white flex-wrap">
+      {/* Mobile Hamburger Menu */}
+      <div className="flex lg:hidden justify-between items-center p-4 bg-white shadow-md">
+        <Image src={Logo} alt="Logo" priority />
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-gray-600 focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5m-16.5 5.25h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <aside
+        className={`w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 fixed lg:static h-full lg:h-auto transition-transform duration-300 z-50`}
+      >
         <div className="flex justify-center mb-10">
           <Image src={Logo} alt="Logo" priority />
         </div>
@@ -216,11 +245,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </Button>
       </aside>
 
-      <main className="w-[calc(100%-256px)] p-8 relative">
+      {/* Main Content */}
+      <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen relative">
         <Breadcrumb />
         {isLoading && <Loading />}
         <div className="mt-5">{children}</div>
       </main>
     </div>
+
   );
 }

@@ -106,7 +106,7 @@ export default function ChannelsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 pr-8 md:pr-16 lg:pr-24">
+    <div className="container mx-auto py-8 pr-8 md:pr-16 lg:pr-24 max-sm:pr-0">
       <h1 className="text-3xl font-bold mb-6">Channels</h1>
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">

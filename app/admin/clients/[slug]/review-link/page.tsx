@@ -226,7 +226,8 @@ const ReviewLink: React.FC = (params) => {
     <>
       <Button
         onClick={handleCreateLink}
-        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto table font-bold mb-8 -mt-12"
+        // href={`/admin/clients/${slug}/review-link/manage`}
+        className="bg-[#00AB55] text-white text-sm px-4 rounded-lg hover:bg-gray-800 py-2 ml-auto block font-bold mb-8 -mt-12 max-sm:mt-0"
       >
         Create Link
       </Button>
@@ -235,9 +236,9 @@ const ReviewLink: React.FC = (params) => {
         {reviewLinks.map((reviewLink: any) => (
           <div
             key={reviewLink.id}
-            className="flex items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
+            className="flex flex-col lg:flex-row items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
           >
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 mb-4 lg:mb-0 max-sm:w-full">
               {reviewLink?.positive_review_link_details.map(
                 (item: any, index: number) => (
                   <Image
@@ -250,11 +251,12 @@ const ReviewLink: React.FC = (params) => {
                   />
                 )
               )}
-              <p className="text-ftClor text-sm font-semibold mt-2">
+              <p className="text-ftClor text-sm font-semibold mt-2 lg:mt-0 max-sm:flex-grow">
                 {reviewLink?.review_link_name}
               </p>
             </div>
-            <div className="flex items-center space-x-6 mt-2">
+
+            <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
               <Link
                 href={
                   DEFAULT_TEXTS.reviewSiteBaseUrl + reviewLink?.review_link_slug
@@ -267,7 +269,7 @@ const ReviewLink: React.FC = (params) => {
               <Badge
                 className={`${getStatusColor(
                   reviewLink.is_active ? "Active" : "Inactive"
-                )} !bottom-0 !shadow-none pointer-events-none justify-center px-4 min-w-24  h-7`}
+                )} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
               >
                 {reviewLink?.is_active === true ? "Active" : "Inactive"}
               </Badge>

@@ -101,7 +101,7 @@ export default function AddNewChannel({
   };
 
   return (
-    <div className="flex w-[calc(50%-10px)] max-w-full items-center space-x-4">
+    <div className="flex w-[calc(50%-10px)] max-w-full items-center space-x-4 max-sm:space-x-0 max-sm:flex-wrap max-sm:gap-2 max-sm:w-full">
       {/* Logo Preview */}
       <div className="w-14 h-14 bg-gray-100 flex items-center justify-center rounded-md p-1">
         <Image
@@ -124,7 +124,7 @@ export default function AddNewChannel({
       </Button>
 
       {/* Input Fields */}
-      <div className="flex-grow flex items-center space-x-2">
+      <div className="flex-grow flex items-center space-x-2 max-sm:w-full max-sm:space-x-0 max-sm:!ml-0 max-sm:order-3">
         <Input
           value={newChannelName}
           onChange={(e) => setNewChannelName(e.target.value)}
@@ -141,14 +141,14 @@ export default function AddNewChannel({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 max-sm:order-2 max-sm:!ml-auto">
         <Button
           disabled={!newChannelName || !channelFile}
           variant="ghost"
           className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold"
           onClick={handleCreateChannel}
         >
-          <CheckIcon className="h-4 w-4" /> Save
+          <CheckIcon className="h-4 w-4" /> <span className="max-sm:hidden">Save</span>
           <span className="sr-only">Save new channel</span>
         </Button>
         <Button
@@ -156,7 +156,7 @@ export default function AddNewChannel({
           className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"
           onClick={() => setIsAdding(false)}
         >
-          <XIcon className="h-4 w-4" /> Cancel
+          <XIcon className="h-4 w-4" /> <span className="max-sm:hidden">Cancel</span>
           <span className="sr-only">Cancel adding new channel</span>
         </Button>
       </div>
