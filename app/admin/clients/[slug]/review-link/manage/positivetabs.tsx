@@ -15,8 +15,12 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
-import PPIMG from "@/app/images/image_1.png";
-import { mapPositivePageDBFormat, mapPositivePageUIFormat } from "@/mappers/index-mapper";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
+import { useSelectedClient } from "@/app/context/selected-client-context";
+import {
+  mapPositivePageDBFormat,
+  mapPositivePageUIFormat,
+} from "@/mappers/index-mapper";
 
 export interface SelectedChannel {
   id: number;
@@ -30,11 +34,9 @@ interface PositiveTabsProps {
   channels: Channel[];
 }
 
-const PositiveTabs: React.FC<PositiveTabsProps> = ({
-  channels,
-}) => {
+const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
-
+  const { selectedClient } = useSelectedClient();
   const { reviewLinkSettings } = useReviewLinkSettings();
 
   const { toast } = useToast();
@@ -60,7 +62,7 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
       title,
       selectedChannels,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, selectedChannels]);
 
   const handleEdit = (id: number, currentLink: string) => {
@@ -69,7 +71,6 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
   };
 
   const handleSave = async (id: number) => {
-    
     const updatedLink = channelLinks[id];
     const updatedChannels = selectedChannels.map((ch) =>
       ch.id === id ? { ...ch, link: updatedLink } : ch
@@ -148,9 +149,9 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
         const response = await saveReviewLinkPositivePage(
           mapPositivePageDBFormat(channelsWithReviewId)
         );
-        const { error: addPositiveRlErr, data: positiveRLdata } = JSON.parse(response);
+        const { error: addPositiveRlErr, data: positiveRLdata } =
+          JSON.parse(response);
         if (!addPositiveRlErr) {
-
           setSelectedChannels(mapPositivePageUIFormat(positiveRLdata));
           toast({ description: "Channels updated" });
           return;
@@ -173,7 +174,6 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
       toast({ description: "Field updated" });
     }
   };
-
 
   const handleLinkChange = (id: number, value: string) => {
     setChannelLinks((prev) => ({ ...prev, [id]: value }));
@@ -320,9 +320,16 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({
         </div>
       )}
 
+      {/* Preview Section */}
+
       {isMainDivVisible && (
         <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-          <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+          <Image
+            src={selectedClient?.logo || PlaceholderImage}
+            alt={`Preview Image`}
+            width={145}
+            height={145}
+          />
           <p className="max-w-96 text-center mx-auto">{title}</p>
           <div className="space-y-4 max-w-72 mx-auto w-full">
             {selectedChannels.map((channel) => (

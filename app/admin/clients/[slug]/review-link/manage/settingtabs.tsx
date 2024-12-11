@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useParams } from "next/navigation";
 import PPIMG from "@/app/images/image_1.png";
 import { Heart, Star } from "lucide-react";
@@ -25,6 +26,7 @@ import { useReviewLinkSettings } from "@/app/context/review-link-settings.contex
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import { useSelectedClient } from "@/app/context/selected-client-context";
 
 interface Settings {
   reviewLinkName: string;
@@ -38,7 +40,7 @@ interface Settings {
 
 export default function SettingTabs() {
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
-
+  const { selectedClient } = useSelectedClient();
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );
@@ -84,7 +86,6 @@ export default function SettingTabs() {
     const file = e.target.files?.[0];
 
     if (file) {
-
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -195,7 +196,7 @@ export default function SettingTabs() {
     isSkipFirstPageEnabled,
     ratingThresholdCount,
     isActive,
-    imagePreview
+    imagePreview,
   ]);
 
   // useEffect(() => {
@@ -416,7 +417,6 @@ export default function SettingTabs() {
               />
             </div>
           </div>
-
         </div>
 
         {/* Image Upload */}
@@ -466,24 +466,25 @@ export default function SettingTabs() {
         </div>
       </div>
 
-      {/* Right Section */}
+      {/* Preview Section */}
       <div className=" relative w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+        <Image src={selectedClient?.logo || PlaceholderImage} alt={`Preview Image`} width={145} height={145} />
         <p className="max-w-96 text-center mx-auto">{title}</p>
         <div className="flex gap-3">
           {Array.from({ length: 5 }, (_, index) => (
             <Star
               key={index}
-              className={`text-3xl ${index < ratingThresholdCount ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                }`}
+              className={`text-3xl text-gray-300`}
             />
           ))}
         </div>
-        {isPoweredByEnabled &&
-          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2"><span className="font-medium">Powered</span> with <Heart className="text-red-600" /> by place booster</div>
-        }
+        {isPoweredByEnabled && (
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="text-red-600" /> by place booster
+          </div>
+        )}
       </div>
     </div>
-
   );
 }

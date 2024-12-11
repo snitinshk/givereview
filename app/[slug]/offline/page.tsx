@@ -39,7 +39,7 @@ export default async function OfflinePage({
       <div className="hidden h-screen md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={800}
           height={1000}
           className="object-cover w-full h-full"

@@ -341,7 +341,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
       <div className="hidden h-screen sticky top-0 md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={800}
           height={1000}
           className="object-cover w-full h-full"

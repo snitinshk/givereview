@@ -45,9 +45,7 @@ export default function Home({
           {/* Rating Section */}
           <div className="space-y-7 text-center">
             <h1 className="text-3xl font-semibold text-gray-800 font-MOSTR">
-              How was your
-              <br />
-              experience with Silvis ?
+              {reviewLink?.review_link_home_title}
             </h1>
 
             {/* Star Rating */}
@@ -80,7 +78,7 @@ export default function Home({
       <div className="hidden h-screen md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={700}
           height={800}
           className="object-cover w-full h-full"

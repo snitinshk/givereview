@@ -41,7 +41,7 @@ export default async function ThankYouPage({
             thankyou_review_link_details?.review_thankyou_bg_image ||
             reviewLink?.desktop_bg_image
           }
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={800}
           height={1000}
           className="object-cover w-full h-full"

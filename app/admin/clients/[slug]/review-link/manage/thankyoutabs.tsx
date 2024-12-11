@@ -9,9 +9,11 @@ import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.contex
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import PPIMG from "@/app/images/image_1.png";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
+import { useSelectedClient } from "@/app/context/selected-client-context";
 
 const ThankYouTabs: React.FC = () => {
+  const { selectedClient } = useSelectedClient();
   const { reviewLinkThankyou, setReviewLinkThankyou } = useReviewLinkThankyou();
   const { toast } = useToast();
 
@@ -163,9 +165,17 @@ const ThankYouTabs: React.FC = () => {
           />
         </div>
       </div>
+      {/* Preview Section */}
       <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
-        <p className="max-w-96 text-center mx-auto">{reviewLinkThankyouTitle}</p>
+        <Image
+          src={selectedClient?.logo || PlaceholderImage}
+          alt={`Preview Image`}
+          width={145}
+          height={145}
+        />
+        <p className="max-w-96 text-center mx-auto">
+          {reviewLinkThankyouTitle}
+        </p>
       </div>
     </div>
   );

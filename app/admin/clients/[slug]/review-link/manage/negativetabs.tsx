@@ -11,13 +11,12 @@ import { useReviewLinkNegative } from "@/app/context/review-link-negative.contex
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import PPIMG from "@/app/images/image_1.png";
-import GLGIMG from "@/app/images/google.svg";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
+import { useSelectedClient } from "@/app/context/selected-client-context";
 
 type HoverStates = {
   [key: string]: number;
 };
-
 
 interface RatingCategory {
   name: string;
@@ -40,8 +39,16 @@ interface TextareaCategory {
 
 const NegativeTabs: React.FC = () => {
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
-
-  const categories = ["Food", "Service", "Atmosphere", "Noise", "Price", "Cleanliness", "WaitTime"];
+  const { selectedClient } = useSelectedClient();
+  const categories = [
+    "Food",
+    "Service",
+    "Atmosphere",
+    "Noise",
+    "Price",
+    "Cleanliness",
+    "WaitTime",
+  ];
 
   const [hoverStates, setHoverStates] = useState<HoverStates>({});
 
@@ -183,7 +190,6 @@ const NegativeTabs: React.FC = () => {
   };
 
   const handleUpdateReviewLink = async (updateInfo: any) => {
-
     // do nothing for add case;
     if (!reviewLinkNegative?.negativeRLId) {
       return;
@@ -198,7 +204,7 @@ const NegativeTabs: React.FC = () => {
       }
     );
     const { error } = JSON.parse(response);
-    
+
     if (!error) {
       toast({
         description: "Field updated",
@@ -206,17 +212,16 @@ const NegativeTabs: React.FC = () => {
     }
   };
 
-
   const enabledRatingCategories = ratingCategories.filter(
-    (category: { enabled: any; }) => category.enabled
+    (category: { enabled: any }) => category.enabled
   );
 
   const enabledInputCategories = inputCategories.filter(
-    (input: { enabled: any; }) => input.enabled
+    (input: { enabled: any }) => input.enabled
   );
 
   const enabledTextareaCategories = textareaCategories.filter(
-    (textarea: { enabled: any; }) => textarea.enabled
+    (textarea: { enabled: any }) => textarea.enabled
   );
 
   return (
@@ -285,7 +290,11 @@ const NegativeTabs: React.FC = () => {
         {/* Title and Description Section */}
         <div className="flex flex-col gap-5 max-w-full sm:max-w-xl">
           <div className="flex items-center w-full gap-2">
-            <div className={`flex items-center gap-2 ${isEditingPageTitle ? "flex-grow" : ""}`}>
+            <div
+              className={`flex items-center gap-2 ${
+                isEditingPageTitle ? "flex-grow" : ""
+              }`}
+            >
               {renderEditableField(
                 isEditingPageTitle,
                 title?.title,
@@ -355,7 +364,10 @@ const NegativeTabs: React.FC = () => {
         {/* Rating Categories Section */}
         <div className="flex flex-col gap-5 mb-16">
           {ratingCategories?.map(
-            (category: { name: string; dbField: string; enabled: boolean }, index: number) => (
+            (
+              category: { name: string; dbField: string; enabled: boolean },
+              index: number
+            ) => (
               <div className="flex gap-8 items-center" key={index}>
                 <p className="w-28">{category?.name}</p>
                 <div className="flex gap-2 text-gray-300">
@@ -383,7 +395,15 @@ const NegativeTabs: React.FC = () => {
 
         {/* Input Categories Section */}
         {inputCategories?.map(
-          (input: { placeholder: string; dbField: string; type: string; enabled: boolean }, index: number) => (
+          (
+            input: {
+              placeholder: string;
+              dbField: string;
+              type: string;
+              enabled: boolean;
+            },
+            index: number
+          ) => (
             <div className="flex items-center gap-4" key={index}>
               <Input
                 disabled={true}
@@ -410,7 +430,14 @@ const NegativeTabs: React.FC = () => {
 
         {/* Textarea Categories Section */}
         {textareaCategories?.map(
-          (textarea: { placeholder: string; dbField: string; enabled: boolean }, index: number) => (
+          (
+            textarea: {
+              placeholder: string;
+              dbField: string;
+              enabled: boolean;
+            },
+            index: number
+          ) => (
             <div className="flex items-center gap-4" key={index}>
               <Textarea
                 disabled={true}
@@ -420,7 +447,10 @@ const NegativeTabs: React.FC = () => {
               <Switch
                 checked={textarea?.enabled}
                 onCheckedChange={() => {
-                  updateTextareaCategories(textarea?.placeholder, !textarea?.enabled);
+                  updateTextareaCategories(
+                    textarea?.placeholder,
+                    !textarea?.enabled
+                  );
                   handleUpdateReviewLink({
                     [textarea.dbField]: !textarea?.enabled,
                   });
@@ -435,12 +465,19 @@ const NegativeTabs: React.FC = () => {
         )}
       </div>
 
+      {/* Preview Section */}
+
       <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10">
-        <Image src={PPIMG} alt={`Priview Image`} width={145} height={145} />
+        <Image
+          src={selectedClient?.logo || PlaceholderImage}
+          alt={`Preview Image`}
+          width={145}
+          height={145}
+        />
         <p className="max-w-96 text-center mx-auto">{reviewDesc}</p>
 
         <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40">
-          {defaultChannel?.enabled &&
+          {defaultChannel?.enabled && (
             <Image
               src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
               alt="Google"
@@ -448,12 +485,8 @@ const NegativeTabs: React.FC = () => {
               height={20}
               className="w-5 h-5"
             />
-          }
-          {title?.enabled &&
-            <span className="text-sm">
-              {title?.title}
-            </span>
-          }
+          )}
+          {title?.enabled && <span className="text-sm">{title?.title}</span>}
         </div>
         <div className="flex flex-col gap-8 w-96">
           <div className="space-y-1 max-w-80 w-full">
@@ -484,7 +517,7 @@ const NegativeTabs: React.FC = () => {
                   placeholder={input.placeholder}
                   className="border-gray-300 max-w-80 h-12 bg-white"
                   aria-invalid="false"
-                  disabled={false}
+                  disabled={true}
                 />
               </div>
             ))}
@@ -497,7 +530,7 @@ const NegativeTabs: React.FC = () => {
                   placeholder={textarea.placeholder}
                   className="min-h-[100px] border-gray-300 resize-none bg-white"
                   aria-invalid="false"
-                  disabled={false}
+                  disabled={true}
                 />
               </div>
             ))}

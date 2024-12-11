@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -16,13 +16,21 @@ import { useToast } from "@/hooks/use-toast";
 import { ReviewDetailDB, TransformedReview } from "@/interfaces/i-reviews";
 import { mapReviews } from "@/mappers/reviews-mapper";
 import { useClients } from "@/app/context/clients-context";
+import { useLoader } from "@/app/context/loader.context";
+import { getReviewLinkSettings } from "./action";
+
+type SelectItem = {
+  id: string | number; // Replace with the actual type of your IDs
+  name: string;
+};
 
 const ReviewPage: React.FC = () => {
   const [reviews, setReviews] = useState<TransformedReview[]>([]);
+  const [reviewLinks, setReviewLinks] = useState([]);
+  const { setIsLoading } = useLoader();
   const { toast } = useToast();
   const { clients } = useClients();
 
-  // Fetch reviews using SWR
   const { data: negativeReviewsList, error } = useSWR<ReviewDetailDB[]>(
     "/api/admin/reviews",
     fetcher
@@ -34,6 +42,7 @@ const ReviewPage: React.FC = () => {
       const mappedReviews = mapReviews(negativeReviewsList);
       setReviews(mappedReviews);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [negativeReviewsList]);
 
   // Handle errors
@@ -43,34 +52,87 @@ const ReviewPage: React.FC = () => {
     }
   }, [error, toast]);
 
-  const [filteredClient, setFilteredClient] = useState<string>("All");
+  const [filteredClient, setFilteredClient] = useState<number | string>("All");
+  const [filteredReviewsByRL, setFilteredReviewsByRL] = useState<
+    number | string
+  >("All");
+
+  const fetchReviewLinks = useCallback(async () => {
+    if (filteredClient !== "All") {
+      try {
+        setIsLoading(true);
+        const response = await getReviewLinkSettings(Number(filteredClient));
+        setIsLoading(false);
+        const { data: reviewLinks, error } = JSON.parse(response);
+        if (error) {
+          toast({ title: "Error in fetching review links" });
+        } else {
+          setReviewLinks(
+            reviewLinks?.map((reviewLink: any) => ({
+              ...reviewLink,
+              name: reviewLink.review_link_name,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Error fetching review links:", err);
+        toast({ title: "Unexpected error occurred" });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredClient, getReviewLinkSettings]);
+
+  useEffect(() => {
+    fetchReviewLinks();
+  }, [fetchReviewLinks]);
 
   const filteredReviews = reviews?.filter((review) => {
+
     const matchesClient =
-      filteredClient === "All" || review?.client === filteredClient;
-    return matchesClient;
+      filteredClient === "All" || Number(filteredClient) === review?.clientId;
+
+    const matchesReviewsByRL =
+      filteredReviewsByRL === "All" ||
+      Number(filteredReviewsByRL) === review?.reviewLinkId;
+
+    return matchesClient && matchesReviewsByRL;
   });
 
-  // Reusable Select Component
-  const renderSelect = (placeholder: string, items: string[]) => (
-    <div className="w-1/5">
-      <Select
-        onValueChange={(newValue) => {
-          setFilteredClient(newValue);
-        }}
-      >
-        <SelectTrigger className="h-12">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {items.map((item) => (
-            <SelectItem key={item} value={item}>
-              {item}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+  const handleSelectChange = useCallback(
+    (newValue: string, placeholder: string) => {
+      if (placeholder === "Client") {
+        setFilteredClient(newValue);
+      } else if (placeholder === "Review link") {
+        setFilteredReviewsByRL(newValue);
+      }
+    },
+    []
+  );
+
+  const renderSelect = useCallback(
+    (placeholder: string, items: SelectItem[]) => {
+      const onValueChange = (newValue: string) => {
+        handleSelectChange(newValue, placeholder);
+      };
+
+      return (
+        <div className="w-1/5">
+          <Select onValueChange={onValueChange}>
+            <SelectTrigger className="h-12">
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {items.map((item) => (
+                <SelectItem key={item.id} value={item.id.toString() ?? "All"}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    },
+    [handleSelectChange]
   );
 
   return (
@@ -85,12 +147,12 @@ const ReviewPage: React.FC = () => {
         {/* NegativeTbs Content */}
         <TabsContent value="NegativeTbs">
           <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-            {renderSelect("Client", [
-              "All",
-              ...clients?.map((client) => client?.name),
-            ])}
-            {/* {filteredClient !== "All" &&
-              renderSelect("Review link", ["All", "ACTIVE", "INACTIVE"])} */}
+            {renderSelect("Client", [{ id: "All", name: "All" }, ...clients])}
+            {filteredClient !== "All" &&
+              renderSelect("Review link", [
+                { id: "All", name: "All" },
+                ...reviewLinks,
+              ])}
           </div>
           <ReviewTable reviews={filteredReviews} />
         </TabsContent>
@@ -98,7 +160,7 @@ const ReviewPage: React.FC = () => {
         {/* StreamTbs Content */}
         <TabsContent value="StreamTbs">
           <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-            {renderSelect("Stream", ["All", "RESTAURANT", "NIGHTCLUB"])}
+            {/* {renderSelect("Stream", ["All", "RESTAURANT", "NIGHTCLUB"])} */}
           </div>
           <ReviewTable reviews={reviews} showImage showAction />
         </TabsContent>

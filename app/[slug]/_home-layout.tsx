@@ -48,7 +48,7 @@ export default async function HomeLayout({
       <div className="hidden md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={700}
           height={800}
           className="object-cover w-full h-full"

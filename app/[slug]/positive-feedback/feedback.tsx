@@ -2,10 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import Loading from "@/components/loader/loading";
 
 export default function PositiveFeedback({ reviewLink }: any) {
   const { positive_review_link_details: positiveRL, clients: client } =
     reviewLink;
+
+  if (positiveRL?.length === 1) {
+    window.location.href = positiveRL[0]?.channel_review_link;
+    return <Loading />;
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
@@ -26,23 +32,23 @@ export default function PositiveFeedback({ reviewLink }: any) {
           </p>
 
           <div className="space-y-4 max-w-72 mx-auto">
-            {positiveRL?.map((reviewLink: any, index: number) => (
+            {positiveRL?.map((item: any, index: number) => (
               <Button
                 key={index}
                 variant="outline"
                 className="w-full h-12 text-base flex items-center justify-start px-6 gap-2"
                 asChild
               >
-                <Link href={reviewLink?.channel_review_link}>
+                <Link href={item?.channel_review_link}>
                   <Image
-                    src={reviewLink?.channels?.channel_logo_url}
+                    src={item?.channels?.channel_logo_url}
                     alt="Google"
                     width={20}
                     height={20}
                     className="w-5 h-5"
                   />
                   <div className="flex-1 text-center font-MOSTR font-bold text-sm">
-                    {reviewLink?.channels?.channel_name}
+                    {item?.channels?.channel_name}
                   </div>
                 </Link>
               </Button>
@@ -57,11 +63,10 @@ export default function PositiveFeedback({ reviewLink }: any) {
           </div>
         )}
       </div>
-
       <div className="hidden h-screen md:block">
         <Image
           src={reviewLink?.desktop_bg_image}
-          alt="Restaurant Interior"
+          alt="Desktop background"
           width={800}
           height={1000}
           className="object-cover w-full h-full"
