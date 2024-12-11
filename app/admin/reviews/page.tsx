@@ -116,7 +116,7 @@ const ReviewPage: React.FC = () => {
       };
 
       return (
-        <div className="w-1/5">
+        <div className="w-1/5 max-sm:w-full">
           <Select onValueChange={onValueChange}>
             <SelectTrigger className="h-12">
               <SelectValue placeholder={placeholder} />

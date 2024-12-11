@@ -374,7 +374,7 @@ const NegativeTabs: React.FC = () => {
                   {Array(5)
                     .fill(null)
                     .map((_, starIndex) => (
-                      <FaStar className="text-3xl" key={starIndex} />
+                      <FaStar className="text-3xl max-md:text-xl" key={starIndex} />
                     ))}
                 </div>
                 <Switch
@@ -467,7 +467,7 @@ const NegativeTabs: React.FC = () => {
 
       {/* Preview Section */}
 
-      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10">
+      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10 max-md:px-6">
         <Image
           src={selectedClient?.logo || PlaceholderImage}
           alt={`Preview Image`}
@@ -476,7 +476,7 @@ const NegativeTabs: React.FC = () => {
         />
         <p className="max-w-96 text-center mx-auto">{reviewDesc}</p>
 
-        <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40">
+        <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40 max-md:-ml-6">
           {defaultChannel?.enabled && (
             <Image
               src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
@@ -488,7 +488,7 @@ const NegativeTabs: React.FC = () => {
           )}
           {title?.enabled && <span className="text-sm">{title?.title}</span>}
         </div>
-        <div className="flex flex-col gap-8 w-96">
+        <div className="flex flex-col gap-8 w-96 max-md:w-full">
           <div className="space-y-1 max-w-80 w-full">
             {enabledRatingCategories.map((category: any) => (
               <div
