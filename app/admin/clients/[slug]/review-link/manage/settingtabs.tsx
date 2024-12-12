@@ -436,7 +436,7 @@ export default function SettingTabs() {
             )}
           </div>
           {imagePreview ? (
-            <div className="relative w-full max-w-xs h-36">
+            <div className="relative w-full max-w-xs h-36 max-sm:h-auto">
               <Image
                 src={imagePreview}
                 alt="Preview"

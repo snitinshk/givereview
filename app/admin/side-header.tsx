@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, ChevronRight } from "lucide-react";
 import { useParams, useRouter, usePathname } from "next/navigation";
@@ -73,6 +73,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isLoading } = useLoader();
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   // useEffect(() => {
   //   if (slug) fetchData();
@@ -105,6 +106,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleNavigation = (path: string) => {
     setSelectedPath(path);
+    setSidebarOpen(false);
     router.push(path);
   };
 
@@ -140,6 +142,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       return updatedMenuItems;
     })()
     : menuItems;
+
+
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
 
   return (
@@ -182,11 +203,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
-                    selectedPath === item.path
-                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                      : ""
-                  }`}
+                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
+                    ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                    : ""
+                    }`}
                   onClick={() =>
                     item.submenu
                       ? toggleSubmenu(item.path)
@@ -217,11 +237,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <li key={subItem.path}>
                         <Button
                           variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
-                            selectedPath === subItem.path
-                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                              : ""
-                          }`}
+                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
+                            ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                            : ""
+                            }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className="w-1 h-1 bg-gray-500 rounded"></span>
@@ -244,7 +263,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           Logout
         </Button>
       </aside>
-
+      {sidebarOpen &&
+        <div className="fixed left-0 top-0 w-full h-full backdrop-blur-sm z-30 bg-black bg-opacity-20" onClick={() => setSidebarOpen(false)}></div>
+      }
       {/* Main Content */}
       <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen relative">
         <Breadcrumb />
