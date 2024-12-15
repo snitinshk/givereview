@@ -33,14 +33,11 @@ import { useChannels } from "@/app/context/channels-context";
 import { CHANNEL_TYPE } from "@/constant";
 
 const CreateReviewLink: React.FC = () => {
-  const { setIsLoading } = useLoader();
   const { channels } = useChannels();
-  setIsLoading(false);
   const { reviewLinkSettings } = useReviewLinkSettings();
   const { reviewLinkPositive } = useReviewLinkPositive();
   const { reviewLinkNegative } = useReviewLinkNegative();
   const { reviewLinkThankyou } = useReviewLinkThankyou();
-
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();

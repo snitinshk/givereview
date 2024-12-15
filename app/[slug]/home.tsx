@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star } from 'lucide-react';
 import { useState } from "react";
 
 export default function Home({
@@ -14,7 +14,7 @@ export default function Home({
 }: any) {
   const { clients: client } = reviewLink;
 
-  // const [rating, setRating] = useState(averageRating);
+  const [hoveredRating, setHoveredRating] = useState(0);
 
   const handleSelectRating = (star: number) => {
     if (star >= reviewLink?.rating_threshold_count) {
@@ -25,6 +25,14 @@ export default function Home({
       setIsHomeVisible(false);
     }
     setAverageRating(star);
+  };
+
+  const handleMouseEnter = (star: number) => {
+    setHoveredRating(star);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredRating(0);
   };
 
   return (
@@ -51,12 +59,17 @@ export default function Home({
             {/* Star Rating */}
             <div className="flex justify-center items-center gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
-                <div key={star} className="relative">
+                <div 
+                  key={star} 
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter(star)}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <Star
-                    className={`w-12 h-12 cursor-pointer ${
-                      star <= averageRating
+                    className={`w-12 h-12 cursor-pointer transition-colors duration-200 ${
+                      star <= (hoveredRating || averageRating)
                         ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300 stroke-gray-300"
+                        : "text-gray-300 stroke-gray-300 hover:text-yellow-200 hover:fill-yellow-200"
                     }`}
                     onClick={() => handleSelectRating(star)}
                   />
