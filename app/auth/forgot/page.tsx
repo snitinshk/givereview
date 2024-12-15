@@ -21,10 +21,11 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState<string>('')
     const [notifyText, setNotifyText] = useState<NotifyTextObject>()
 
+    console.log(`url from forgot...${process.env.NEXT_PUBLIC_BASE_URL}`)
+
     const handleResetPassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const { error } = await forgotPasswordAction(email);
-
         if (!error) {
             setNotifyText({ isSuccess: true, alertText: 'Please check your email for link to reset your password.' })
         } else {
