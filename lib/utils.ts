@@ -56,3 +56,56 @@ export const isValidUrl = (url: string) => {
     return false;
   }
 }
+
+export const handleImageUpload = async (
+  event: React.ChangeEvent<HTMLInputElement>
+): Promise<{ base64: string | null; file: File | null; error: string | null }> => {
+  const file = event.target.files?.[0];
+
+  if (!file) {
+    return { base64: null, file: null, error: "No file selected" };
+  }
+
+  if (!file.type.startsWith("image/")) {
+    return { base64: null, file: null, error: "Invalid file type, please upload an image" };
+  }
+
+  try {
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject("Error reading file");
+      reader.readAsDataURL(file);
+    });
+
+    return { base64, file, error: null };
+  } catch (err) {
+    return { base64: null, file: null, error: err as string };
+  }
+};
+
+export const uploadFileToSupabase = async (path: string, file: File) => {
+  const uploadPath = `${path}/${getFileName(file as File)}`;
+  const { data: uploadData, error } = await uploadFile(
+    file as File,
+    uploadPath
+  );
+  return { fileUrl: mediaUrl(uploadData?.fullPath as string), error };
+}
+
+
+// if (uploadError) {
+//   toast({
+//     description: `Error in uploading client logo, please try again later`,
+//   });
+//   return;
+// }
+// const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
+// if (clientLogoUrl) {
+//   setSelectedClient((prev: any) => ({
+//     ...prev,
+//     logo: clientLogoUrl,
+//   }));
+// }
+
+// handleUpdateClient({ client_logo: clientLogoUrl });

@@ -1,55 +1,51 @@
-// "use client";
+"use client";
 
-// import { Channel } from "@/interfaces/channels";
-// import { fetcher } from "@/lib/utils";
-// import { mapClients } from "@/mappers";
+import { API_ROUTES } from "@/constant";
+import { Channel } from "@/interfaces/channels";
+import { fetcher } from "@/lib/utils";
+import { mapChannels } from "@/mappers/index-mapper";
 
-// import React, {
-//   createContext,
-//   useContext,
-//   useState,
-//   ReactNode,
-//   SetStateAction,
-//   Dispatch,
-//   useEffect,
-// } from "react";
-// import useSWR from "swr";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  SetStateAction,
+  Dispatch,
+  useEffect,
+} from "react";
+interface ChannelsContextProps {
+  channels: Channel[];
+  setChannels: Dispatch<SetStateAction<Channel[]>>;
+}
 
-// interface ClientsContextProps {
-//   channels: Channel[];
-//   setClients: Dispatch<SetStateAction<Channel[]>>;
-// }
+// Create the context
+const ChannelsContext = createContext<ChannelsContextProps | undefined>(
+  undefined
+);
 
-// // Create the context
-// const ClientsContext = createContext<ClientsContextProps | undefined>(
-//   undefined
-// );
+export const ChannelsProvider = ({ children }: { children: ReactNode }) => {
+  const [channels, setChannels] = useState<Channel[]>([]);
 
-// export const ClientProvider = ({ children }: { children: ReactNode }) => {
-//   const [channels, setClients] = useState<Channel[]>([]);
+  useEffect(() => {
+    (async () => {
+      const channelsList = await fetcher(API_ROUTES.channels);
+      setChannels(mapChannels(channelsList));
+    })();
+  }, []);
 
-//   useEffect(() => {
-//     (async () => {
-      
-//       const channelsList = await fetcher("/api/admin/channels");
-//       const mappedClients = mapClients(channelsList);
-//       setClients(mappedClients);
+  return (
+    <ChannelsContext.Provider value={{ channels, setChannels }}>
+      {children}
+    </ChannelsContext.Provider>
+  );
+};
 
-//     })();
-//   }, []);
-
-//   return (
-//     <ClientsContext.Provider value={{ channels, setClients }}>
-//       {children}
-//     </ClientsContext.Provider>
-//   );
-// };
-
-// // Custom hook for consuming the alert context
-// export const useClients = (): ClientsContextProps => {
-//   const context = useContext(ClientsContext);
-//   if (!context) {
-//     throw new Error("useClients must be used within an ClientsProvider");
-//   }
-//   return context;
-// };
+// Custom hook for consuming the alert context
+export const useChannels = (): ChannelsContextProps => {
+  const context = useContext(ChannelsContext);
+  if (!context) {
+    throw new Error("useChannels must be used within an ChannelsProvider");
+  }
+  return context;
+};

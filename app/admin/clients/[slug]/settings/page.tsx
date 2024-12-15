@@ -17,55 +17,78 @@ import { SelectGroup } from "@radix-ui/react-select";
 import { useSelectedClient } from "@/app/context/selected-client-context";
 import { updateClient } from "../../action";
 import { useToast } from "@/hooks/use-toast";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import {
+  getFileName,
+  getSlug,
+  handleImageUpload,
+  mediaUrl,
+  uploadFile,
+  uploadFileToSupabase,
+} from "@/lib/utils";
+import { updateIndividualAttributes } from "@/app/admin/action";
 
 export default function Page() {
   const { selectedClient, setSelectedClient } = useSelectedClient();
   const { toast } = useToast();
-  const [clientName, setClientName] = useState(selectedClient?.name);
-  const [clientType, setClientType] = useState(selectedClient?.type);
-  const [clientLogo, setClientLogo] = useState(selectedClient?.logo);
-  const [isActive, setIsActive] = useState(selectedClient?.status === "ACTIVE");
+
   const [editingName, setEditingName] = useState(false);
   const [editingType, setEditingType] = useState(false);
   const [editingLogo, setEditingLogo] = useState(false);
 
   useEffect(() => {
     console.log(selectedClient);
-
-    setClientName(selectedClient?.name);
-    setClientType(selectedClient?.type);
-    setClientLogo(selectedClient?.logo);
-    setIsActive(selectedClient?.status === "ACTIVE");
   }, [selectedClient]);
+
+  // const handleLogoUpload = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {};
+  //     reader.readAsDataURL(file);
+
+  //     const uploadPath = `clients/${getFileName(file as File)}`;
+  //     const { data: uploadData, error: uploadError } = await uploadFile(
+  //       file as File,
+  //       uploadPath
+  //     );
+
+  //     if (uploadError) {
+  //       toast({
+  //         description: `Error in uploading client logo, please try again later`,
+  //       });
+  //       return;
+  //     }
+  //     const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
+  //     if (clientLogoUrl) {
+  //       setSelectedClient((prev: any) => ({
+  //         ...prev,
+  //         logo: clientLogoUrl,
+  //       }));
+  //     }
+
+  //     handleUpdateClient({ client_logo: clientLogoUrl });
+  //   }
+  // };
 
   const handleLogoUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        setClientLogo(base64);
-      };
-      reader.readAsDataURL(file);
-
-      const uploadPath = `clients/${getFileName(file as File)}`;
-      const { data: uploadData, error: uploadError } = await uploadFile(
-        file as File,
-        uploadPath
-      );
-  
-      if (uploadError) {
+    const { base64, file, error } = await handleImageUpload(event);
+    if (!error && file) {
+      setSelectedClient((prev: any) => ({
+        ...prev,
+        logo: base64,
+      }));
+      const { error, fileUrl } = await uploadFileToSupabase("clients", file);
+      if (!error) {
+        handleUpdateClient({ client_logo: fileUrl });
+      } else {
         toast({
-          description: `Error in uploading client logo, please try again later`,
+          title: `Error in uploading client logo, please try again later`,
         });
       }
-      const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
-      handleUpdateClient({
-        client_logo: clientLogoUrl
-      })
     }
   };
 
@@ -74,16 +97,14 @@ export default function Page() {
       return;
     }
 
-    const response = await updateClient(updateInfo, {
+    const response = await updateIndividualAttributes("clients", updateInfo, {
       col: "id",
       val: selectedClient?.id,
     });
     const { error } = JSON.parse(response);
 
     if (!error) {
-      toast({
-        description: "Field updated",
-      });
+      toast({ description: "Field updated" });
     }
   };
 
@@ -93,12 +114,15 @@ export default function Page() {
         <div className="flex items-center gap-2">
           <span className="text-sm">Active</span>
           <Switch
-            checked={isActive}
+            checked={selectedClient?.status === "ACTIVE"}
             onCheckedChange={(checked) => {
-              setIsActive(!isActive);
               handleUpdateClient({
                 client_status: checked ? "ACTIVE" : "INACTIVE",
               });
+              setSelectedClient((prev: any) => ({
+                ...prev,
+                status: checked ? "ACTIVE" : "INACTIVE",
+              }));
             }}
           />
         </div>
@@ -106,17 +130,21 @@ export default function Page() {
         <div className="space-y-2">
           <EditableField
             isEditing={editingName}
-            value={clientName ?? ""}
+            value={selectedClient?.name ?? ""}
             onEdit={() => setEditingName(true)}
             onSave={(newValue) => {
-              setClientName(newValue);
-              setEditingName(false);
               handleUpdateClient({
                 client_name: newValue,
+                client_slug: getSlug(newValue),
               });
+              setEditingName(false);
+              setSelectedClient((prev: any) => ({
+                ...prev,
+                name: newValue,
+              }));
             }}
             onCancel={() => setEditingName(false)}
-            renderValue={<p>{clientName}</p>}
+            renderValue={<p>{selectedClient?.name}</p>}
           />
 
           <div className="flex items-center">
@@ -126,12 +154,13 @@ export default function Page() {
             <Select
               disabled={!editingType}
               onValueChange={(newValue) => {
-                setClientType(newValue);
-                handleUpdateClient({
-                  client_type: newValue,
-                });
+                handleUpdateClient({ client_type: newValue });
+                setSelectedClient((prev: any) => ({
+                  ...prev,
+                  type: newValue,
+                }));
               }}
-              value={clientType}
+              value={selectedClient?.type}
             >
               <SelectTrigger className="h-12 ml-2 mt-2 w-full sm:w-64">
                 <SelectValue placeholder="Type" />
@@ -174,9 +203,9 @@ export default function Page() {
               </Button>
             </div>
             <div className="flex justify-center rounded-lg border-2 border-dashed p-8">
-              {clientLogo ? (
+              {selectedClient?.logo ? (
                 <Image
-                  src={clientLogo}
+                  src={selectedClient.logo}
                   alt="Client Logo"
                   width={100}
                   height={100}

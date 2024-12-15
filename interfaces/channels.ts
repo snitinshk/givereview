@@ -32,21 +32,19 @@ export interface Channel {
     id: number,
     name: string,
     logo: string,
-    logoId: string
+    channelType: string
 }
 
 export interface ChannelDB {
     id?: number,
     channel_name?: string,
     channel_logo?: string,
-    channel_logo_id?: string
-    channel_logo_url?: string
+    channel_logo_url?: string,
+    channel_type?: string
 }
 
 // Define the props type for your component
 export interface AddChannelProps {
-    channels: Channel[];
-    setChannels: Dispatch<SetStateAction<Channel[]>>;
     setIsAdding: Dispatch<SetStateAction<boolean>>;
 }
 

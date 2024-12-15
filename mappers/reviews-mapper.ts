@@ -1,4 +1,4 @@
-import { ReviewDetailDB, TransformedReview } from "@/interfaces/i-reviews";
+import { ExternalReviewDB, ExternalReviewRequest, ReviewDetailDB, TransformedReview } from "@/interfaces/i-reviews";
 
 export function mapReviews(inputData: ReviewDetailDB[]): TransformedReview[] {
     return inputData.map((item) => ({
@@ -25,4 +25,30 @@ export function mapReviews(inputData: ReviewDetailDB[]): TransformedReview[] {
         reviewLinkId: item.review_link_id, // Review link ID
         clientId: item.client_id, // Client ID
     }));
+}
+
+export const mapExternalReviewsToDb = (source: ExternalReviewRequest) => {
+    return {
+        stream_name: source.streamName,
+        review_source_id: source.reviewSourceId,
+        review_date: source.reviewDate,
+        review_count: source.reviewCount,
+        reviewers_name: source.reviewersName,
+        reviewers_avtar: source.reviewersAvtar,
+        review_title: source.reviewTitle,
+        review_description: source.reviewDescription,
+    }
+}
+
+export const mapExternalReviewsToUI = (source: ExternalReviewDB) => {
+    return {
+        streamName: source.stream_name,
+        source: source.review_source_id,
+        reviewDate: source.review_date,
+        stars: source.review_count,
+        name: source.reviewers_name,
+        reviewersAvtar: source.reviewers_avtar,
+        reviewTitle: source.review_title,
+        reviewDescription: source.review_description,
+    }
 }

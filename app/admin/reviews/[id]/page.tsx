@@ -15,7 +15,6 @@ const ReviewDetail = () => {
   const [review, setReview] = useState<TransformedReview | null>(
     selectedReview
   );
-  console.log(review);
   if (!review) {
     return (
       <div className="flex justify-center items-center h-screen">

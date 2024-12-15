@@ -8,7 +8,7 @@ export const mapChannels = (channels: ChannelDB[]): Channel[] => {
             id: channel.id as number,
             name: channel?.channel_name ?? '',
             logo: channel?.channel_logo_url ?? '',
-            logoId: channel?.channel_logo_id ?? ''
+            channelType: channel?.channel_type ?? ''
         }
     })
 }

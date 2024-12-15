@@ -29,12 +29,13 @@ import { useReviewLinkPositive } from "@/app/context/review-link-positive.contex
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
 import { useLoader } from "@/app/context/loader.context";
+import { useChannels } from "@/app/context/channels-context";
+import { CHANNEL_TYPE } from "@/constant";
 
 const CreateReviewLink: React.FC = () => {
   const { setIsLoading } = useLoader();
+  const { channels } = useChannels();
   setIsLoading(false);
-  
-  const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
   const { reviewLinkSettings } = useReviewLinkSettings();
   const { reviewLinkPositive } = useReviewLinkPositive();
   const { reviewLinkNegative } = useReviewLinkNegative();
@@ -53,8 +54,7 @@ const CreateReviewLink: React.FC = () => {
   const { selectedClient } = useSelectedClient();
 
   const handleSaveReviewLink = async () => {
-
-    // Validate selected channels 
+    // Validate selected channels
     if (!reviewLinkPositive?.selectedChannels?.length) {
       toast({ description: "Please select at least one channel!" });
       return;
@@ -105,22 +105,30 @@ const CreateReviewLink: React.FC = () => {
 
       const thankyouPageData = {
         review_thankyou_title: reviewLinkThankyou?.title,
-        review_thankyou_bg_image: thankyouBgImage ?? '',
+        review_thankyou_bg_image: thankyouBgImage ?? "",
         review_link_id: settings.id,
-      }
-
+      };
 
       // Trigger both saves concurrently
-      const [positiveReviewLinkResult, negativeReviewLinkResult, thankyouReviewLinkResult] =
-        await Promise.all([
-          saveReviewLinkPositivePage(positivePageData),
-          saveReviewLinkNegativePage(negativePageData),
-          saveReviewLinkThankyouPage(thankyouPageData),
-        ]);
+      const [
+        positiveReviewLinkResult,
+        negativeReviewLinkResult,
+        thankyouReviewLinkResult,
+      ] = await Promise.all([
+        saveReviewLinkPositivePage(positivePageData),
+        saveReviewLinkNegativePage(negativePageData),
+        saveReviewLinkThankyouPage(thankyouPageData),
+      ]);
 
-      const { error: positiveReviewLinkError } = JSON.parse(positiveReviewLinkResult);
-      const { error: negativeReviewLinkError } = JSON.parse(negativeReviewLinkResult);
-      const { error: thankyouReviewLinkError } = JSON.parse(thankyouReviewLinkResult);
+      const { error: positiveReviewLinkError } = JSON.parse(
+        positiveReviewLinkResult
+      );
+      const { error: negativeReviewLinkError } = JSON.parse(
+        negativeReviewLinkResult
+      );
+      const { error: thankyouReviewLinkError } = JSON.parse(
+        thankyouReviewLinkResult
+      );
 
       // Handle errors for either save
       if (positiveReviewLinkError) {
@@ -149,7 +157,6 @@ const CreateReviewLink: React.FC = () => {
       // Success toast and redirection
       toast({ description: "Review link created successfully!" });
       router.push(`/admin/clients/${slug}/review-link/`);
-
     } catch (err) {
       console.error("Unexpected error:", err);
       toast({
@@ -225,7 +232,9 @@ const CreateReviewLink: React.FC = () => {
           </TabsContent>
           <TabsContent value="positivepg">
             <PositiveTabs
-              channels={mapChannels(channelList)}
+              channels={channels.filter(
+                (channel) => channel?.channelType === CHANNEL_TYPE.REVIEW
+              )}
             />
           </TabsContent>
           <TabsContent value="negativepg">

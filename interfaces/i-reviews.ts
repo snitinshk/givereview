@@ -1,3 +1,4 @@
+import { Channel, ChannelDB } from "./channels";
 import { Client, ClientDB } from "./clients";
 
 export interface ReviewDetailDB {
@@ -69,4 +70,30 @@ export interface TransformedReview {
     reviewerComments: string | null;
     reviewLinkId: number;
     clientId: number;
+}
+
+
+export interface ExternalReviewRequest {
+    id: number
+    streamName: string,
+    reviewSourceId: string,
+    reviewDate: Date,
+    reviewCount: number,
+    reviewersName: string,
+    reviewersAvtar: string,
+    reviewTitle: string,
+    reviewDescription: string,
+}
+
+export interface ExternalReviewDB {
+    id?: number,
+    stream_name: string,
+    review_source_id: string,
+    review_date: Date,
+    review_count: number,
+    reviewers_name: string,
+    reviewers_avtar: string,
+    review_title: string,
+    review_description: string,
+    channels?: ChannelDB;
 }

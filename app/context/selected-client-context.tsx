@@ -33,9 +33,11 @@ export const SelectedClientProvider = ({
 
   const { clients } = useClients();
 
+  console.log(clients);
+
   useEffect(() => {
-    const [selectedClient] = clients?.filter((client) => client.slug === slug);
-    setSelectedClient(selectedClient);
+    const selectedClient = clients?.find((client) => client.slug === slug);
+    if(selectedClient) setSelectedClient(selectedClient);
   }, [clients]);
 
   return (

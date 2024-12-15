@@ -67,10 +67,12 @@ const ReviewLink: React.FC = (params) => {
   useEffect(() => {
     // setIsLoading(true);
     (async () => {
+      console.log(selectedClient);
       if (selectedClient) {
         setIsLoading(true);
         const response = await getReviewLinks(selectedClient?.id);
         const { data: reviewLink, error } = JSON.parse(response);
+        console.log(reviewLink);
         if (error) {
           toast({ description: "Error in fetching review links." });
         }
@@ -231,69 +233,76 @@ const ReviewLink: React.FC = (params) => {
       >
         Create Link
       </Button>
-
       <div className="space-y-5">
-        {reviewLinks.map((reviewLink: any) => (
-          <div
-            key={reviewLink.id}
-            className="flex flex-col lg:flex-row items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
-          >
-            <div className="flex space-x-4 mb-4 lg:mb-0 max-sm:w-full">
-              {reviewLink?.positive_review_link_details.map(
-                (item: any, index: number) => (
-                  <Image
-                    key={index}
-                    src={item?.channels?.channel_logo_url}
-                    alt={`${item?.channels.channel_name} image`}
-                    width={32}
-                    height={32}
-                    className="rounded-md"
-                  />
-                )
-              )}
-              <p className="text-ftClor text-sm font-semibold mt-2 lg:mt-0 max-sm:flex-grow">
-                {reviewLink?.review_link_name}
-              </p>
-            </div>
+        {reviewLinks.length > 0 ? (
+          reviewLinks.map((reviewLink: any) => (
+            <div
+              key={reviewLink.id}
+              className="flex flex-col lg:flex-row items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
+            >
+              <div className="flex space-x-4 mb-4 lg:mb-0 max-sm:w-full">
+                {reviewLink?.positive_review_link_details.map(
+                  (item: any, index: number) => (
+                    <Image
+                      key={index}
+                      src={item?.channels?.channel_logo_url}
+                      alt={`${item?.channels.channel_name} image`}
+                      width={32}
+                      height={32}
+                      className="rounded-md"
+                    />
+                  )
+                )}
+                <p className="text-ftClor text-sm font-semibold mt-2 lg:mt-0 max-sm:flex-grow">
+                  {reviewLink?.review_link_name}
+                </p>
+              </div>
 
-            <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
-              <Link
-                href={
-                  DEFAULT_TEXTS.reviewSiteBaseUrl + reviewLink?.review_link_slug
-                }
-                target="_blank"
-                className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
-              >
-                <BiLinkExternal /> Link
-              </Link>
-              <Badge
-                className={`${getStatusColor(
-                  reviewLink.is_active ? "Active" : "Inactive"
-                )} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
-              >
-                {reviewLink?.is_active === true ? "Active" : "Inactive"}
-              </Badge>
-              <Button
-                data-review-link-id={reviewLink?.id}
-                onClick={handleEdit}
-                variant="ghost"
-                size="sm"
-                className="bg-[#9edcc0] text-[#027b55] px-4 h-7 font-bold !shadow-none"
-              >
-                Edit
-              </Button>
-              <Button
-                data-review-link-id={reviewLink?.id}
-                onClick={handleDelete}
-                variant="ghost"
-                size="sm"
-                className="bg-[#ff5631] text-white px-4 h-7 font-bold !shadow-none"
-              >
-                Delete
-              </Button>
+              <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
+                <Link
+                  href={
+                    DEFAULT_TEXTS.reviewSiteBaseUrl +
+                    reviewLink?.review_link_slug
+                  }
+                  target="_blank"
+                  className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
+                >
+                  <BiLinkExternal /> Link
+                </Link>
+                <Badge
+                  className={`${getStatusColor(
+                    reviewLink.is_active ? "Active" : "Inactive"
+                  )} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
+                >
+                  {reviewLink?.is_active === true ? "Active" : "Inactive"}
+                </Badge>
+                <Button
+                  data-review-link-id={reviewLink?.id}
+                  onClick={handleEdit}
+                  variant="ghost"
+                  size="sm"
+                  className="bg-[#9edcc0] text-[#027b55] px-4 h-7 font-bold !shadow-none"
+                >
+                  Edit
+                </Button>
+                <Button
+                  data-review-link-id={reviewLink?.id}
+                  onClick={handleDelete}
+                  variant="ghost"
+                  size="sm"
+                  className="bg-[#ff5631] text-white px-4 h-7 font-bold !shadow-none"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center border border-gray-200 p-6 rounded-lg shadow-md text-gray-500 mt-44">
+            <p className="text-lg font-semibold">No review links available</p>
+            <p className="text-sm">Create a review link to get started.</p>
           </div>
-        ))}
+        )}
       </div>
     </>
   );

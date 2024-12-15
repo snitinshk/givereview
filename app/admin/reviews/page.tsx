@@ -11,9 +11,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReviewTable from "./review-table";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { capitalizeFirstLetter, fetcher } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { ReviewDetailDB, TransformedReview } from "@/interfaces/i-reviews";
+import {
+  ExternalReviewDB,
+  ReviewDetailDB,
+  TransformedReview,
+} from "@/interfaces/i-reviews";
 import { mapReviews } from "@/mappers/reviews-mapper";
 import { useClients } from "@/app/context/clients-context";
 import { useLoader } from "@/app/context/loader.context";
@@ -26,15 +30,52 @@ type SelectItem = {
 
 const ReviewPage: React.FC = () => {
   const [reviews, setReviews] = useState<TransformedReview[]>([]);
+  const [externalReviews, setExternalReviews] = useState([]);
   const [reviewLinks, setReviewLinks] = useState([]);
+  const [externalReviewsFilter, setExternalReviewsFilter] = useState<any>([]);
+  const [filteredExternalReview, setFilteredExternalReview] =
+    useState<string>("All");
+  const [filteredClient, setFilteredClient] = useState<number | string>("All");
+  const [filteredReviewsByRL, setFilteredReviewsByRL] = useState<
+    number | string
+  >("All");
+
   const { setIsLoading } = useLoader();
   const { toast } = useToast();
   const { clients } = useClients();
 
-  const { data: negativeReviewsList, error } = useSWR<ReviewDetailDB[]>(
-    "/api/admin/reviews",
-    fetcher
-  );
+  const { data: negativeReviewsList, error: fetchingNegativeReviewsErr } =
+    useSWR<ReviewDetailDB[]>("/api/admin/reviews", fetcher);
+
+  const { data: externalReviewsList, error: fetchingExternalReviewsErr } =
+    useSWR<ExternalReviewDB[]>("/api/web/external-reviews", fetcher);
+
+  useEffect(() => {
+    if (externalReviewsList) {
+      const mappedExternalReviews = externalReviewsList?.map(
+        (externalReview) => {
+          return {
+            id: externalReview.id,
+            name: externalReview?.reviewers_name,
+            image: externalReview?.channels?.channel_logo_url,
+            client: externalReview?.stream_name,
+            stars: externalReview?.review_count,
+            review: externalReview?.review_description,
+            date: externalReview?.review_date,
+          };
+        }
+      );
+
+      const uniqueClients = Array.from(
+        new Set(mappedExternalReviews.map((item) => item.client.toLowerCase()))
+      ).map((client) => ({ id: client, name: capitalizeFirstLetter(client) }));
+
+      setExternalReviewsFilter(uniqueClients);
+
+      setExternalReviews(mappedExternalReviews as any);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalReviewsList]);
 
   // Map and set reviews once data is fetched
   useEffect(() => {
@@ -47,15 +88,10 @@ const ReviewPage: React.FC = () => {
 
   // Handle errors
   useEffect(() => {
-    if (error) {
+    if (fetchingNegativeReviewsErr || fetchingExternalReviewsErr) {
       toast({ title: "Error in fetching reviews" });
     }
-  }, [error, toast]);
-
-  const [filteredClient, setFilteredClient] = useState<number | string>("All");
-  const [filteredReviewsByRL, setFilteredReviewsByRL] = useState<
-    number | string
-  >("All");
+  }, [fetchingNegativeReviewsErr, fetchingExternalReviewsErr]);
 
   const fetchReviewLinks = useCallback(async () => {
     if (filteredClient !== "All") {
@@ -75,7 +111,6 @@ const ReviewPage: React.FC = () => {
           );
         }
       } catch (err) {
-        console.error("Error fetching review links:", err);
         toast({ title: "Unexpected error occurred" });
       }
     }
@@ -86,17 +121,30 @@ const ReviewPage: React.FC = () => {
     fetchReviewLinks();
   }, [fetchReviewLinks]);
 
-  const filteredReviews = reviews?.filter((review) => {
+  let filteredExternalReviews: any = [];
+  let filteredReviews: any = [];
 
-    const matchesClient =
-      filteredClient === "All" || Number(filteredClient) === review?.clientId;
+  if (externalReviews?.length) {
+    filteredExternalReviews = externalReviews?.filter((review: any) => {
+      return (
+        filteredExternalReview === "All" ||
+        filteredExternalReview === review?.client.toLowerCase()
+      );
+    });
+  }
 
-    const matchesReviewsByRL =
-      filteredReviewsByRL === "All" ||
-      Number(filteredReviewsByRL) === review?.reviewLinkId;
+  if (reviews?.length) {
+    filteredReviews = reviews?.filter((review) => {
+      const matchesClient =
+        filteredClient === "All" || Number(filteredClient) === review?.clientId;
 
-    return matchesClient && matchesReviewsByRL;
-  });
+      const matchesReviewsByRL =
+        filteredReviewsByRL === "All" ||
+        Number(filteredReviewsByRL) === review?.reviewLinkId;
+
+      return matchesClient && matchesReviewsByRL;
+    });
+  }
 
   const handleSelectChange = useCallback(
     (newValue: string, placeholder: string) => {
@@ -104,6 +152,8 @@ const ReviewPage: React.FC = () => {
         setFilteredClient(newValue);
       } else if (placeholder === "Review link") {
         setFilteredReviewsByRL(newValue);
+      } else if (placeholder === "Stream") {
+        setFilteredExternalReview(newValue);
       }
     },
     []
@@ -154,15 +204,23 @@ const ReviewPage: React.FC = () => {
                 ...reviewLinks,
               ])}
           </div>
-          <ReviewTable reviews={filteredReviews} />
+          <ReviewTable reviewType="internal" reviews={filteredReviews} />
         </TabsContent>
 
         {/* StreamTbs Content */}
         <TabsContent value="StreamTbs">
           <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-            {/* {renderSelect("Stream", ["All", "RESTAURANT", "NIGHTCLUB"])} */}
+            {renderSelect("Stream", [
+              { id: "All", name: "All" },
+              ...externalReviewsFilter,
+            ])}
           </div>
-          <ReviewTable reviews={reviews} showImage showAction />
+          <ReviewTable
+            reviewType="external"
+            reviews={filteredExternalReviews}
+            showImage
+            showAction
+          />
         </TabsContent>
       </Tabs>
     </div>

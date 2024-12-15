@@ -10,17 +10,17 @@ import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { deleteChannel } from "./action";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
+import { useChannels } from "@/app/context/channels-context";
 
 export default function ChannelCard({
   channel,
-  setChannels,
   onEdit,
 }: {
   channel: Channel;
-  setChannels: Dispatch<SetStateAction<Channel[]>>;
   onEdit: (editChannelData: EditChannelData) => void;
 }) {
   const { toast } = useToast();
+  const { setChannels } = useChannels();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(channel.name);
   const [editedLogo, setEditedLogo] = useState(channel.logo);
@@ -28,6 +28,7 @@ export default function ChannelCard({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
+    
     const editChannelData = {
       channelId: channel.id,
       newName: editedName,
@@ -136,7 +137,7 @@ export default function ChannelCard({
           </div>
         ) : (
           <span className="font-medium bg-gray-100 rounded-sm px-4 py-4 text-gray-400 w-full inline-block">
-            {channel.name}
+            {editedName || channel.name}
           </span>
         )}
       </div>

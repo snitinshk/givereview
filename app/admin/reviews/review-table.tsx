@@ -11,13 +11,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FaStar } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import placeholder from "../../images/placeholder.svg";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
 import { TransformedReview } from "@/interfaces/i-reviews";
 import { useSelectedReview } from "@/app/context/selected-negative-review-context";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { useLoader } from "@/app/context/loader.context";
 
 // type Review = {
 //   id: string;
@@ -31,27 +39,28 @@ import { useSelectedReview } from "@/app/context/selected-negative-review-contex
 
 interface ReviewTableProps {
   reviews: TransformedReview[];
+  reviewType: string;
   showImage?: boolean;
   showAction?: boolean;
 }
 
-const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, showAction = false }) => {
-
-  const { setSelectedReview } = useSelectedReview(); 
+const ReviewTable: React.FC<ReviewTableProps> = ({
+  reviewType,
+  reviews,
+  showImage = false,
+  showAction = false,
+}) => {
+  const { setSelectedReview } = useSelectedReview();
   const router = useRouter(); // Initialize the router
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasData, setHasData] = useState<boolean>(false);
-
+  const { setIsLoading } = useLoader();
   const totalPages = Math.ceil(reviews.length / rowsPerPage);
 
   useEffect(() => {
-    setIsLoading(false);
-    if(!reviews?.length){
-      setHasData(false)
-    }else{
-      setHasData(true)
+    if (reviews?.length) {
+      setIsLoading(false);
     }
   }, [reviews]);
 
@@ -64,7 +73,11 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
     const totalStars = 5;
     return Array.from({ length: totalStars }).map((_, index) => (
       <span key={index}>
-        {index < stars ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-400" />}
+        {index < stars ? (
+          <FaStar className="text-yellow-500" />
+        ) : (
+          <FaRegStar className="text-gray-400" />
+        )}
       </span>
     ));
   };
@@ -74,30 +87,28 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
     setCurrentPage(1);
   };
 
-  
-
   const handleReadMore = (id: string) => {
     // Navigate to the review detail page
-    const selectedReview = reviews?.find(review => review.id === id)
+    const selectedReview = reviews?.find((review) => review.id === id);
     setSelectedReview(selectedReview as TransformedReview);
     router.push(`/admin/reviews/${id}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-10">
-        <p className="text-gray-500 text-xl">Loading...</p>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center p-10">
+  //       <p className="text-gray-500 text-xl">Loading...</p>
+  //     </div>
+  //   );
+  // }
 
-  if (!hasData) {
-    return (
-      <div className="flex items-center justify-center p-10">
-        <p className="text-gray-500 text-xl">No reviews available</p>
-      </div>
-    );
-  }
+  // if (!hasData) {
+  //   return (
+  //     <div className="flex items-center justify-center p-10">
+  //       <p className="text-gray-500 text-xl">No reviews available</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -105,10 +116,16 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
         <TableHeader>
           <TableRow className="bg-gray-100 text-[#637381]">
             {showImage && (
-              <TableHead className="py-5 px-8 hidden sm:table-cell">Image</TableHead>
+              <TableHead className="py-5 px-8 hidden sm:table-cell">
+                Image
+              </TableHead>
             )}
-            <TableHead className={`py-5 ${!showImage ? "px-8" : ""}`}>Date</TableHead>
-            <TableHead>Client</TableHead>
+            <TableHead className={`py-5 ${!showImage ? "px-8" : ""}`}>
+              Date
+            </TableHead>
+            <TableHead>
+              {reviewType === "internal" ? "Client" : "Stream"}
+            </TableHead>
             <TableHead>Stars</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Review</TableHead>
@@ -116,8 +133,8 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paginatedReviews.map((review) => (
-            <TableRow key={review.id} className="hover:bg-gray-50">
+          {paginatedReviews.map((review, index) => (
+            <TableRow key={index} className="hover:bg-gray-50">
               {showImage && (
                 <TableCell className="py-4 px-8 hidden sm:table-cell">
                   <Image
@@ -132,11 +149,17 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
               <TableCell className={`py-4 ${!showImage ? "px-8" : ""}`}>
                 {review.date}
               </TableCell>
-              <TableCell className="py-4">{review.client}</TableCell>
               <TableCell className="py-4">
-                <div className="flex gap-1 text-lg">{renderStars(review.stars)}</div>
+                {capitalizeFirstLetter(review.client)}
               </TableCell>
-              <TableCell className="py-4">{review.name}</TableCell>
+              <TableCell className="py-4">
+                <div className="flex gap-1 text-lg">
+                  {renderStars(review.stars)}
+                </div>
+              </TableCell>
+              <TableCell className="py-4">
+                {capitalizeFirstLetter(review.name)}
+              </TableCell>
               <TableCell className="py-4 max-w-[200px] lg:max-w-[300px] truncate overflow-hidden text-ellipsis">
                 {review.review}
               </TableCell>
@@ -159,7 +182,10 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
       <div className="flex justify-end text-sm gap-3 border-t border-gray-200 items-center p-4">
         <div className="flex items-center gap-4">
           <p>Rows per page:</p>
-          <Select onValueChange={handleRowsPerPageChange} defaultValue={String(rowsPerPage)}>
+          <Select
+            onValueChange={handleRowsPerPageChange}
+            defaultValue={String(rowsPerPage)}
+          >
             <SelectTrigger className="w-24">
               <SelectValue placeholder={`${rowsPerPage}`} />
             </SelectTrigger>
@@ -172,9 +198,9 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, showImage = false, s
           </Select>
         </div>
         <p>
-          
           Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-          {Math.min(currentPage * rowsPerPage, reviews.length)} of {reviews.length}
+          {Math.min(currentPage * rowsPerPage, reviews.length)} of{" "}
+          {reviews.length}
         </p>
       </div>
     </>

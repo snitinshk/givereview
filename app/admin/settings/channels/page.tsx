@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { PlusIcon } from "lucide-react";
 
@@ -9,78 +9,115 @@ import AddNewChannel from "./add-new-channel";
 import { updateChannel } from "./action";
 import { mapChannels } from "@/mappers/index-mapper";
 import { Channel, EditChannelData } from "@/interfaces/channels";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import {
+  getFileName,
+  mediaUrl,
+  uploadFile,
+  uploadFileToSupabase,
+} from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useChannels } from "@/app/context/channels-context";
+import { channel } from "diagnostics_channel";
+import { CHANNEL_TYPE } from "@/constant";
+import { useLoader } from "@/app/context/loader.context";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ChannelsPage() {
-
   const { toast } = useToast();
-  const [channels, setChannels] = useState<Channel[]>([]);
-  const [leftColumnChannels, setLeftColumnChannels] = useState<Channel[]>([]);
-  const [rightColumnChannels, setRightColumnChannels] = useState<Channel[]>([]);
+
+  const { channels, setChannels } = useChannels();
+  const { setIsLoading } = useLoader();
+  // const [leftColumnChannels, setLeftColumnChannels] = useState<Channel[]>([]);
+  // const [rightColumnChannels, setRightColumnChannels] = useState<Channel[]>([]);
   const [isAdding, setIsAdding] = useState(false);
 
-  const { data: channelList, error } = useSWR("/api/admin/channel", fetcher);
+  const { leftColumnChannels, rightColumnChannels } = useMemo(() => {
+    if (!channels) return { leftColumnChannels: [], rightColumnChannels: [] };
 
-  if (error) {
-    toast({
-      title: "Error!",
-      description: `Error in fetching channels list, please try again later`,
-    });
-  }
+    const reviewChannels = channels.filter(
+      (channel) => channel?.channelType === CHANNEL_TYPE.REVIEW
+    );
+    // setReviewChannels(reviewChannels);
 
-  useEffect(() => {
-    if (channelList) {
-      const mappedChannels = mapChannels(channelList);
-      setChannels(mappedChannels);
-    }
-  }, [channelList]);
-
-  useEffect(() => {
-    const midpoint = Math.ceil(channels.length / 2);
-    setLeftColumnChannels(channels.slice(0, midpoint));
-    setRightColumnChannels(channels.slice(midpoint));
+    const midpoint = Math.ceil(reviewChannels.length / 2);
+    return {
+      leftColumnChannels: reviewChannels.slice(0, midpoint),
+      rightColumnChannels: reviewChannels.slice(midpoint),
+    };
   }, [channels]);
 
-  const handleEdit = async (editChannelData: EditChannelData) => {
-    
-    const { channelId, newName, newLogoFile, newLogo } = editChannelData;
-    const channelToUpdate = channels.find(
-      (channel) => channel.id === channelId
-    );
-    let updatedLogoUrl = newLogo ?? channelToUpdate?.logo;
+  // useEffect(()=>{
+  //   if(channels){
+  //     const filteredChannels = channels?.filter(
+  //       (channel) => channel?.channelType === CHANNEL_TYPE.REVIEW
+  //     );
+  //     setReviewChannels(filteredChannels)
+  //   }
+  // },[channels])
 
-    if (newLogoFile) {
-      const uploadPath = `channels/${getFileName(newLogoFile)}`;
-      const { data: uploadData, error: uploadError } = await uploadFile(
-        newLogoFile,
-        uploadPath
+  // console.log(reviewChannels);
+
+  // useEffect(() => {
+  //   if(reviewChannels?.length){
+  //     const midpoint = Math.ceil(reviewChannels.length / 2);
+  //     setLeftColumnChannels(reviewChannels.slice(0, midpoint));
+  //     setRightColumnChannels(reviewChannels.slice(midpoint));
+  //   }
+  // }, [reviewChannels]);
+
+  const handleEdit = async (editChannelData: EditChannelData) => {
+    const { channelId, newName, newLogoFile, newLogo } = editChannelData;
+  
+    // Find the channel to update
+    const channelToUpdate = channels.find((channel) => channel.id === channelId);
+    if (!channelToUpdate) {
+      toast({ title: "Channel not found." });
+      return;
+    }
+  
+    setIsLoading(true);
+  
+    // Helper function for error toasts
+    const showErrorToast = (message: string) => {
+      toast({ title: message });
+      setIsLoading(false);
+    };
+  
+    try {
+      // Determine the updated logo URL
+      let updatedLogoUrl = newLogo || channelToUpdate.logo;
+  
+      if (newLogoFile) {
+        const { fileUrl, error } = await uploadFileToSupabase(
+          "channels",
+          newLogoFile
+        );
+        if (error) {
+          showErrorToast("Error uploading file, please try again later.");
+          return;
+        }
+        updatedLogoUrl = fileUrl;
+      }
+  
+      // Prepare updated channel data
+      const updatedChannelData = {
+        channel_name: newName || channelToUpdate.name,
+        channel_logo_url: updatedLogoUrl,
+      };
+  
+      // Update the channel
+      const { error: updateError } = await updateChannel(
+        updatedChannelData,
+        channelId
       );
-      if (!uploadError && uploadData?.fullPath) {
-        updatedLogoUrl = mediaUrl(uploadData.fullPath);
-      } else {
-        toast({
-          title: "Error!",
-          description: `Error in uploading file, please try again later.`,
-        });
+  
+      if (updateError) {
+        showErrorToast("Error updating channel information.");
         return;
       }
-    }
-
-    const updatedChannelData = {
-      channel_name: newName ?? channelToUpdate?.name,
-      channel_logo_url: updatedLogoUrl,
-    };
-    
-    const { error: updateError } = await updateChannel(
-      updatedChannelData,
-      channelId
-    );
-    
-    if (!updateError) {
-      
+  
+      // Update state and show success toast
       setChannels((prevChannels) =>
         prevChannels.map((channel) =>
           channel.id === channelId
@@ -92,28 +129,24 @@ export default function ChannelsPage() {
             : channel
         )
       );
-      toast({
-        title: "Success!",
-        description: `Channel updated successfully.`,
-      });
-
-    } else {
-      toast({
-        title: "Error!",
-        description: `Error in updating channel information.`,
-      });
+  
+      toast({ title: "Channel updated successfully." });
+    } catch (error) {
+      showErrorToast("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="container mx-auto py-8 pr-8 md:pr-16 lg:pr-24 max-sm:pr-0">
-      <h1 className="text-3xl font-bold mb-6">Channels</h1>
+      {/* <h1 className="text-3xl font-bold mb-6">Channels</h1> */}
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
           {leftColumnChannels.map((channel) => (
             <ChannelCard
               key={channel.id}
-              setChannels={setChannels}
               channel={channel}
               onEdit={handleEdit}
             />
@@ -123,7 +156,6 @@ export default function ChannelsPage() {
           {rightColumnChannels.map((channel) => (
             <ChannelCard
               key={channel.id}
-              setChannels={setChannels}
               channel={channel}
               onEdit={handleEdit}
             />
@@ -132,11 +164,7 @@ export default function ChannelsPage() {
       </div>
       <div className="mt-8">
         {isAdding ? (
-          <AddNewChannel
-            channels={channels}
-            setChannels={setChannels}
-            setIsAdding={setIsAdding}
-          />
+          <AddNewChannel setIsAdding={setIsAdding} />
         ) : (
           <Button
             variant="ghost"

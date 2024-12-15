@@ -14,19 +14,26 @@ import {
 import { TbCameraPlus } from "react-icons/tb";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
-import { fetcher, getFileName, getSlug, mediaUrl, uploadFile } from "@/lib/utils";
+import {
+  fetcher,
+  getFileName,
+  getSlug,
+  mediaUrl,
+  uploadFile,
+} from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { addClient } from "../action";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { mapClients } from "@/mappers/index-mapper";
 import { useClients } from "@/app/context/clients-context";
+import { useLoader } from "@/app/context/loader.context";
 // import { IoMdInformationCircle } from "react-icons/io";
 
 const CreateClient: React.FC = () => {
-  
+  const { setIsLoading } = useLoader();
   const [preview, setPreview] = useState<string | null>(null);
   const { setClients } = useClients();
-  const router = useRouter()
+  const router = useRouter();
 
   const { toast } = useToast();
   const [clientName, setClientName] = useState<string>("");
@@ -47,7 +54,7 @@ const CreateClient: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (event: any) => {
-
+    setIsLoading(true);
     event.preventDefault();
 
     if (!clientLogo || !clientName || !clientType) {
@@ -75,7 +82,7 @@ const CreateClient: React.FC = () => {
       client_name: clientName,
       client_logo: clientLogoUrl,
       client_type: clientType,
-      client_slug: getSlug(clientName)
+      client_slug: getSlug(clientName),
     };
 
     const response = await addClient(newClientData);
@@ -88,8 +95,9 @@ const CreateClient: React.FC = () => {
         description: `Error in adding a new client, please try again later`,
       });
     } else {
-
       const clientsList = await fetcher("/api/admin/clients");
+
+      setIsLoading(false);
       const mappedClients = mapClients(clientsList);
       setClients(mappedClients);
 
@@ -98,18 +106,23 @@ const CreateClient: React.FC = () => {
         description: `New client with name ${clientName} created successfully`,
       });
 
-      router.push('/admin/clients');
+      router.push("/admin/clients");
     }
   };
 
   return (
     <>
       <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5 max-sm:mt-0">
-        <Button onClick={()=>{ router.back() }} className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold">
+        <Button
+          onClick={() => {
+            router.back();
+          }}
+          className="bg-[#ffe4de] text-[#b71e17] hover:text-white font-bold"
+        >
           Cancel
         </Button>
         <Button
-          disabled={ !clientName || !clientType || !clientLogo}
+          disabled={!clientName || !clientType || !clientLogo}
           form="add-client"
           type="submit"
           className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
@@ -128,7 +141,7 @@ const CreateClient: React.FC = () => {
               placeholder="Client name"
               className="h-12"
             />
-            
+
             <Select onValueChange={setClienType}>
               <SelectTrigger className="w-full h-12 mt-2">
                 <SelectValue placeholder="Type" />

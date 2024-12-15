@@ -6,41 +6,40 @@ import { CHANNEL_TYPE } from "@/constant";
 import { CheckIcon, UploadIcon, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { addChannel } from "./action";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import { handleImageUpload, uploadFileToSupabase } from "@/lib/utils";
 import { mapChannels } from "@/mappers/index-mapper";
 import { AddChannelProps, Channel } from "@/interfaces/channels";
 import Image from "next/image";
 import placeholder from "../../../images/placeholder.svg";
 import { useToast } from "@/hooks/use-toast";
+import { useChannels } from "@/app/context/channels-context";
+import { useLoader } from "@/app/context/loader.context";
 
-export default function AddNewChannel({
-  setIsAdding,
-  setChannels,
-  channels,
-}: AddChannelProps) {
-
+export default function AddNewChannel({ setIsAdding }: AddChannelProps) {
   const { toast } = useToast();
+  const { channels, setChannels } = useChannels();
+  const { setIsLoading } = useLoader();
   const [newChannelName, setNewChannelName] = useState("");
   const [newChannelLogo, setNewChannelLogo] = useState<string>(placeholder);
   const [channelFile, setChannelFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleNewLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setNewChannelLogo(reader.result as string);
-      reader.readAsDataURL(file);
-      setChannelFile(file);
-    } else {
+  const handleNewLogoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { base64, file, error } = await handleImageUpload(event);
+    if (error) {
       toast({
-        title: "Error!",
-        description: "Invalid file. Please select a valid image file.",
+        title: "Invalid file. Please select a valid image file.",
       });
+      return;
     }
+    setChannelFile(file);
+    setNewChannelLogo(base64 as string);
   };
 
   const handleCreateChannel = async () => {
+    // Validate input
     if (!newChannelName || !channelFile) {
       toast({
         title: "Error!",
@@ -49,22 +48,30 @@ export default function AddNewChannel({
       return;
     }
 
+    setIsLoading(true);
+
+    // Centralized error handling
+    const handleError = (message: string) => {
+      toast({ title: "Error!", description: message });
+    };
+
     try {
       // Upload the file
-      const uploadPath = `channels/${getFileName(channelFile)}`;
-      const { data: uploadData, error: uploadError } = await uploadFile(
-        channelFile,
-        uploadPath
+      const { fileUrl, error: uploadError } = await uploadFileToSupabase(
+        "channels",
+        channelFile
       );
 
-      if (uploadError || !uploadData?.fullPath || !uploadData?.id) {
+      console.log(uploadError);
+
+      if (uploadError) {
         throw new Error("Error uploading the logo. Please try again.");
       }
 
+      // Create new channel data
       const newChannelData = {
         channel_name: newChannelName,
-        channel_logo_url: mediaUrl(uploadData.fullPath),
-        channel_logo_id: uploadData.id,
+        channel_logo_url: fileUrl,
         channel_type: CHANNEL_TYPE.REVIEW,
       };
 
@@ -77,13 +84,13 @@ export default function AddNewChannel({
         throw new Error("Error creating the channel. Please try again.");
       }
 
-      // Update the channels list
+      // Update channel list with the new channel
       const [newMappedChannel]: Channel[] = mapChannels(addedChannel);
-      setChannels([...channels, newMappedChannel]);
+      setChannels((prevChannels) => [...prevChannels, newMappedChannel]);
 
+      // Show success toast
       toast({
-        title: "Success!",
-        description: `Channel "${newMappedChannel?.name}" added successfully!`,
+        title: `Channel "${newMappedChannel?.name}" added successfully!`,
       });
 
       // Reset form
@@ -91,12 +98,10 @@ export default function AddNewChannel({
       setNewChannelLogo(placeholder);
       setChannelFile(null);
       setIsAdding(false);
-      
     } catch (error: any) {
-      toast({
-        title: "Error!",
-        description: error.message || "An unexpected error occurred.",
-      });
+      handleError(error.message || "An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,7 +153,8 @@ export default function AddNewChannel({
           className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold"
           onClick={handleCreateChannel}
         >
-          <CheckIcon className="h-4 w-4" /> <span className="max-sm:hidden">Save</span>
+          <CheckIcon className="h-4 w-4" />{" "}
+          <span className="max-sm:hidden">Save</span>
           <span className="sr-only">Save new channel</span>
         </Button>
         <Button
@@ -156,7 +162,8 @@ export default function AddNewChannel({
           className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"
           onClick={() => setIsAdding(false)}
         >
-          <XIcon className="h-4 w-4" /> <span className="max-sm:hidden">Cancel</span>
+          <XIcon className="h-4 w-4" />{" "}
+          <span className="max-sm:hidden">Cancel</span>
           <span className="sr-only">Cancel adding new channel</span>
         </Button>
       </div>
