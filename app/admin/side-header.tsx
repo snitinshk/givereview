@@ -3,7 +3,7 @@
 import { useState, ReactNode, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, ChevronRight } from "lucide-react";
-import { useParams, useRouter, usePathname } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image, { StaticImageData } from "next/image";
 import Breadcrumb from "../../components/admin/breadcrum";
 import { createClient } from "@/lib/supabase/supabase-client";
@@ -29,17 +29,7 @@ export interface MenuItem {
   submenu?: MenuItem[];
 }
 
-export interface Client {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-const menuItems: MenuItem[] = [
+const defaultMenuItems: MenuItem[] = [
   {
     name: "Clients",
     path: "/admin/clients",
@@ -67,42 +57,37 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const { clients } = useClients();
-  const pathname = usePathname();
+  const { slug } = useParams();
+  const { isLoading } = useLoader();
+
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isLoading } = useLoader();
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   if (slug) fetchData();
-  // }, [slug]);
+  const dynamicMenu = slug
+    ? {
+        name: capitalizeFirstLetter(slug as string),
+        path: `/admin/clients/${slug}/review-link`,
+        icon: <IconWrapper src={USERICON} alt="Clients Icon" />,
+        submenu: [
+          { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
+          { name: "Widget", path: `/admin/clients/${slug}/widget` },
+          { name: "Settings", path: `/admin/clients/${slug}/settings` },
+        ],
+      }
+    : null;
 
-  // useEffect(() => {
-  //   setIsLoading(false);
-  //   const handleRouteChangeStart = () => setIsLoading(true);
-  //   const handleRouteChangeComplete = () => setIsLoading(false);
-  //   const observer = new MutationObserver(handleRouteChangeComplete);
-  //   observer.observe(document.body, { childList: true, subtree: true });
-
-  //   return () => observer.disconnect();
-  // }, [pathname]);
-
-  // const fetchData = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  useEffect(() => {
-    if (clients) menuItems[0].clientNumber = clients.length;
-  }, [clients]);
+  const finalMenuItems: MenuItem[] = (() => {
+    const updatedMenuItems = [...defaultMenuItems];
+    if (dynamicMenu) {
+      updatedMenuItems.splice(1, 0, dynamicMenu);
+    }
+    if (clients) {
+      updatedMenuItems[0].clientNumber = clients.length;
+    }
+    return updatedMenuItems;
+  })();
 
   const handleNavigation = (path: string) => {
     setSelectedPath(path);
@@ -120,31 +105,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (!error) router.replace("/auth/login");
   };
 
-  const dynamicMenu = slug
-    ? {
-      name: capitalizeFirstLetter(slug as string),
-      path: `/admin/clients/${slug}/review-link`,
-      icon: <IconWrapper src={USERICON} alt="Clients Icon" />,
-      submenu: [
-        { name: "Review Link", path: `/admin/clients/${slug}/review-link` },
-        { name: "Widget", path: `/admin/clients/${slug}/widget` },
-        { name: "Settings", path: `/admin/clients/${slug}/settings` },
-      ],
-    }
-    : null;
-
-  const finalMenuItems: MenuItem[] = slug
-    ? (() => {
-      const updatedMenuItems = [...menuItems]; // Create a copy of menuItems
-      if (dynamicMenu) {
-        updatedMenuItems.splice(1, 0, dynamicMenu); // Insert dynamicMenu at the second index
-      }
-      return updatedMenuItems;
-    })()
-    : menuItems;
-
-
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -160,8 +120,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white flex-wrap">
@@ -191,8 +149,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 fixed lg:static h-full lg:h-auto transition-transform duration-300 z-50`}
+        ref={sidebarRef}
+        className={`w-[256px] bg-white pt-8 flex flex-col border-dashed border-r border-gray-300 px-2 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 fixed lg:static h-full lg:h-auto transition-transform duration-300 z-50`}
       >
         <div className="flex justify-center mb-10">
           <Image src={Logo} alt="Logo" priority />
@@ -203,10 +163,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li key={item.path} className="relative mb-2">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${selectedPath === item.path
-                    ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                    : ""
-                    }`}
+                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
+                    selectedPath === item.path
+                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                      : ""
+                  }`}
                   onClick={() =>
                     item.submenu
                       ? toggleSubmenu(item.path)
@@ -237,10 +198,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <li key={subItem.path}>
                         <Button
                           variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${selectedPath === subItem.path
-                            ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                            : ""
-                            }`}
+                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
+                            selectedPath === subItem.path
+                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                              : ""
+                          }`}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className="w-1 h-1 bg-gray-500 rounded"></span>
@@ -263,9 +225,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           Logout
         </Button>
       </aside>
-      {sidebarOpen &&
-        <div className="fixed left-0 top-0 w-full h-full backdrop-blur-sm z-30 bg-black bg-opacity-20" onClick={() => setSidebarOpen(false)}></div>
-      }
+      {sidebarOpen && (
+        <div
+          className="fixed left-0 top-0 w-full h-full backdrop-blur-sm z-30 bg-black bg-opacity-20"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
       {/* Main Content */}
       <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen relative">
         <Breadcrumb />
@@ -273,6 +238,5 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="mt-5">{children}</div>
       </main>
     </div>
-
   );
 }
