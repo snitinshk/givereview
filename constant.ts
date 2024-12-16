@@ -26,6 +26,8 @@ export enum CLIENT_TYPE {
 
 export const BUCKET_NAME = 'media'
 
+export const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://reviewbooster.vercel.app/'
+
 export const DEFAULT_TEXTS = {
     reviewSiteBaseUrl: process.env.NEXT_PUBLIC_BASE_URL,
     homeReviewTitle: 'How was your experience with ',

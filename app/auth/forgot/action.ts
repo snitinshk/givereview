@@ -1,12 +1,13 @@
 'use server'
 
+import { SITE_URL } from "@/constant";
 import { createClient } from "@/lib/supabase/supabase-server";
 
 export default async function forgotPasswordAction(email: string) {
 
     const supabase = await createClient()
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `https://reviewbooster.vercel.app/auth/reset`
+        redirectTo: `${SITE_URL}auth/reset`
     })
     console.log(error);
     if (!error) {

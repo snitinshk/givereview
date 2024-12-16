@@ -24,6 +24,7 @@ import {
   reviewLinkPositiveDefaultValue,
   reviewLinkSettingsDefaultValue,
   reviewLinkThankyouDefaultValue,
+  SITE_URL,
 } from "@/constant";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import {
@@ -215,9 +216,7 @@ const ReviewLink: React.FC = (params) => {
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
     setReviewLinkThankyou(reviewLinkThankyouDefaultValue);
   };
-  console.log(`url from reviewlink...${process.env.NEXT_PUBLIC_BASE_URL}`);
-  const siteUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://reviewbooster.vercel.app/";
+  console.log(`url from reviewlink...${SITE_URL}`);
 
   // if (!hasData) {
   //   return (
@@ -263,7 +262,7 @@ const ReviewLink: React.FC = (params) => {
 
               <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
                 <Link
-                  href={siteUrl + reviewLink?.review_link_slug}
+                  href={SITE_URL + reviewLink?.review_link_slug}
                   target="_blank"
                   className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
                 >

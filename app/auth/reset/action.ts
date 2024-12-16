@@ -13,6 +13,8 @@ export default async function resetPasswordAction(password: string, code: string
                 password
             })
 
+            console.log(error);
+
             return error ? true : false;
         } else {
             return true

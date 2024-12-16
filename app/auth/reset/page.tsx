@@ -27,7 +27,7 @@ interface NotifyTextObject {
 
 export default function ResetPassword() {
   const [notifyText, setNotifyText] = useState<NotifyTextObject>();
-
+  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [cnpassword, setCnpassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,25 +37,21 @@ export default function ResetPassword() {
 
   const searchParams = useSearchParams();
 
-  useEffect(()=>{
-    
+  useEffect(() => {
     const code = searchParams.get("code");
     setAuthCode(code);
     const errorMsg = searchParams.get("error_description");
     setErrorMsg(errorMsg);
+  }, [searchParams]);
 
-  },[searchParams])
-
-  useEffect(()=>{
-
+  useEffect(() => {
     if (errorMsg) {
       setNotifyText({
         isSuccess: false,
         alertText: errorMsg,
       });
     }
-
-  },[errorMsg])
+  }, [errorMsg]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,7 +63,12 @@ export default function ResetPassword() {
       });
       return false;
     }
+
+    setLoading(true);
+
     const error = await resetPasswordAction(password, authCode ?? "");
+    console.log(error);
+    setLoading(false);
 
     if (!error) {
       setNotifyText({
@@ -176,8 +177,16 @@ export default function ResetPassword() {
             <Button
               type="submit"
               className="w-full h-12 font-bold font-PUBSAN bg-[#00AB55]"
+              disabled={loading}
             >
-              Update Password
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <span className="loader mr-2"></span>
+                  Updating password...
+                </span>
+              ) : (
+                "Update Password"
+              )}
             </Button>
             <div className="flex justify-center text- text-ftClor items-center mt-5"></div>
             <Link
