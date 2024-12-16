@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignInData } from "@/interfaces/user";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../images/logo.svg";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -23,6 +23,12 @@ export default function LoginForm({
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setLoading(false);
+  }, [invalidCredentials]);
+
+  // console.log(invalidCredentials);
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +37,7 @@ export default function LoginForm({
     try {
       signInData({ email, password });
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -129,7 +135,7 @@ export default function LoginForm({
         {loading ? (
           <span className="flex items-center justify-center">
             <span className="loader mr-2"></span>
-            Loading...
+            Signing you in...
           </span>
         ) : (
           "Login"

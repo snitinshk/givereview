@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useSelectedClient } from "@/app/context/selected-client-context";
+import { Heart } from "lucide-react";
 
 const ThankYouTabs: React.FC = () => {
   const { selectedClient } = useSelectedClient();
@@ -166,16 +167,21 @@ const ThankYouTabs: React.FC = () => {
         </div>
       </div>
       {/* Preview Section */}
-      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-        <Image
+      <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+        {/* <Image
           src={selectedClient?.logo || PlaceholderImage}
           alt={`Preview Image`}
           width={145}
           height={145}
-        />
-        <p className="max-w-96 text-center mx-auto">
+        /> */}
+        <p className="max-w-96 text-center mx-auto text-2xl font-medium text-gray-800 font-MOSTR">
           {reviewLinkThankyouTitle}
         </p>
+        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+          <span className="font-medium">Powered</span> with{" "}
+          <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+          booster
+        </div>
       </div>
     </div>
   );
