@@ -215,7 +215,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
                 <div>
                   <Input
                     placeholder="Your name"
-                    className="border-gray-300"
+                    className="border-gray-300 h-12"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     aria-invalid={errors.name ? "true" : "false"}
@@ -229,7 +229,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
                 <div>
                   <Input
                     placeholder="Phone no"
-                    className="border-gray-300"
+                    className="border-gray-300 h-12"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     aria-invalid={errors.phone ? "true" : "false"}
@@ -244,7 +244,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
                   <Input
                     type="email"
                     placeholder="Email"
-                    className="border-gray-300"
+                    className="border-gray-300 h-12"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     aria-invalid={errors.email ? "true" : "false"}

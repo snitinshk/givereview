@@ -19,7 +19,7 @@ export default async function ThankYouPage({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
-      <div className="flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex flex-col items-center justify-center p-8 bg-white relative">
         <div className="w-full max-w-md text-center">
           <h1 className="text-2xl font-medium text-gray-800">
             {thankyou_review_link_details?.review_thankyou_title}
