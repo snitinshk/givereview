@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EditableField from "../editable";
 import { useEffect, useRef, useState } from "react";
-import { Star, UploadIcon } from "lucide-react";
+import { Heart, Star, UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
@@ -291,9 +291,8 @@ const NegativeTabs: React.FC = () => {
         <div className="flex flex-col gap-5 max-w-full sm:max-w-xl">
           <div className="flex items-center w-full gap-2">
             <div
-              className={`flex items-center gap-2 ${
-                isEditingPageTitle ? "flex-grow" : ""
-              }`}
+              className={`flex items-center gap-2 ${isEditingPageTitle ? "flex-grow" : ""
+                }`}
             >
               {renderEditableField(
                 isEditingPageTitle,
@@ -467,14 +466,14 @@ const NegativeTabs: React.FC = () => {
 
       {/* Preview Section */}
 
-      <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10 max-md:px-6">
+      <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[550px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-start p-11 flex-col gap-10 max-md:px-6">
         <Image
           src={selectedClient?.logo || PlaceholderImage}
           alt={`Preview Image`}
           width={145}
           height={145}
         />
-        <p className="max-w-96 text-center mx-auto">{reviewDesc}</p>
+        <p className="max-w-[395px] text-center mx-auto font-MOSTR font-light text-gray-700 text-base">{reviewDesc}</p>
 
         <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40 max-md:-ml-6">
           {defaultChannel?.enabled && (
@@ -495,7 +494,7 @@ const NegativeTabs: React.FC = () => {
                 key={category.name}
                 className="flex items-center justify-between py-2 w-full"
               >
-                <span className="text-base text-gray-700 font-medium">
+                <span className="text-base text-gray-700 font-medium font-MOSTR">
                   {category.name}
                 </span>
                 <div className="flex gap-1">
@@ -515,7 +514,7 @@ const NegativeTabs: React.FC = () => {
               <div key={input.placeholder}>
                 <Input
                   placeholder={input.placeholder}
-                  className="border-gray-300 max-w-80 h-12 bg-white"
+                  className="border-gray-300 max-w-80 h-12 bg-white font-MOSTR"
                   aria-invalid="false"
                   disabled={true}
                 />
@@ -528,13 +527,17 @@ const NegativeTabs: React.FC = () => {
               <div key={textarea.placeholder}>
                 <Textarea
                   placeholder={textarea.placeholder}
-                  className="min-h-[100px] border-gray-300 resize-none bg-white"
+                  className="min-h-[100px] border-gray-300 resize-none bg-white font-MOSTR"
                   aria-invalid="false"
                   disabled={true}
                 />
               </div>
             ))}
           </div>
+        </div>
+        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+          <span className="font-medium">Powered</span> with{" "}
+          <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place booster
         </div>
       </div>
     </div>

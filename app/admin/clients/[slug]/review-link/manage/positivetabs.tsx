@@ -14,7 +14,7 @@ import {
 } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { Heart, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useSelectedClient } from "@/app/context/selected-client-context";
 import {
@@ -323,34 +323,38 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
       {/* Preview Section */}
 
       {isMainDivVisible && (
-        <div className="w-full md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
+        <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[550px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
           <Image
             src={selectedClient?.logo || PlaceholderImage}
             alt={`Preview Image`}
             width={145}
             height={145}
           />
-          <p className="max-w-96 text-center mx-auto">{title}</p>
+          <p className="max-w-96 text-center text-gray-700 font-MOSTR font-light mx-auto">{title}</p>
           <div className="space-y-4 max-w-72 mx-auto w-full">
             {selectedChannels.map((channel) => (
               <div
                 key={channel.id}
                 className="flex gap-5 items-center flex-wrap rounded-md"
               >
-                <div className="bg-gray-100 w-80 h-14 rounded-lg p-3 flex items-center">
+                <div className="bg-white border border-gray-200 w-80 h-12 rounded-lg px-6 flex items-center">
                   <Image
                     src={channel.logo}
                     alt={`${channel.name} logo`}
                     width={40}
                     height={40}
-                    className="rounded-sm"
+                    className="w-5 h-5"
                   />
-                  <span className="flex-grow text-center font-semibold">
+                  <span className="flex-grow text-center font-MOSTR font-bold text-sm">
                     {channel.name}
                   </span>
                 </div>
               </div>
             ))}
+          </div>
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place booster
           </div>
         </div>
       )}
