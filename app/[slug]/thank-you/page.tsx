@@ -20,6 +20,20 @@ export default async function ThankYouPage({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative">
+        <div className="space-y-8 mb-20">
+          {/* Logo */}
+          {thankyou_review_link_details?.review_thankyou_bg_image && (
+            <div className="flex justify-center">
+              <Image
+                src={thankyou_review_link_details?.review_thankyou_bg_image}
+                alt="Restaurant Logo"
+                width={150}
+                height={150}
+                className="w-auto h-32"
+              />
+            </div>
+          )}
+        </div>
         <div className="w-full max-w-md text-center">
           <h1 className="text-2xl font-medium text-gray-800">
             {thankyou_review_link_details?.review_thankyou_title}
@@ -38,7 +52,6 @@ export default async function ThankYouPage({
       <div className="hidden h-screen md:block">
         <Image
           src={
-            thankyou_review_link_details?.review_thankyou_bg_image ||
             reviewLink?.desktop_bg_image
           }
           alt="Desktop background"

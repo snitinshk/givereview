@@ -168,9 +168,9 @@ const ThankYouTabs: React.FC = () => {
       </div>
       {/* Preview Section */}
       <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-        {selectedClient?.logo && (
+        {imagePreview && (
           <Image
-            src={selectedClient?.logo || PlaceholderImage}
+            src={imagePreview}
             alt={`Preview Image`}
             width={145}
             height={145}
