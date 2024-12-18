@@ -129,8 +129,8 @@ export default function Page() {
 
 
   return (
-    <div className="flex-1 space-y-6 p-8">
-      <div className="space-y-6">
+    <div className="flex-1 space-y-6 p-8 px-0">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="text-sm">Active</span>
           <Switch
@@ -144,7 +144,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-[500px]">
           <EditableField
             isEditing={editingName}
             value={selectedClient?.name ?? ""}
@@ -162,9 +162,6 @@ export default function Page() {
           />
 
           <div className="flex items-center">
-            <div className="flex items-center gap-2">
-              <span>Restaurant</span>
-            </div>
             <Select
               disabled={!editingType}
               onValueChange={(newValue) => {
@@ -177,7 +174,7 @@ export default function Page() {
               }}
               value={selectedClient?.type}
             >
-              <SelectTrigger className="h-12 ml-2 mt-2 w-full sm:w-64">
+              <SelectTrigger className="h-12 mt-2 w-full sm:w-64">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -207,7 +204,7 @@ export default function Page() {
           <div className="space-y-2">
             <div className=" table">
               <div className="flex items-center justify-between gap-3">
-                <span>Client logo</span>
+                <span className="text-sm font-semibold text-gray-500">Client logo</span>
                 <Button
                   onClick={() => setEditingLogo(!editingLogo)}
                   variant="ghost"

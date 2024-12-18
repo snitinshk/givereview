@@ -131,7 +131,7 @@ const CreateClient: React.FC = () => {
           Save
         </Button>
       </div>
-      <div className="bg-white rounded-lg shadow-lg mb-5 p-5">
+      <div className="mb-5 p-5 px-0">
         <div className="max-w-80 space-y-4 flex flex-col">
           {/* <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900 mb-4"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div> */}
           <form id="add-client" onSubmit={handleSubmit} className="space-y-8 flex flex-col">
