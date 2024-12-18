@@ -17,16 +17,17 @@ export default function PositiveFeedback({ reviewLink }: any) {
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-8">
-          <div className="flex justify-center mb-6">
-            <Image
-              src={client?.client_logo}
-              alt="Client Logo"
-              width={100}
-              height={100}
-              className="h-24 w-auto"
-            />
-          </div>
-
+          {client?.client_logo && (
+            <div className="flex justify-center mb-6">
+              <Image
+                src={client?.client_logo}
+                alt="Restaurant Logo"
+                width={100}
+                height={100}
+                className="h-24 w-auto"
+              />
+            </div>
+          )}
           <p className="text-gray-700 font-MOSTR font-light text-center max-w-96 mx-auto">
             {reviewLink?.review_link_positive_title}
           </p>

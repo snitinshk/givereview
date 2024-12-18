@@ -156,16 +156,17 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
       <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-7">
           {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <Image
-              src={client?.client_logo}
-              alt="Client Logo"
-              width={100}
-              height={100}
-              className="h-24 w-auto"
-            />
-          </div>
-
+          {client?.client_logo && (
+            <div className="flex justify-center mb-6">
+              <Image
+                src={client?.client_logo}
+                alt="Restaurant Logo"
+                width={100}
+                height={100}
+                className="h-24 w-auto"
+              />
+            </div>
+          )}
           {/* Description */}
           <div className="text-center mb-8 space-y-2 font-MOSTR font-light text-gray-700 text-base max-w-[394px] mx-auto">
             {negative_page_description}
