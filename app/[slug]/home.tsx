@@ -17,7 +17,7 @@ export default function Home({
   const [hoveredRating, setHoveredRating] = useState(0);
 
   const handleSelectRating = (star: number) => {
-    if (star >= reviewLink?.rating_threshold_count) {
+    if (star > reviewLink?.rating_threshold_count) {
       setIsPositivePageVisible(true);
       setIsHomeVisible(false);
     } else {

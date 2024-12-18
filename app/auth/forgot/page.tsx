@@ -17,7 +17,7 @@ import Link from "next/link";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import InlineAlert from "@/components/alert/inline-alert";
 import forgotPasswordAction from "./action";
-import { SITE_URL } from "@/constant";
+import { getURL } from "@/lib/utils";
 
 interface NotifyTextObject {
   isSuccess: boolean;
@@ -30,7 +30,7 @@ export default function ForgotPassword() {
   const [notifyText, setNotifyText] = useState<NotifyTextObject>();
   const [loading, setLoading] = useState(false);
 
-  console.log(`url from forgot...${SITE_URL}`);
+  console.log(`url from forgot...${getURL()}`);
 
   const handleResetPassword = async (
     event: React.FormEvent<HTMLFormElement>
