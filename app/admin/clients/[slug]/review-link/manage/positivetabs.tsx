@@ -324,13 +324,17 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
 
       {isMainDivVisible && (
         <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[550px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-          <Image
-            src={selectedClient?.logo || PlaceholderImage}
-            alt={`Preview Image`}
-            width={145}
-            height={145}
-          />
-          <p className="max-w-96 text-center text-gray-700 font-MOSTR font-light mx-auto">{title}</p>
+          {selectedClient?.logo && (
+            <Image
+              src={selectedClient?.logo || PlaceholderImage}
+              alt={`Preview Image`}
+              width={145}
+              height={145}
+            />
+          )}
+          <p className="max-w-96 text-center text-gray-700 font-MOSTR font-light mx-auto">
+            {title}
+          </p>
           <div className="space-y-4 max-w-72 mx-auto w-full">
             {selectedChannels.map((channel) => (
               <div
@@ -354,7 +358,8 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
           </div>
           <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
             <span className="font-medium">Powered</span> with{" "}
-            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place booster
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+            booster
           </div>
         </div>
       )}

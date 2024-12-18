@@ -168,12 +168,14 @@ const ThankYouTabs: React.FC = () => {
       </div>
       {/* Preview Section */}
       <div className="w-full relative pb-12 md:w-[calc(50%-50px)] min-h-[450px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-        <Image
-          src={selectedClient?.logo || PlaceholderImage}
-          alt={`Preview Image`}
-          width={145}
-          height={145}
-        />
+        {selectedClient?.logo && (
+          <Image
+            src={selectedClient?.logo || PlaceholderImage}
+            alt={`Preview Image`}
+            width={145}
+            height={145}
+          />
+        )}
         <p className="max-w-96 text-center mx-auto text-2xl font-medium text-gray-800 font-MOSTR">
           {reviewLinkThankyouTitle}
         </p>
