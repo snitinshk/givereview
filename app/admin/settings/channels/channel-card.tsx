@@ -146,7 +146,7 @@ export default function ChannelCard({
           <>
             <Button
               variant="ghost"
-              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold"
+              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold px-4"
               onClick={handleSave}
             >
               <CheckIcon className="h-4 w-4" /> <span className="max-sm:hidden">Save</span>
@@ -154,7 +154,7 @@ export default function ChannelCard({
             </Button>
             <Button
               variant="ghost"
-              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold"
+              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold px-4"
               onClick={handleCancel}
             >
               <XIcon className="h-4 w-4" />  <span className="max-sm:hidden">Cancel</span>
@@ -165,7 +165,7 @@ export default function ChannelCard({
           <>
             <Button
               variant="ghost"
-              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold max-sm:order-2"
+              className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold max-sm:order-2 px-4"
               onClick={() => setIsEditing(true)}
             >
               <PencilIcon className="h-4 w-4" /> <span className="max-sm:hidden">Edit</span>
@@ -173,7 +173,7 @@ export default function ChannelCard({
             </Button>
             <Button
               variant="ghost"
-              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold max-sm:order-3"
+              className="text-[#FF5630] hover:bg-[#FF5630] hover:text-white font-bold max-sm:order-3 px-4"
               onClick={handleDelete}
             >
               <TrashIcon className="h-4 w-4" /> <span className="max-sm:hidden">Delete</span>
