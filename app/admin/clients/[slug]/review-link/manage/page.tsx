@@ -17,7 +17,6 @@ import {
   saveReviewLinkSettings,
   saveReviewLinkThankyouPage,
 } from "../action";
-import { useSelectedClient } from "@/app/context/selected-client-context";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import {
@@ -31,6 +30,7 @@ import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.contex
 import { useLoader } from "@/app/context/loader.context";
 import { useChannels } from "@/app/context/channels-context";
 import { CHANNEL_TYPE } from "@/constant";
+import { useClients } from "@/app/context/clients-context";
 
 const CreateReviewLink: React.FC = () => {
   const { channels } = useChannels();
@@ -48,7 +48,7 @@ const CreateReviewLink: React.FC = () => {
 
   const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
 
-  const { selectedClient } = useSelectedClient();
+  const { selectedClient } = useClients();
 
   const handleSaveReviewLink = async () => {
     // Validate selected channels

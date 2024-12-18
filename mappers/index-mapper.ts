@@ -8,7 +8,8 @@ export const mapChannels = (channels: ChannelDB[]): Channel[] => {
             id: channel.id as number,
             name: channel?.channel_name ?? '',
             logo: channel?.channel_logo_url ?? '',
-            channelType: channel?.channel_type ?? ''
+            channelType: channel?.channel_type ?? '',
+            orderPriority: channel?.order_priority ?? 0
         }
     })
 }
@@ -198,7 +199,7 @@ export const mapNegativeLinkDefault = (negativeReviewLink: any) => {
 };
 
 export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {
-    
+
     return reviewLinkPositive.map(
         (channel: any) => ({
             channel_id: channel.id,

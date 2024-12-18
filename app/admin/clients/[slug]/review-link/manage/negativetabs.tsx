@@ -12,7 +12,7 @@ import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
-import { useSelectedClient } from "@/app/context/selected-client-context";
+import { useClients } from "@/app/context/clients-context";
 
 type HoverStates = {
   [key: string]: number;
@@ -39,7 +39,7 @@ interface TextareaCategory {
 
 const NegativeTabs: React.FC = () => {
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
-  const { selectedClient } = useSelectedClient();
+  const { selectedClient } = useClients();
   const categories = [
     "Food",
     "Service",

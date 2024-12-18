@@ -20,6 +20,7 @@ import {
   getSlug,
   mediaUrl,
   uploadFile,
+  uploadFileToSupabase,
 } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { addClient } from "../action";
@@ -54,33 +55,33 @@ const CreateClient: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (event: any) => {
-    setIsLoading(true);
+    
     event.preventDefault();
 
-    if (!clientLogo || !clientName || !clientType) {
+    if (!clientName || !clientType) {
       toast({
         description: `Fill all client detail and then submit form`,
       });
       return;
     }
 
-    const uploadPath = `clients/${getFileName(clientLogo as File)}`;
-    const { data: uploadData, error: uploadError } = await uploadFile(
-      clientLogo as File,
-      uploadPath
-    );
+    setIsLoading(true);
 
-    if (uploadError) {
-      toast({
-        description: `Error in uploading client logo, please try again later`,
-      });
+    let clientLogoUrl;
+
+    if(clientLogo){
+      const { error: uploadError, fileUrl } = await uploadFileToSupabase("clients", clientLogo);
+      clientLogoUrl = fileUrl;
+      if (uploadError) {
+        toast({
+          description: `Error in uploading client logo, please try again later`,
+        });
+      }
     }
-
-    const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
 
     const newClientData = {
       client_name: clientName,
-      client_logo: clientLogoUrl,
+      client_logo: clientLogoUrl || '',
       client_type: clientType,
       client_slug: getSlug(clientName),
     };
@@ -122,7 +123,7 @@ const CreateClient: React.FC = () => {
           Cancel
         </Button>
         <Button
-          disabled={!clientName || !clientType || !clientLogo}
+          disabled={!clientName || !clientType}
           form="add-client"
           type="submit"
           className="bg-[#d6f2e4] text-[#027b55] hover:text-white font-bold"
@@ -169,7 +170,7 @@ const CreateClient: React.FC = () => {
                       alt="Image Preview"
                       width={500}
                       height={500}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 ) : (

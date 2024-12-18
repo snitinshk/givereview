@@ -7,7 +7,7 @@ export default async function forgotPasswordAction(email: string) {
 
     const supabase = await createClient()
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${SITE_URL}auth/reset`
+        redirectTo: `https://reviewbooster.vercel.app/auth/reset`
     })
     console.log(error);
     if (!error) {
