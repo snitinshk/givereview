@@ -69,11 +69,10 @@ export default function Home({
                   onMouseLeave={handleMouseLeave}
                 >
                   <Star
-                    className={`w-12 h-12 cursor-pointer transition-colors duration-200 ${
-                      star <= (hoveredRating || averageRating)
+                    className={`w-12 h-12 cursor-pointer transition-colors duration-200 ${star <= (hoveredRating || averageRating)
                         ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300 stroke-gray-300 hover:text-yellow-200 hover:fill-yellow-200"
-                    }`}
+                        : "text-gray-300 stroke-gray-700 hover:text-yellow-200 hover:fill-yellow-200"
+                      }`}
                     onClick={() => handleSelectRating(star)}
                   />
                 </div>

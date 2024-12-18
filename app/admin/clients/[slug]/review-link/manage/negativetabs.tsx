@@ -483,7 +483,7 @@ const NegativeTabs: React.FC = () => {
           {reviewDesc}
         </p>
 
-        <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-40 max-md:-ml-6">
+        <div className="flex items-center gap-3 font-MOSTR font-light text-black text-base -ml-80 max-md:-ml-6">
           {defaultChannel?.enabled && (
             <Image
               src={reviewLinkNegative?.previewUrl || defaultChannel?.logo}
@@ -509,7 +509,7 @@ const NegativeTabs: React.FC = () => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={`${category.name}-${star}`}
-                      className="w-6 h-6 cursor-pointer transition-colors text-gray-300"
+                      className="w-6 h-6 cursor-pointer transition-colors text-gray-700"
                     />
                   ))}
                 </div>

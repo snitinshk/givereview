@@ -131,10 +131,10 @@ const CreateClient: React.FC = () => {
           Save
         </Button>
       </div>
-      <div className="bg-white rounded-lg shadow-lg mb-5 p-5">
-        <div className="max-w-lg space-y-4 flex flex-col">
+      <div className="mb-5 p-5 px-0">
+        <div className="max-w-80 space-y-4 flex flex-col">
           {/* <div className="flex items-center gap-3 bg-red-100 py-3 px-4 rounded-lg text-red-900 mb-4"><IoMdInformationCircle className="text-2xl text-red-500" /> Invalid email or password.</div> */}
-          <form id="add-client" onSubmit={handleSubmit}>
+          <form id="add-client" onSubmit={handleSubmit} className="space-y-8 flex flex-col">
             <Input
               value={clientName as string}
               onChange={(e) => setClientName(e.target.value)}
@@ -159,7 +159,7 @@ const CreateClient: React.FC = () => {
               </SelectContent>
             </Select>
             <div>
-              <label className="text-sm text-gray-700 font-semibold">
+              <label className="text-sm text-gray-500 font-semibold">
                 Logo
               </label>
               <div className="flex justify-between items-center border border-dashed border-gray-200 rounded-full w-[145px] h-[145px] p-2 relative">
