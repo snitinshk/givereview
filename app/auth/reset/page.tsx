@@ -66,8 +66,11 @@ export default function ResetPassword() {
 
     setLoading(true);
 
-    const error = await resetPasswordAction(password, authCode ?? "");
+    const response = await resetPasswordAction(password, authCode ?? "");
+    const { error } = JSON.parse(response);
+
     console.log(error);
+
     setLoading(false);
 
     if (!error) {
@@ -101,93 +104,97 @@ export default function ResetPassword() {
                 isSuccess={notifyText?.isSuccess}
               />
             )}
-            <div className="space-y-6">
-              <div className="relative mb-4">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  required
-                  className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary pr-10"
-                />
-                <label
-                  htmlFor="password"
-                  className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
+            {!notifyText && (
+              <div className="space-y-6">
+                <div className="relative mb-4">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                    className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary pr-10"
+                  />
+                  <label
+                    htmlFor="password"
+                    className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
                     ${
                       password
                         ? "-top-2 text-sm text-gray-700"
                         : "top-3 text-base text-gray-500"
                     }
                     peer-focus:-top-2 peer-focus:text-sm peer-focus:text-gray-700`}
-                >
-                  New Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOffIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
+                  >
+                    New Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOffIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
 
-              {/* Confirm New Password Field */}
-              <div className="relative mb-4">
-                <Input
-                  id="cnpassword"
-                  type={showCnPassword ? "text" : "password"}
-                  onChange={(e) => setCnpassword(e.target.value)}
-                  value={cnpassword}
-                  required
-                  className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary pr-10"
-                />
-                <label
-                  htmlFor="cnpassword"
-                  className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
+                {/* Confirm New Password Field */}
+                <div className="relative mb-4">
+                  <Input
+                    id="cnpassword"
+                    type={showCnPassword ? "text" : "password"}
+                    onChange={(e) => setCnpassword(e.target.value)}
+                    value={cnpassword}
+                    required
+                    className="peer h-12 w-full border-gray-300 focus:outline-none focus:border-primary pr-10"
+                  />
+                  <label
+                    htmlFor="cnpassword"
+                    className={`absolute left-2 bg-white px-1 transition-all duration-200 ease-in-out transform
                     ${
                       cnpassword
                         ? "-top-2 text-sm text-gray-700"
                         : "top-3 text-base text-gray-500"
                     }
                     peer-focus:-top-2 peer-focus:text-sm peer-focus:text-gray-700`}
-                >
-                  Confirm New Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowCnPassword(!showCnPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                >
-                  {showCnPassword ? (
-                    <EyeOffIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
+                  >
+                    Confirm New Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowCnPassword(!showCnPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showCnPassword ? (
+                      <EyeOffIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex flex-col items-center">
-            <Button
-              type="submit"
-              className="w-full h-12 font-bold font-PUBSAN bg-[#00AB55]"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <span className="loader mr-2"></span>
-                  Updating password...
-                </span>
-              ) : (
-                "Update Password"
-              )}
-            </Button>
+            {!notifyText && (
+              <Button
+                type="submit"
+                className="w-full h-12 font-bold font-PUBSAN bg-[#00AB55]"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <span className="loader mr-2"></span>
+                    Updating password...
+                  </span>
+                ) : (
+                  "Update Password"
+                )}
+              </Button>
+            )}
             <div className="flex justify-center text- text-ftClor items-center mt-5"></div>
             <Link
               href="/auth/login"

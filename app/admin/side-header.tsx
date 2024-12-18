@@ -241,7 +241,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         ></div>
       )}
       {/* Main Content */}
-      <main className="lg:w-[calc(100vw-256px)] p-4 lg:p-8 w-screen relative">
+      <main className="lg:w-[calc(100vw-280px)] p-4 lg:p-8 w-screen relative">
         <Breadcrumb />
         {isLoading && <Loading />}
         <div className="mt-5">{children}</div>

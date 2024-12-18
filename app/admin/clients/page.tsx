@@ -36,7 +36,7 @@ const getStatusColor = (status: string) => {
     case "ACTIVE":
       return "bg-[#def4e9] text-[#1a806a]";
     case "INACTIVE":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-[#ff5631] text-white";
   }
 };
 
@@ -47,10 +47,9 @@ const ClientTable: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(50);
 
   const { clients, setClients, setSelectedClient } = useClients();
-  console.log(clients);
 
   const filteredClients = clients?.filter((client) => {
     const matchesType = typeFilter === "All" || client.type === typeFilter;

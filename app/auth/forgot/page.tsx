@@ -30,8 +30,6 @@ export default function ForgotPassword() {
   const [notifyText, setNotifyText] = useState<NotifyTextObject>();
   const [loading, setLoading] = useState(false);
 
-  console.log(`url from forgot...${getURL()}`);
-
   const handleResetPassword = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
