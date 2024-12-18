@@ -469,12 +469,12 @@ export default function SettingTabs() {
       {/* Preview Section */}
       <div className=" relative w-full md:w-[calc(50%-50px)] min-h-[550px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
         <Image src={selectedClient?.logo || PlaceholderImage} alt={`Preview Image`} width={145} height={145} />
-        <p className="max-w-80 text-center mx-auto text-2xl font-semibold text-gray-800 font-MOSTR">{title}</p>
+        <p className="max-w-80 text-center mx-auto text-base font-normal text-gray-800">{title}</p>
         <div className="flex gap-3">
           {Array.from({ length: 5 }, (_, index) => (
             <Star
               key={index}
-              className={`w-12 h-12 text-gray-300`}
+              className={`w-8 h-8 text-gray-800`}
             />
           ))}
         </div>

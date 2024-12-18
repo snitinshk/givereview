@@ -172,7 +172,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
           </div>
 
           {/* Google placeExperience Indicator */}
-          <div className="flex items-center gap-3 mb-6 font-MOSTR font-light text-black text-base">
+          <div className="flex items-center gap-3 !mb-10 !mt-10 font-MOSTR font-light text-black text-base -ml-20">
             {channel_logo?.enabled && (
               <Image
                 src={channel_logo?.logo}
@@ -322,7 +322,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
             </div>
             <Button
               type="submit"
-              className="w-half bg-black hover:bg-gray-800 text-white"
+              className="w-half bg-black hover:bg-gray-800 text-white ml-auto table min-w-28"
             >
               Send
             </Button>

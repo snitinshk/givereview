@@ -22,6 +22,8 @@ import {
 } from "@/lib/utils";
 import { updateIndividualAttributes } from "@/app/admin/action";
 import { useClients } from "@/app/context/clients-context";
+import { TbCameraPlus } from "react-icons/tb";
+import { IoMdClose } from "react-icons/io";
 
 export default function Page() {
   const { selectedClient, setSelectedClient, clients, setClients } =
@@ -78,6 +80,7 @@ export default function Page() {
         ...prev,
         logo: base64,
       }));
+      setEditingLogo(false);
       const { error, fileUrl } = await uploadFileToSupabase("clients", file);
       if (!error) {
         handleUpdateClient({ client_logo: fileUrl });
@@ -116,13 +119,14 @@ export default function Page() {
       prevClients.map((client) =>
         client.id === selectedClient?.id
           ? {
-              ...selectedClient,
-              [field]: value,
-            }
+            ...selectedClient,
+            [field]: value,
+          }
           : client
       )
     );
   };
+
 
   return (
     <div className="flex-1 space-y-6 p-8">
@@ -140,7 +144,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-6">
           <EditableField
             isEditing={editingName}
             value={selectedClient?.name ?? ""}
@@ -192,7 +196,7 @@ export default function Page() {
                 onClick={() => setEditingType(true)}
                 variant="ghost"
                 size="sm"
-                className="text-green-500"
+                className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold flex items-center text-sm"
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
@@ -201,39 +205,53 @@ export default function Page() {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span>Client logo</span>
-              <Button
-                onClick={() => setEditingLogo(!editingLogo)}
-                variant="ghost"
-                size="sm"
-                className="text-green-500"
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </Button>
-            </div>
-            <div className="flex justify-center rounded-lg border-2 border-dashed p-8">
-              {selectedClient?.logo ? (
-                <Image
-                  src={selectedClient.logo}
-                  alt="Client Logo"
-                  width={100}
-                  height={100}
-                  className="h-[100px] w-[200px] object-contain"
-                />
-              ) : (
-                <p>No Logo Uploaded</p>
+            <div className=" table">
+              <div className="flex items-center justify-between gap-3">
+                <span>Client logo</span>
+                <Button
+                  onClick={() => setEditingLogo(!editingLogo)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#36B37E] hover:bg-[#36B37E] hover:text-white font-bold flex items-center text-sm"
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              </div>
+              {!editingLogo && (
+                <div className="block mt-5">
+                  {selectedClient?.logo ? (
+                    <Image
+                      src={selectedClient.logo}
+                      alt="Client Logo"
+                      width={100}
+                      height={100}
+                      className="h-[100px] w-[200px] object-contain"
+                    />
+                  ) : (
+                    <p>No Logo Uploaded</p>
+                  )}
+                </div>
+              )}
+              {editingLogo && (
+                <div className="flex mt-5 justify-between items-center border border-dashed border-gray-200 rounded-full w-[145px] h-[145px] p-2 relative">
+                  <label
+                    htmlFor="imageUpload"
+                    className="bg-gray-200 h-full w-full rounded-full flex items-center justify-center flex-col text-sm text-gray-500 gap-2 cursor-pointer"
+                  >
+                    <TbCameraPlus className="text-lg" />{" "}
+                    {selectedClient?.logo ? "Change logo" : "Upload logo"}
+                    <input
+                      id="imageUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               )}
             </div>
-            {editingLogo && (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleLogoUpload}
-                className="mt-4"
-              />
-            )}
           </div>
         </div>
       </div>

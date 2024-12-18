@@ -20,7 +20,7 @@ export function RatingItem({ name, rating, onRatingChange }: RatingItemProps) {
             className={`w-6 h-6 cursor-pointer transition-colors ${
               star <= (hover || rating)
                 ? "text-yellow-400 fill-yellow-400"
-                : "text-gray-300"
+                : "text-gray-700"
             }`}
             onClick={() => onRatingChange(star)}
             onMouseEnter={() => setHover(star)}
