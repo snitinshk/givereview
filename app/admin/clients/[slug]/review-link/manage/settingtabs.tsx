@@ -40,6 +40,7 @@ interface Settings {
 
 export default function SettingTabs() {
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
+  
   const { selectedClient } = useClients();
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
@@ -75,7 +76,7 @@ export default function SettingTabs() {
     reviewLinkSettings?.isSkipFirstPageEnabled
   );
   const [isPoweredByEnabled, setIsPoweredByEnabled] = useState(
-    !reviewLinkSettings?.isPoweredByEnabled
+    reviewLinkSettings?.isPoweredByEnabled
   );
 
   const [ratingThresholdCount, setRatingThresholdCount] = useState<number>(

@@ -113,10 +113,12 @@ const ReviewLink: React.FC = (params) => {
   const fetchReviewLinkDataForEdit = async (reviewLinkId: number) => {
     const response = await getReviewLinkSettings(reviewLinkId);
     const { error, data: reviewLink } = JSON.parse(response);
+    
     if (error) {
       toast({
         description: `Error in fetching settings, please try again later`,
       });
+      return;
     }
 
     const {
@@ -216,15 +218,6 @@ const ReviewLink: React.FC = (params) => {
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
     setReviewLinkThankyou(reviewLinkThankyouDefaultValue);
   };
-  console.log(`url from reviewlink...${getURL()}`);
-
-  // if (!hasData) {
-  //   return (
-  //     <div className="flex items-center justify-center p-10">
-  //       <p className="text-gray-500 text-xl">No Review links</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
