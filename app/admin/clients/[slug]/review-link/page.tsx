@@ -23,7 +23,6 @@ import {
   reviewLinkPositiveDefaultValue,
   reviewLinkSettingsDefaultValue,
   reviewLinkThankyouDefaultValue,
-  SITE_URL,
 } from "@/constant";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import {
@@ -39,11 +38,12 @@ import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.contex
 // import Loading from "@/components/loader/loading";
 import { useLoader } from "@/app/context/loader.context";
 import { useClients } from "@/app/context/clients-context";
+import { getURL } from "@/lib/utils";
 
 const ReviewLink: React.FC = (params) => {
   // const [isLoading, setIsLoading] = useState<boolean>(true);
   const { setIsLoading } = useLoader();
-  const [hasData, setHasData] = useState<boolean>(false);
+  // const [hasData, setHasData] = useState<boolean>(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -217,7 +217,7 @@ const ReviewLink: React.FC = (params) => {
     setReviewLinkNegative(reviewLinkNegativeDefaultValue);
     setReviewLinkThankyou(reviewLinkThankyouDefaultValue);
   };
-  console.log(`url from reviewlink...${SITE_URL}`);
+  console.log(`url from reviewlink...${getURL()}`);
 
   // if (!hasData) {
   //   return (
@@ -263,7 +263,7 @@ const ReviewLink: React.FC = (params) => {
 
               <div className="flex lg:flex-row items-center space-x-0 lg:space-x-6 gap-3 lg:gap-0 mt-2 lg:mt-0 max-sm:w-full max-sm:flex-row">
                 <Link
-                  href={SITE_URL + reviewLink?.review_link_slug}
+                  href={getURL() + reviewLink?.review_link_slug}
                   target="_blank"
                   className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
                 >
