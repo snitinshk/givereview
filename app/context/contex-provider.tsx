@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { ClientProvider } from "./clients-context";
-import { SelectedClientProvider } from "./selected-client-context";
+import { WidgetProvider } from "./widget-context";
 import { ReviewLinkProvider } from "./review-link-context";
 import { ReviewLinkSettingsProvider } from "./review-link-settings.context";
 import { ReviewLinkPositiveProvider } from "./review-link-positive.context";
@@ -16,8 +16,8 @@ export const ContextProvider = ({ children }: { children: ReactNode }) => (
   <LoaderProvider>
     <ChannelsProvider>
       <ClientProvider>
-        <SelectedClientProvider>
-          <SelectedReviewProvider>
+        <SelectedReviewProvider>
+          <WidgetProvider>
             <ReviewLinkProvider>
               <ReviewLinkPositiveProvider>
                 <ReviewLinkSettingsProvider>
@@ -29,8 +29,8 @@ export const ContextProvider = ({ children }: { children: ReactNode }) => (
                 </ReviewLinkSettingsProvider>
               </ReviewLinkPositiveProvider>
             </ReviewLinkProvider>
-          </SelectedReviewProvider>
-        </SelectedClientProvider>
+          </WidgetProvider>
+        </SelectedReviewProvider>
       </ClientProvider>
     </ChannelsProvider>
   </LoaderProvider>

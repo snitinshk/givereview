@@ -28,9 +28,8 @@ import { capitalizeFirstLetter, fetcher, getSlug } from "@/lib/utils";
 import { deleteClient } from "./action";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-import { Client } from "@/interfaces/clients";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useClients } from "@/app/context/clients-context";
-import { useSelectedClient } from "@/app/context/selected-client-context";
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -49,9 +48,9 @@ const ClientTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-  const { setSelectedClient } = useSelectedClient();
 
-  const { clients, setClients } = useClients();
+  const { clients, setClients, setSelectedClient } = useClients();
+  console.log(clients);
 
   const filteredClients = clients?.filter((client) => {
     const matchesType = typeFilter === "All" || client.type === typeFilter;
@@ -180,7 +179,7 @@ const ClientTable: React.FC = () => {
                 <TableCell className="flex items-center pl-4 gap-3">
                   <div className="w-[52px] h-[52px] bg-gray-100 rounded-sm flex items-center justify-center p-2">
                     <Image
-                      src={client.logo}
+                      src={client?.logo || PlaceholderImage}
                       alt={`${client.name} logo`}
                       width={40}
                       height={40}

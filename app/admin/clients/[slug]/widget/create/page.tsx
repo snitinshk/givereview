@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CiSettings } from "react-icons/ci";
-import ChannelsTabs from "./ChannelsTabs";
-import SettingstTabs from "./settingstTabs";
+import ChannelsTabs from "./channels-tab";
+import SettingstTabs from "./settings-tab";
+import { useWidget } from "@/app/context/widget-context";
 
 const WidgetCreate: React.FC = () => {
-
+    
     return (
         <>
             <div className="mb-8 -mt-12 ml-auto flex justify-end gap-5 max-sm:mt-0">

@@ -32,7 +32,8 @@ export interface Channel {
     id: number,
     name: string,
     logo: string,
-    channelType: string
+    channelType: string,
+    orderPriority: number
 }
 
 export interface ChannelDB {
@@ -40,7 +41,8 @@ export interface ChannelDB {
     channel_name?: string,
     channel_logo?: string,
     channel_logo_url?: string,
-    channel_type?: string
+    channel_type?: string,
+    order_priority?: number
 }
 
 // Define the props type for your component

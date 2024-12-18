@@ -26,7 +26,7 @@ export const useReviewLinkThankyou = (): any => {
   const context = useContext(ReviewLinkThankyouContext);
   if (!context) {
     throw new Error(
-      "useReviewLinkThankyou must be used within an ClientProvider"
+      "useReviewLinkThankyou must be used within a ClientProvider"
     );
   }
   return context;

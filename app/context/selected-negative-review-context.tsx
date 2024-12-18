@@ -45,7 +45,7 @@ export const SelectedReviewProvider = ({
 export const useSelectedReview = (): SelectedReviewContextProps => {
   const context = useContext(SelectedReviewContext);
   if (!context) {
-    throw new Error("useSelectedReview must be used within an ClientProvider");
+    throw new Error("useSelectedReview must be used within a ClientProvider");
   }
   return context;
 };

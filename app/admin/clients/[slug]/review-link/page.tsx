@@ -9,7 +9,6 @@ import GGLIMG from "@/app/images/google.svg";
 import TRIPIMG from "@/app/images/tripadvisor.svg";
 import { BiLinkExternal } from "react-icons/bi";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useSelectedClient } from "@/app/context/selected-client-context";
 import { useToast } from "@/hooks/use-toast";
 
 import {
@@ -39,6 +38,7 @@ import { useReviewLinkNegative } from "@/app/context/review-link-negative.contex
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
 // import Loading from "@/components/loader/loading";
 import { useLoader } from "@/app/context/loader.context";
+import { useClients } from "@/app/context/clients-context";
 
 const ReviewLink: React.FC = (params) => {
   // const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,7 +54,8 @@ const ReviewLink: React.FC = (params) => {
     }
   };
 
-  const { selectedClient } = useSelectedClient();
+  const { selectedClient } = useClients();
+
   const [reviewLinks, setReviewLinks] = useState([]);
 
   const { slug } = useParams();
@@ -198,7 +199,7 @@ const ReviewLink: React.FC = (params) => {
   };
 
   const handleCreateLink = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     // Navigate immediately to provide a responsive user experience
     router.push(`/admin/clients/${slug}/review-link/manage`);
 

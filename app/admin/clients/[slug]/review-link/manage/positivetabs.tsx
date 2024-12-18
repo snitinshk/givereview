@@ -16,11 +16,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { Heart, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
-import { useSelectedClient } from "@/app/context/selected-client-context";
 import {
   mapPositivePageDBFormat,
   mapPositivePageUIFormat,
 } from "@/mappers/index-mapper";
+import { useClients } from "@/app/context/clients-context";
 
 export interface SelectedChannel {
   id: number;
@@ -36,7 +36,7 @@ interface PositiveTabsProps {
 
 const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
   const { reviewLinkPositive, setReviewLinkPositive } = useReviewLinkPositive();
-  const { selectedClient } = useSelectedClient();
+  const { selectedClient } = useClients();
   const { reviewLinkSettings } = useReviewLinkSettings();
 
   const { toast } = useToast();

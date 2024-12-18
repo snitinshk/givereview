@@ -14,30 +14,27 @@ import Image from "next/image";
 import EditableField from "../review-link/editable";
 import { useEffect, useState } from "react";
 import { SelectGroup } from "@radix-ui/react-select";
-import { useSelectedClient } from "@/app/context/selected-client-context";
-import { updateClient } from "../../action";
 import { useToast } from "@/hooks/use-toast";
 import {
-  getFileName,
   getSlug,
   handleImageUpload,
-  mediaUrl,
-  uploadFile,
   uploadFileToSupabase,
 } from "@/lib/utils";
 import { updateIndividualAttributes } from "@/app/admin/action";
+import { useClients } from "@/app/context/clients-context";
 
 export default function Page() {
-  const { selectedClient, setSelectedClient } = useSelectedClient();
+  const { selectedClient, setSelectedClient, clients, setClients } =
+    useClients();
   const { toast } = useToast();
 
   const [editingName, setEditingName] = useState(false);
   const [editingType, setEditingType] = useState(false);
   const [editingLogo, setEditingLogo] = useState(false);
 
-  useEffect(() => {
-    console.log(selectedClient);
-  }, [selectedClient]);
+  // useEffect(() => {
+  //   console.log(selectedClient);
+  // }, [selectedClient]);
 
   // const handleLogoUpload = async (
   //   event: React.ChangeEvent<HTMLInputElement>
@@ -84,6 +81,7 @@ export default function Page() {
       const { error, fileUrl } = await uploadFileToSupabase("clients", file);
       if (!error) {
         handleUpdateClient({ client_logo: fileUrl });
+        updateClientState("logo", fileUrl);
       } else {
         toast({
           title: `Error in uploading client logo, please try again later`,
@@ -108,6 +106,24 @@ export default function Page() {
     }
   };
 
+  const updateClientState = (field: string, value: string) => {
+    setSelectedClient((prev: any) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    setClients((prevClients) =>
+      prevClients.map((client) =>
+        client.id === selectedClient?.id
+          ? {
+              ...selectedClient,
+              [field]: value,
+            }
+          : client
+      )
+    );
+  };
+
   return (
     <div className="flex-1 space-y-6 p-8">
       <div className="space-y-6">
@@ -119,10 +135,7 @@ export default function Page() {
               handleUpdateClient({
                 client_status: checked ? "ACTIVE" : "INACTIVE",
               });
-              setSelectedClient((prev: any) => ({
-                ...prev,
-                status: checked ? "ACTIVE" : "INACTIVE",
-              }));
+              updateClientState("status", checked ? "ACTIVE" : "INACTIVE");
             }}
           />
         </div>
@@ -138,10 +151,7 @@ export default function Page() {
                 client_slug: getSlug(newValue),
               });
               setEditingName(false);
-              setSelectedClient((prev: any) => ({
-                ...prev,
-                name: newValue,
-              }));
+              updateClientState("name", newValue);
             }}
             onCancel={() => setEditingName(false)}
             renderValue={<p>{selectedClient?.name}</p>}
@@ -159,6 +169,7 @@ export default function Page() {
                   ...prev,
                   type: newValue,
                 }));
+                updateClientState("type", newValue);
               }}
               value={selectedClient?.type}
             >

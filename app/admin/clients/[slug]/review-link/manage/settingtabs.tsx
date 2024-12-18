@@ -26,7 +26,7 @@ import { useReviewLinkSettings } from "@/app/context/review-link-settings.contex
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import { useSelectedClient } from "@/app/context/selected-client-context";
+import { useClients } from "@/app/context/clients-context";
 
 interface Settings {
   reviewLinkName: string;
@@ -40,7 +40,7 @@ interface Settings {
 
 export default function SettingTabs() {
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
-  const { selectedClient } = useSelectedClient();
+  const { selectedClient } = useClients();
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );

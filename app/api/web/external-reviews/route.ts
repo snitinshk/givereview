@@ -51,15 +51,19 @@ export async function POST(request: NextRequest) {
 
         const supabase = await createClient()
 
-        const { error } = await supabase.from('external_reviews')
-            .insert([
-                externalReview,
-            ])
+        const { error: upsertErr } = await supabase
+            .from('external_reviews')
+            .upsert([
+                externalReview, // Insert data
+            ], {
+                onConflict: 'review_date,stream_name,reviewers_name', // Unique columns
+                ignoreDuplicates: true, // Ignore if the record already exists
+            });
 
-        if (!error) {
+        if (!upsertErr) {
             return NextResponse.json({ status: 200 });
         } else {
-            return NextResponse.json({ ...error }, { status: 400 });
+            return NextResponse.json({ ...upsertErr }, { status: 400 });
         }
 
 

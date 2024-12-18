@@ -16,6 +16,7 @@ import { useClients } from "../context/clients-context";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import Loading from "@/components/loader/loading";
 import { useLoader } from "../context/loader.context";
+import { usePathname } from 'next/navigation'
 
 const IconWrapper = ({ src, alt }: { src: StaticImageData; alt: string }) => (
   <Image src={src} alt={alt} priority />
@@ -61,6 +62,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { isLoading } = useLoader();
 
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
+  const pathname = usePathname();
+  
+  useEffect(()=>{
+    setSelectedPath(pathname)
+    setOpenSubmenu(pathname)
+    // setSidebarOpen(true);
+  },[pathname])
+  
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
