@@ -69,12 +69,11 @@ const ReviewLink: React.FC = (params) => {
   useEffect(() => {
     // setIsLoading(true);
     (async () => {
-      
       if (selectedClient) {
         setIsLoading(true);
         const response = await getReviewLinks(selectedClient?.id);
         const { data: reviewLink, error } = JSON.parse(response);
-        
+
         if (error) {
           toast({ description: "Error in fetching review links." });
         }
@@ -298,7 +297,7 @@ const ReviewLink: React.FC = (params) => {
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center border border-gray-200 p-6 rounded-lg shadow-md text-gray-500 mt-44">
+          <div className="flex flex-col items-center justify-center text-gray-500 mt-44">
             <p className="text-lg font-semibold">No review links available</p>
             <p className="text-sm">Create a review link to get started.</p>
           </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, Star } from 'lucide-react';
+import { Heart, Star } from "lucide-react";
 import { useState } from "react";
+import PlaceholderImage from "@/app/images/placeholder-image.svg";
 
 export default function Home({
   reviewLink,
@@ -40,15 +41,17 @@ export default function Home({
       <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
-          <div className="flex justify-center">
-            <Image
-              src={client?.client_logo}
-              alt="The Elephant Pure Indian Kitchen"
-              width={150}
-              height={150}
-              className="w-auto h-32"
-            />
-          </div>
+          {client?.client_logo && (
+            <div className="flex justify-center">
+              <Image
+                src={client?.client_logo || PlaceholderImage}
+                alt="Restaurant Logo"
+                width={150}
+                height={150}
+                className="w-auto h-32"
+              />
+            </div>
+          )}
 
           {/* Rating Section */}
           <div className="space-y-7 text-center">
