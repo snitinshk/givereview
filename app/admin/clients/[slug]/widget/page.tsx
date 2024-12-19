@@ -73,11 +73,11 @@ const Widget: React.FC = () => {
         Create widget
       </Link>
 
-      <div className="space-y-5">
+      <div className="space-y-9">
         {clients.map((client) => (
           <div
             key={client.id}
-            className="flex flex-wrap items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md gap-4"
+            className="flex flex-wrap items-center justify-between bg-white p-6 rounded-2xl drop-shadow-cl-box-shadow gap-4"
           >
             <div className="flex items-center space-x-4 w-full sm:w-auto">
               {client.images.map((image, index) => (
