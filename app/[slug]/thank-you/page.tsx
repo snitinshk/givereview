@@ -20,7 +20,7 @@ export default async function ThankYouPage({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative">
-        <div className="space-y-8 mb-20">
+        <div className="space-y-8 mb-10 -mt-20">
           {/* Logo */}
           {thankyou_review_link_details?.review_thankyou_bg_image && (
             <div className="flex justify-center">
@@ -29,7 +29,6 @@ export default async function ThankYouPage({
                 alt="Restaurant Logo"
                 width={350}
                 height={350}
-                className="w-auto h-32"
               />
             </div>
           )}
@@ -40,7 +39,7 @@ export default async function ThankYouPage({
           </h1>
         </div>
         {reviewLink?.powered_by_enabled && (
-          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2 max-sm:w-full max-sm:justify-center">
             <span className="font-medium">Powered</span> with{" "}
             <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
             booster

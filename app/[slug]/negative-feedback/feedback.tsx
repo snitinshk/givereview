@@ -153,7 +153,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
-      <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
+      <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-20">
         <div className="w-full max-w-md space-y-7">
           {/* Logo */}
           {client?.client_logo && (
@@ -330,7 +330,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
           </form>
         </div>
         {reviewLink?.powered_by_enabled && (
-          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2 max-sm:w-full max-sm:justify-center">
             <span className="font-medium">Powered</span> with{" "}
             <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
             booster
