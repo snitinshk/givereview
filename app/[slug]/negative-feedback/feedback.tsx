@@ -173,7 +173,7 @@ export default function NegativeFeedback({ reviewLink, averageRating }: any) {
           </div>
 
           {/* Google placeExperience Indicator */}
-          <div className="flex items-center gap-3 !mb-10 !mt-10 font-MOSTR font-light text-black text-base -ml-20">
+          <div className="flex items-center gap-3 !mb-10 !mt-10 font-MOSTR font-light text-black text-base">
             {channel_logo?.enabled && (
               <Image
                 src={channel_logo?.logo}

@@ -118,7 +118,7 @@ const ClientTable: React.FC = () => {
         New Client
       </Link>
 
-      <div className="bg-white rounded-lg shadow-lg mb-5">
+      <div className="bg-white rounded-2xl drop-shadow-cl-box-shadow mb-5">
         <div className="px-6 pt-6 flex flex-col lg:flex-row items-center mb-4 gap-4">
           <div className="w-full lg:w-1/5 mb-4 lg:mb-0">
             <Select value={typeFilter} onValueChange={setTypeFilter}>

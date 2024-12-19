@@ -228,12 +228,12 @@ const ReviewLink: React.FC = (params) => {
       >
         Create Link
       </Button>
-      <div className="space-y-5">
+      <div className="space-y-9">
         {reviewLinks.length > 0 ? (
           reviewLinks.map((reviewLink: any) => (
             <div
               key={reviewLink.id}
-              className="flex flex-col lg:flex-row items-center justify-between border border-gray-50 p-6 rounded-lg shadow-md"
+              className="flex flex-col lg:flex-row items-center justify-between bg-white p-6 rounded-2xl drop-shadow-cl-box-shadow"
             >
               <div className="flex space-x-4 mb-4 lg:mb-0 max-sm:w-full">
                 {reviewLink?.positive_review_link_details.map(
@@ -242,8 +242,8 @@ const ReviewLink: React.FC = (params) => {
                       key={index}
                       src={item?.channels?.channel_logo_url}
                       alt={`${item?.channels.channel_name} image`}
-                      width={32}
-                      height={32}
+                      width={24}
+                      height={24}
                       className="rounded-md"
                     />
                   )
