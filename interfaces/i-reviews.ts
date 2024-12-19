@@ -66,7 +66,7 @@ export interface TransformedReview {
     reviewerPhone: string | null;
     reviewerEmail: string | null;
     reviewerExperience: string | null;
-    reviewerDrawbacks: string | null;
+    reviewerHighlights: string | null;
     reviewerComments: string | null;
     reviewLinkId: number;
     clientId: number;

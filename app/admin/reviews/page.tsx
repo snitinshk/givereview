@@ -22,6 +22,7 @@ import { mapReviews } from "@/mappers/reviews-mapper";
 import { useClients } from "@/app/context/clients-context";
 import { useLoader } from "@/app/context/loader.context";
 import { getReviewLinkSettings } from "./action";
+import { useSearchParams } from "next/navigation";
 
 type SelectItem = {
   id: string | number; // Replace with the actual type of your IDs
@@ -33,12 +34,21 @@ const ReviewPage: React.FC = () => {
   const [externalReviews, setExternalReviews] = useState([]);
   const [reviewLinks, setReviewLinks] = useState([]);
   const [externalReviewsFilter, setExternalReviewsFilter] = useState<any>([]);
+
+  const searchParams = useSearchParams();
+  const filteredClientQuery = searchParams.get("client");
+  const filteredReviewLinkQuery = searchParams.get("filteredrl");
+
   const [filteredExternalReview, setFilteredExternalReview] =
     useState<string>("All");
-  const [filteredClient, setFilteredClient] = useState<number | string>("All");
+
+  const [filteredClient, setFilteredClient] = useState<number | string>(
+    filteredClientQuery || "All"
+  );
+
   const [filteredReviewsByRL, setFilteredReviewsByRL] = useState<
     number | string
-  >("All");
+  >(filteredReviewLinkQuery || "All");
 
   const { setIsLoading } = useLoader();
   const { toast } = useToast();
@@ -91,7 +101,7 @@ const ReviewPage: React.FC = () => {
     if (fetchingNegativeReviewsErr || fetchingExternalReviewsErr) {
       toast({ title: "Error in fetching reviews" });
     }
-  }, [fetchingNegativeReviewsErr, fetchingExternalReviewsErr]);
+  }, [fetchingNegativeReviewsErr, fetchingExternalReviewsErr, toast]);
 
   const fetchReviewLinks = useCallback(async () => {
     if (filteredClient !== "All") {
@@ -161,13 +171,26 @@ const ReviewPage: React.FC = () => {
 
   const renderSelect = useCallback(
     (placeholder: string, items: SelectItem[]) => {
+      const getValue = () => {
+        switch (placeholder) {
+          case "Client":
+            return filteredClient?.toString();
+          case "Review link":
+            return filteredReviewsByRL?.toString();
+          case "Stream":
+            return filteredExternalReview?.toString();
+          default:
+            return "All";
+        }
+      };
+  
       const onValueChange = (newValue: string) => {
         handleSelectChange(newValue, placeholder);
       };
-
+  
       return (
         <div className="w-1/5 max-sm:w-full">
-          <Select onValueChange={onValueChange}>
+          <Select onValueChange={onValueChange} value={getValue()}>
             <SelectTrigger className="h-12">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
@@ -182,8 +205,38 @@ const ReviewPage: React.FC = () => {
         </div>
       );
     },
-    [handleSelectChange]
+    [filteredClient, filteredReviewsByRL, filteredExternalReview, handleSelectChange]
   );
+  
+
+  // const renderSelect = useCallback(
+  //   (placeholder: string, items: SelectItem[]) => {
+  //     const onValueChange = (newValue: string) => {
+  //       handleSelectChange(newValue, placeholder);
+  //     };
+
+  //     return (
+  //       <div className="w-1/5 max-sm:w-full">
+  //         <Select
+  //           onValueChange={onValueChange}
+  //           value={filteredClient?.toString()}
+  //         >
+  //           <SelectTrigger className="h-12">
+  //             <SelectValue placeholder={placeholder} />
+  //           </SelectTrigger>
+  //           <SelectContent>
+  //             {items.map((item) => (
+  //               <SelectItem key={item.id} value={item.id.toString() ?? "All"}>
+  //                 {item.name}
+  //               </SelectItem>
+  //             ))}
+  //           </SelectContent>
+  //         </Select>
+  //       </div>
+  //     );
+  //   },
+  //   [handleSelectChange]
+  // );
 
   return (
     <div className="bg-white rounded-lg shadow-lg mb-5">
@@ -204,7 +257,12 @@ const ReviewPage: React.FC = () => {
                 ...reviewLinks,
               ])}
           </div>
-          <ReviewTable reviewType="internal" reviews={filteredReviews} />
+          <ReviewTable
+            filteredClient={filteredClient.toString()}
+            filteredReviewLink={filteredReviewsByRL.toString()}
+            reviewType="internal"
+            reviews={filteredReviews}
+          />
         </TabsContent>
 
         {/* StreamTbs Content */}

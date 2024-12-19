@@ -8,7 +8,7 @@ export function mapReviews(inputData: ReviewDetailDB[]): TransformedReview[] {
         stars: item.average_rating, // Average rating
         name: item.reviewers_name || "Anonymous", // Reviewer name fallback
         review:
-            item.reviewers_visit_highlights || "No review provided.", // Default review text if empty
+            item.reviewers_visit_drawbacks || "No review provided.", // Default review text if empty
         image: item.clients?.client_logo || "", // Client logo
         foodReview: item.food_review ?? null, // Food review
         serviceReview: item.service_review ?? null, // Service review
@@ -20,7 +20,7 @@ export function mapReviews(inputData: ReviewDetailDB[]): TransformedReview[] {
         reviewerPhone: item.reviewers_phone || null, // Reviewer phone
         reviewerEmail: item.reviewers_email || null, // Reviewer email
         reviewerExperience: item.reviewers_place_experience || null, // Reviewer experience
-        reviewerDrawbacks: item.reviewers_visit_drawbacks || null, // Reviewer drawbacks
+        reviewerHighlights: item.reviewers_visit_highlights || null, // Reviewer drawbacks
         reviewerComments: item.reviewers_other_comments || null, // Reviewer other comments
         reviewLinkId: item.review_link_id, // Review link ID
         clientId: item.client_id, // Client ID

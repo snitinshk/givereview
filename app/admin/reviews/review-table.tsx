@@ -24,7 +24,7 @@ import placeholder from "../../images/placeholder.svg";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
 import { TransformedReview } from "@/interfaces/i-reviews";
 import { useSelectedReview } from "@/app/context/selected-negative-review-context";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, getSlug } from "@/lib/utils";
 import { useLoader } from "@/app/context/loader.context";
 
 // type Review = {
@@ -38,6 +38,8 @@ import { useLoader } from "@/app/context/loader.context";
 // };
 
 interface ReviewTableProps {
+  filteredClient?: string;
+  filteredReviewLink?: string;
   reviews: TransformedReview[];
   reviewType: string;
   showImage?: boolean;
@@ -45,6 +47,8 @@ interface ReviewTableProps {
 }
 
 const ReviewTable: React.FC<ReviewTableProps> = ({
+  filteredClient,
+  filteredReviewLink,
   reviewType,
   reviews,
   showImage = false,
@@ -91,7 +95,24 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
     // Navigate to the review detail page
     const selectedReview = reviews?.find((review) => review.id === id);
     setSelectedReview(selectedReview as TransformedReview);
-    router.push(`/admin/reviews/${id}`);
+    const params: Record<string, string> = {};
+
+    if (filteredClient && filteredClient !== "All") {
+      params["filteredclient"] = filteredClient;
+    }
+    if (filteredReviewLink && filteredReviewLink !== "All") {
+      params["filteredrl"] = filteredReviewLink;
+    }
+
+    // Properly construct the query string
+    const query =
+      Object.keys(params).length >= 1
+        ? `?${new URLSearchParams(params).toString()}`
+        : "";
+    // Append the query string to the URL
+    router.push(
+      `/admin/reviews/${getSlug(selectedReview?.name || "")}${query}`
+    );
   };
 
   // if (isLoading) {
