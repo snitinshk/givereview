@@ -239,10 +239,10 @@ const ReviewPage: React.FC = () => {
   // );
 
   return (
-    <div className="bg-white rounded-lg shadow-lg mb-5">
+    <div className="bg-white rounded-2xl drop-shadow-cl-box-shadow mb-5">
       <Tabs defaultValue="NegativeTbs" className="flex-grow">
         {/* Tabs List */}
-        <TabsList className="w-full flex-wrap rounded-b-none gap-4 justify-start p-0 pt-3 border-b h-auto border-gray-200 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none">
+        <TabsList className="w-full flex-wrap rounded-2xl rounded-b-none gap-4 justify-start p-0 pt-3 border-b h-auto border-gray-200 [&>button[data-state='active']]:bg-transparent [&>button[data-state='active']]:shadow-none [&>button[data-state='active']]:border-b-2 [&>button[data-state='active']]:border-green-500 [&>button[data-state='active']]:rounded-none">
           <TabsTrigger value="NegativeTbs">Negative (internal)</TabsTrigger>
           <TabsTrigger value="StreamTbs">Stream</TabsTrigger>
         </TabsList>

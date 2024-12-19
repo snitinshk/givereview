@@ -79,8 +79,14 @@ const config: Config = {
 				"max-tablet": { max: "1024px" },
 				"max-xl": { max: "1280px" },
 				"max-2xl": { max: "1536px" },
-			  },
-		
+			},
+			dropShadow: {
+				'cl-box-shadow': [
+					'0px 12px 12px rgba(145, 158, 171, 0.12)',
+					'0px 0px 1px rgba(145, 158, 171, 0.2)',
+				]
+			}
+
 		}
 	},
 	// eslint-disable-next-line @typescript-eslint/no-require-imports

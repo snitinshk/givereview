@@ -27,8 +27,8 @@ export default async function ThankYouPage({
               <Image
                 src={thankyou_review_link_details?.review_thankyou_bg_image}
                 alt="Restaurant Logo"
-                width={150}
-                height={150}
+                width={350}
+                height={350}
                 className="w-auto h-32"
               />
             </div>
