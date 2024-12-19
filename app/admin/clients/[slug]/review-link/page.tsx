@@ -50,7 +50,7 @@ const ReviewLink: React.FC = (params) => {
       case "Active":
         return "bg-[#def4e9] text-[#1a806a]";
       case "Inactive":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-[#ff5631] text-white";
     }
   };
 
