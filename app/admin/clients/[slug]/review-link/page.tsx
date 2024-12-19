@@ -101,7 +101,6 @@ const ReviewLink: React.FC = (params) => {
     setIsLoading(true);
     if (reviewLinkId) {
       await fetchReviewLinkDataForEdit(parseInt(reviewLinkId));
-      setIsLoading(false);
       if (reviewLinkId) {
         router.push(
           `/admin/clients/${slug}/review-link/manage?review-link=${reviewLinkId}`
@@ -113,7 +112,7 @@ const ReviewLink: React.FC = (params) => {
   const fetchReviewLinkDataForEdit = async (reviewLinkId: number) => {
     const response = await getReviewLinkSettings(reviewLinkId);
     const { error, data: reviewLink } = JSON.parse(response);
-    
+    setIsLoading(false);
     if (error) {
       toast({
         description: `Error in fetching settings, please try again later`,

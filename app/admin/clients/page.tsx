@@ -161,15 +161,15 @@ const ClientTable: React.FC = () => {
           </div>
         </div>
 
-        <Table>
+        <Table className="text-center">
           <TableHeader>
             <TableRow className="bg-gray-100 text-[#637381]">
               <TableHead className="pl-20 py-5">Client</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Created Date</TableHead>
-              <TableHead>Nr of Links</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-52">Actions</TableHead>
+              <TableHead className="!text-center">Type</TableHead>
+              <TableHead className="!text-center">Created Date</TableHead>
+              <TableHead className="!text-center">Nr of Links</TableHead>
+              <TableHead className="!text-center">Status</TableHead>
+              <TableHead className="w-52"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -85,8 +85,8 @@ const Widget: React.FC = () => {
                   key={index}
                   src={image}
                   alt={`${client.description} image ${index + 1}`}
-                  width={32}
-                  height={32}
+                  width={24}
+                  height={24}
                   className="rounded-md"
                 />
               ))}

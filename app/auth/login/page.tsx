@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import bgImg from "./content.svg";
+import bgImg from "./login-bg.svg";
 import LoginForm from "./form";
 
 import { loginAction } from "./action";
