@@ -57,7 +57,7 @@ export default function PositiveFeedback({ reviewLink }: any) {
           </div>
         </div>
         {reviewLink?.powered_by_enabled && (
-          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2 max-sm:w-full max-sm:justify-center">
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2 max-lg:w-full max-lg:justify-center">
             <span className="font-medium">Powered</span> with{" "}
             <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
             booster
