@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
@@ -19,6 +19,7 @@ interface ChannelCardProps {
   onToggle: () => void;
   reviewThreshold: string;
   onReviewChange: (value: string) => void;
+  disabled: boolean
 }
 
 const ChannelCard: React.FC<ChannelCardProps> = ({
@@ -28,7 +29,9 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
   onToggle,
   reviewThreshold,
   onReviewChange,
-}) => {
+  disabled
+}) => { 
+
   return (
     <div>
       <div className="flex gap-5 items-center">
@@ -54,6 +57,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
       <div className="flex items-center gap-4 mt-4">
         <span>Show only reviews bigger than</span>
         <Select
+          disabled={disabled}
           value={reviewThreshold}
           onValueChange={onReviewChange}
         >

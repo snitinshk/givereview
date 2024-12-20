@@ -20,13 +20,13 @@ import {
 } from "@/components/ui/select";
 
 import { DEFAULT_TEXTS } from "@/constant";
-import EditableField from "../editable";
 import { useReviewLink } from "@/app/context/review-link-context";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { useClients } from "@/app/context/clients-context";
+import EditableField from "@/components/editable";
 
 interface Settings {
   reviewLinkName: string;

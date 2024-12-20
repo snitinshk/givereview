@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import TestimonialCompo from "../guests-say";
+// import TestimonialCompo from "../guests-say";
 import { Input } from "@/components/ui/input";
 import ChannelCard from "@/components/channel-card/channel-card";
 import GLGIMG from "@/app/images/google.svg";
 import { useChannels } from "@/app/context/channels-context";
 import { Channel } from "@/interfaces/channels";
 import { useWidget } from "@/app/context/widget-context";
-import { channel } from "diagnostics_channel";
 
 const ChannelsTabs: React.FC = () => {
   const { widget, setWidget } = useWidget();
@@ -20,23 +19,27 @@ const ChannelsTabs: React.FC = () => {
       ...prev, // Corrected typo here
       channels: prev.channels?.map((channel: any) =>
         channel.id === id
-          ? { ...channel, isActive: !channel.isActive } // Toggle `isActive`
+          ? { ...channel, disabled: channel.isActive, isActive: !channel.isActive } // Toggle `isActive`
           : channel
       ),
     }));
   };
 
   const handleReviewChange = (id: number, value: string) => {
-    // setChannels((prev) =>
-    //   prev.map((channel) =>
-    //     channel.id === id ? { ...channel, reviewThreshold: value } : channel
-    //   )
-    // );
+
+    setWidget((prev: any) => ({
+      ...prev, // Corrected typo here
+      channels: prev.channels?.map((channel: any) =>
+        channel.id === id
+          ? { ...channel, reviewThreshold: value } // Toggle `isActive`
+          : channel
+      ),
+    }));
   };
 
   return (
     <>
-      <div className="border border-gray-200 rounded-3xl p-6 shadow-lg max-w-xl w-full">
+      {/* <div className="border border-gray-200 rounded-3xl p-6 shadow-lg max-w-xl w-full">
         <div className="mb-7">
           <label className="text-[#637381] uppercase font-bold text-xs mb-2 block">
             Widget name
@@ -63,7 +66,7 @@ const ChannelsTabs: React.FC = () => {
           </label>
           <Input type="text" placeholder="Name" className="h-12" />
         </div>
-      </div>
+      </div> */}
       <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         {widget?.channels?.map((channel) => (
           <ChannelCard
@@ -74,10 +77,10 @@ const ChannelsTabs: React.FC = () => {
             onToggle={() => handleToggle(channel.id)}
             reviewThreshold={channel.reviewThreshold}
             onReviewChange={(value) => handleReviewChange(channel.id, value)}
+            disabled={channel.disabled}
           />
         ))}
       </div>
-
       {/* <TestimonialCompo /> */}
     </>
   );

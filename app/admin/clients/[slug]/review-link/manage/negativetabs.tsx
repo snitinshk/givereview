@@ -4,7 +4,6 @@ import { Switch } from "@/components/ui/switch";
 import { FaStar } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import EditableField from "../editable";
 import { useEffect, useRef, useState } from "react";
 import { Heart, Star, UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
@@ -13,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useClients } from "@/app/context/clients-context";
+import EditableField from "@/components/editable";
 
 type HoverStates = {
   [key: string]: number;

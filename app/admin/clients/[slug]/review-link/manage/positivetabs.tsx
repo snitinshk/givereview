@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import EditableField from "../editable";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Channel } from "@/interfaces/channels";
@@ -21,6 +20,7 @@ import {
   mapPositivePageUIFormat,
 } from "@/mappers/index-mapper";
 import { useClients } from "@/app/context/clients-context";
+import EditableField from "@/components/editable";
 
 export interface SelectedChannel {
   id: number;

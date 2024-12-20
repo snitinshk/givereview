@@ -10,6 +10,7 @@ import React, {
   useEffect,
 } from "react";
 import { useChannels } from "./channels-context";
+import { WidgetSettings } from "@/interfaces/widget";
 
 // Define the structure of a single channel
 interface Channel {
@@ -17,13 +18,13 @@ interface Channel {
   logo: string;
   name: string;
   isActive: boolean;
+  disabled: boolean;
   reviewThreshold: string;
 }
 
 interface Widget {
-  name: string;
-  streamName: string;
   channels: Channel[];
+  settings: WidgetSettings;
 }
 
 // Define the structure of the widget context
@@ -34,6 +35,21 @@ interface WidgetContextProps {
 
 // Create the WidgetContext with a default undefined value
 const WidgetContext = createContext<WidgetContextProps | undefined>(undefined);
+
+const settings: WidgetSettings = {
+  isActive: true,
+  showTitle: true,
+  widgetTitle: "What our guests say",
+  showTabs: true,
+  showCustomerName: true,
+  showCustomerAvatar: true,
+  showChannelLogo: true,
+  showReviewDate: true,
+  showRating: true,
+  showPoweredBy: true,
+  poweredByText: "Powered by review booster",
+  isLightTheme: true,
+};
 
 export const WidgetProvider = ({ children }: { children: ReactNode }) => {
   const [widget, setWidget] = useState<Widget | null>(null);
@@ -46,7 +62,8 @@ export const WidgetProvider = ({ children }: { children: ReactNode }) => {
     widgetChannels?.map((channel) => {
       return {
         ...channel,
-        isActive: ["Google", "TripAdvisor", "TheFork"].includes(channel.name),
+        isActive: false,
+        disabled: true,
         reviewThreshold: "3",
       };
     }) || [];
@@ -55,9 +72,8 @@ export const WidgetProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!widget && channels?.length) {
       setWidget({
-        name: "",
-        streamName: "",
-        channels: [ ...channels],
+        settings,
+        channels: [...channels],
       });
     }
   }, [channels, widget]);
