@@ -14,7 +14,7 @@ export default async function OfflinePage({
   const reviewLink = await data.json();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen max-sm:h-full max-sm:min-h-full">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-6 text-center">
           <TriangleAlert className="w-12 h-12 mx-auto text-red-500" />

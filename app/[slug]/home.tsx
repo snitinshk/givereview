@@ -39,7 +39,7 @@ export default function Home({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen max-sm:h-full max-sm:min-h-full">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative pb-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}

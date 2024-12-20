@@ -18,7 +18,7 @@ export default async function ThankYouPage({
   // console.log(reviewLink);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen max-sm:h-full max-sm:min-h-full">
       <div className="flex flex-col items-center justify-center p-8 bg-white relative">
         <div className="space-y-8 mb-10 -mt-20">
           {/* Logo */}
