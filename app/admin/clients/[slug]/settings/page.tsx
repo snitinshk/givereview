@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import { ChevronRight, Pencil } from "lucide-react";
 import Image from "next/image";
-import EditableField from "../review-link/editable";
 import { useEffect, useState } from "react";
 import { SelectGroup } from "@radix-ui/react-select";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +23,7 @@ import { updateIndividualAttributes } from "@/app/admin/action";
 import { useClients } from "@/app/context/clients-context";
 import { TbCameraPlus } from "react-icons/tb";
 import { IoMdClose } from "react-icons/io";
+import EditableField from "@/components/editable";
 
 export default function Page() {
   const { selectedClient, setSelectedClient, clients, setClients } =

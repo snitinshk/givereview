@@ -256,14 +256,14 @@ const ReviewLink: React.FC = (params) => {
                 <Link
                   href={getURL() + reviewLink?.review_link_slug}
                   target="_blank"
-                  className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-3 py-1 rounded-md "
+                  className="bg-[#dde6ff] text-[#1939b7] hover:bg-gray-200 flex gap-1 items-center text-sm font-semibold px-4 py-1 rounded-md "
                 >
                   <BiLinkExternal /> Link
                 </Link>
                 <Badge
                   className={`${getStatusColor(
                     reviewLink.is_active ? "Active" : "Inactive"
-                  )} !bottom-0 !shadow-none pointer-events-none px-4 h-7`}
+                  )} !bottom-0 !shadow-none pointer-events-none px-4 h-7 min-w-20 justify-center`}
                 >
                   {reviewLink?.is_active === true ? "Active" : "Inactive"}
                 </Badge>

@@ -46,7 +46,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
           <span className="flex-grow text-center font-semibold">{name}</span>
         </div>
         <div className="flex items-center space-x-2">
-          <Label htmlFor={`${name}-toggle`}>{isActive ? "Active" : "Inactive"}</Label>
+          <Label htmlFor={`${name}-toggle`} className="min-w-14">{isActive ? "Active" : "Inactive"}</Label>
           <Switch
             id={`${name}-toggle`}
             checked={isActive}

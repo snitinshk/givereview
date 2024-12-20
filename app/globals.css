@@ -80,6 +80,11 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Public Sans", sans-serif; 
+    font-family: "Public Sans", sans-serif;
   }
+}
+
+html,
+body {
+  height: 100%;
 }
