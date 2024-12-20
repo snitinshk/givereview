@@ -91,7 +91,6 @@ const ReviewDetail = () => {
         </div>
         <div className="space-y-6">
           {renderField("Client", review?.client)}
-          {renderField("Review", review?.review)}
           {renderField("Phone no", review?.reviewerPhone ?? "")}
           {renderField("Email", review?.reviewerEmail ?? "")}
           {renderField(

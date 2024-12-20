@@ -195,7 +195,7 @@ const ClientTable: React.FC = () => {
                       client.status
                     )}`}
                   >
-                    {capitalizeFirstLetter(client.status)}
+                    {client.status === 'ACTIVE' ? 'Active': 'Inactive'}
                   </Badge>
                 </TableCell>
                 <TableCell className="">
