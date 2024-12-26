@@ -147,7 +147,7 @@ const WidgetCreate: React.FC = () => {
         </div>
         <Link
           href={`/admin/clients/${slug}/widget/preview`}
-          className="bg-[#919EAB14] text-[#000000] hover:text-white font-bold px-4 py-2 rounded inline-block text-center transition duration-300 hover:bg-[#000000]"
+          className="bg-[#919EAB14] text-[#000000] hover:text-white font-bold px-6 py-2 rounded-lg inline-block text-center transition duration-300 hover:bg-[#000000]"
         >
           Preview
         </Link>

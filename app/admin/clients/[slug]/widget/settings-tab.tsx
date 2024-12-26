@@ -193,7 +193,7 @@ const SettingsTabs: React.FC = () => {
       {sections.map((section, index) => (
         <div
           key={index}
-          className="w-[450px] max-w-full shadow-lg p-6 rounded-xl flex flex-col gap-6"
+          className="w-[450px] max-w-full drop-shadow-cl-box-shadow bg-white p-6 rounded-xl flex flex-col gap-6"
         >
           <div className="text-[#637381] text-sm uppercase font-bold">
             {section?.title}

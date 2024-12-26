@@ -35,7 +35,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
   return (
     <div>
       <div className="flex gap-5 items-center">
-        <div className="bg-gray-100 w-80 h-14 rounded-lg p-3 flex items-center">
+        <div className="bg-gray-100 w-96 h-14 rounded-lg p-3 flex items-center">
           <Image
             src={logoSrc}
             alt={`${name} logo`}
