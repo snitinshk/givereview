@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   useContext,
@@ -9,75 +7,73 @@ import React, {
   Dispatch,
   useEffect,
 } from "react";
+
 import { useChannels } from "./channels-context";
-import { WidgetSettings } from "@/interfaces/widget";
+import { Widget, WidgetSettings } from "@/interfaces/widget";
+import { fetcher } from "@/lib/utils";
+import { useClients } from "./clients-context";
+import { mapDbSettingsToWidgetSettings } from "@/mappers/widgets-mapper";
+import { defaultSettings } from "@/constant";
 
-// Define the structure of a single channel
-interface Channel {
-  id: number;
-  logo: string;
-  name: string;
-  isActive: boolean;
-  disabled: boolean;
-  reviewThreshold: string;
-}
-
-interface Widget {
-  channels: Channel[];
-  settings: WidgetSettings;
-}
-
-// Define the structure of the widget context
 interface WidgetContextProps {
   widget: Widget | null;
   setWidget: Dispatch<SetStateAction<Widget | null>>;
 }
 
-// Create the WidgetContext with a default undefined value
 const WidgetContext = createContext<WidgetContextProps | undefined>(undefined);
 
-const settings: WidgetSettings = {
-  isActive: true,
-  showTitle: true,
-  widgetTitle: "What our guests say",
-  showTabs: true,
-  showCustomerName: true,
-  showCustomerAvatar: true,
-  showChannelLogo: true,
-  showReviewDate: true,
-  showRating: true,
-  showPoweredBy: true,
-  poweredByText: "Powered by review booster",
-  isLightTheme: true,
-};
 
 export const WidgetProvider = ({ children }: { children: ReactNode }) => {
   const [widget, setWidget] = useState<Widget | null>(null);
-
+  const [existingWidget, setExistingWidget] = useState<any>(null);
+  const { selectedClient } = useClients();
   const { widgetChannels } = useChannels();
 
-  // Correct the logic for determining isActive
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const channels: Channel[] =
-    widgetChannels?.map((channel) => {
-      return {
-        ...channel,
-        isActive: false,
-        disabled: true,
-        reviewThreshold: "3",
-      };
-    }) || [];
-
-  // Update the widget state when channels change
   useEffect(() => {
-    if (!widget && channels?.length) {
-      setWidget({
-        settings,
-        channels: [...channels],
-      });
+    if (selectedClient?.id) {
+      fetchWidget();
     }
-  }, [channels, widget]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClient]);
 
+  useEffect(() => {
+    if (widgetChannels?.length) {
+      const updatedChannels = widgetChannels.map((channel) => {
+        const dbChannel = existingWidget?.widget_channels?.find(
+          (dbCh: any) => dbCh.channel_id === channel.id
+        );
+
+        return {
+          ...channel,
+          isActive: dbChannel?.is_active || false,
+          disabled: !dbChannel?.is_active, // Disable if not active in DB
+          ratingThreshold: dbChannel?.rating_threshold.toString() || "3", // Default threshold if not found in DB
+        };
+      });
+
+      const updatedWidget: Widget = {
+        id: existingWidget?.id ?? null,
+        settings: {
+          ...defaultSettings,
+          ...(existingWidget ? mapDbSettingsToWidgetSettings(existingWidget) : {}),
+        },
+        channels: updatedChannels,
+      };
+
+      setWidget(updatedWidget);
+    }
+  }, [widgetChannels, existingWidget]);
+
+  const fetchWidget = async () => {
+    try {
+      const data = await fetcher(
+        `/api/web/widget?client=${selectedClient?.id}`
+      );
+      setExistingWidget(data);
+    } catch (error) {
+      console.error("Error fetching widget:", error);
+    }
+  };
   return (
     <WidgetContext.Provider value={{ widget, setWidget }}>
       {children}
@@ -85,7 +81,6 @@ export const WidgetProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook for consuming the WidgetContext
 export const useWidget = (): WidgetContextProps => {
   const context = useContext(WidgetContext);
   if (!context) {

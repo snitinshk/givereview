@@ -13,7 +13,7 @@ import React, {
 } from "react";
 import { useClients } from "./clients-context";
 import { useParams } from "next/navigation";
-import { TransformedReview } from "@/interfaces/i-reviews";
+import { TransformedReview } from "@/interfaces/reviews";
 
 interface SelectedReviewContextProps {
   selectedReview: TransformedReview | null;

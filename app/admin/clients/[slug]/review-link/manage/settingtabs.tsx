@@ -7,8 +7,6 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
-import { useParams } from "next/navigation";
-import PPIMG from "@/app/images/image_1.png";
 import { Heart, Star } from "lucide-react";
 
 import {
@@ -20,13 +18,15 @@ import {
 } from "@/components/ui/select";
 
 import { DEFAULT_TEXTS } from "@/constant";
-import { useReviewLink } from "@/app/context/review-link-context";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
-import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import {
+  handleImageUpload,
+  uploadFileToSupabase,
+} from "@/lib/utils";
 import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
+import { updateIndividualAttributes } from "@/app/admin/action";
 
 interface Settings {
   reviewLinkName: string;
@@ -40,12 +40,11 @@ interface Settings {
 
 export default function SettingTabs() {
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
-  
+
   const { selectedClient } = useClients();
   const [imagePreview, setImagePreview] = useState<string | null>(
     reviewLinkSettings?.desktopBgImage
   );
-  // const [desktopBgImage, setDesktopBgImage] = useState<File>();
 
   if (reviewLinkSettings?.imageFile) {
     const reader = new FileReader();
@@ -83,13 +82,10 @@ export default function SettingTabs() {
     reviewLinkSettings?.ratingThresholdCount
   );
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
+  const uploadBgImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { base64, file, error } = await handleImageUpload(event);
+    if (!error && file) {
+      setImagePreview(base64);
       setReviewLinkSettings((prevState: any) => {
         return {
           ...prevState,
@@ -100,9 +96,29 @@ export default function SettingTabs() {
       if (!reviewLinkSettings?.reviewLinkId) {
         return;
       }
-      const imageUrl = await uploadBgImage(file);
-      handleUpdateReviewLinkSettings({
-        desktop_bg_image: imageUrl,
+
+      const { error, fileUrl } = await uploadFileToSupabase(
+        "reviewlinks",
+        file
+      );
+      if (!error) {
+        handleUpdateReviewLinkSettings({
+          desktop_bg_image: fileUrl,
+        });
+        setReviewLinkSettings((prevState: any) => {
+          return {
+            ...prevState,
+            uploadedFile: fileUrl,
+          };
+        });
+      } else {
+        toast({
+          title: `Error in uploading reviewLink background Image, please try again later`,
+        });
+      }
+    } else {
+      toast({
+        title: `Error in Selecting reviewLink background Image, please try again later`,
       });
     }
   };
@@ -179,15 +195,6 @@ export default function SettingTabs() {
         };
       });
     }
-
-    //Image upload check
-
-    // if (reviewLinkSettings?.imageFile) {
-    //   const reader = new FileReader();
-    //   reader.onload = () => setImagePreview(reader.result as string);
-    //   reader.readAsDataURL(reviewLinkSettings?.imageFile);
-    // }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     reviewLinkName,
@@ -200,60 +207,24 @@ export default function SettingTabs() {
     imagePreview,
   ]);
 
-  // useEffect(() => {
-  //   setReviewLinkSettings({
-  //     ...reviewLinkSettings,
-  //     reviewLinkName,
-  //     reviewLinkSlug,
-  //     ratingThresholdCount,
-  //     title,
-  //     isSkipFirstPageEnabled,
-  //     desktopBgImage,
-  //     isPoweredByEnabled,
-  //     isActive,
-  //   });
-  // }, [
-  //   reviewLinkName,
-  //   reviewLinkSlug,
-  //   title,
-  //   isSkipFirstPageEnabled,
-  //   desktopBgImage,
-  //   ratingThresholdCount,
-  //   isPoweredByEnabled,
-  //   isActive,
-  //   reviewLinkSettings
-  // ]);
-
-  const uploadBgImage = async (file: File) => {
-    const uploadPath = `reviewlinks/${getFileName(file)}`;
-    const { data: uploadData, error: uploadError } = await uploadFile(
-      file,
-      uploadPath
-    );
-
-    if (uploadError) {
-      toast({
-        description: `Error in uploading image, please try again later`,
-      });
-    }
-
-    return mediaUrl(uploadData?.fullPath as string);
-  };
-
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
+    console.log(updateInfo);
     // do nothing for add case;
     if (!reviewLinkSettings?.reviewLinkId) {
       return;
     }
 
-    const response = await updateReviewLink(
+    const condition = {
+      col: "id",
+      val: reviewLinkSettings?.reviewLinkId,
+    };
+
+    const response = await updateIndividualAttributes(
       "setting_review_link_details",
       updateInfo,
-      {
-        col: "id",
-        val: reviewLinkSettings?.reviewLinkId,
-      }
+      condition
     );
+
     const { error } = JSON.parse(response);
 
     if (!error) {
@@ -453,7 +424,7 @@ export default function SettingTabs() {
                 id="image-upload"
                 type="file"
                 className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
-                onChange={handleImageUpload}
+                onChange={uploadBgImage}
               />
               <Label
                 htmlFor="image-upload"
@@ -469,7 +440,7 @@ export default function SettingTabs() {
 
       {/* Preview Section */}
       <div className=" relative w-full md:w-[calc(50%-50px)] min-h-[550px] max-h-[750px] bg-[#FFFAFA] border border-[#F2DDDD] rounded-3xl flex items-center justify-center p-11 flex-col gap-10">
-      {selectedClient?.logo && (
+        {selectedClient?.logo && (
           <Image
             src={selectedClient?.logo || PlaceholderImage}
             alt={`Preview Image`}
@@ -477,13 +448,12 @@ export default function SettingTabs() {
             height={145}
           />
         )}
-        <p className="max-w-80 text-center mx-auto text-base font-normal text-gray-800">{title}</p>
+        <p className="max-w-80 text-center mx-auto text-base font-normal text-gray-800">
+          {title}
+        </p>
         <div className="flex gap-3">
           {Array.from({ length: 5 }, (_, index) => (
-            <Star
-              key={index}
-              className={`w-8 h-8 text-gray-800`}
-            />
+            <Star key={index} className={`w-8 h-8 text-gray-800`} />
           ))}
         </div>
         {isPoweredByEnabled && (

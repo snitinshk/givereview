@@ -17,7 +17,7 @@ interface ChannelCardProps {
   name: string;
   isActive: boolean;
   onToggle: () => void;
-  reviewThreshold: string;
+  ratingThreshold: string;
   onReviewChange: (value: string) => void;
   disabled: boolean
 }
@@ -27,7 +27,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
   name,
   isActive,
   onToggle,
-  reviewThreshold,
+  ratingThreshold,
   onReviewChange,
   disabled
 }) => { 
@@ -58,7 +58,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
         <span>Show only reviews bigger than</span>
         <Select
           disabled={disabled}
-          value={reviewThreshold}
+          value={ratingThreshold}
           onValueChange={onReviewChange}
         >
           <SelectTrigger className="min-w-14 w-auto">

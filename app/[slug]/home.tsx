@@ -15,8 +15,6 @@ export default function Home({
 }: any) {
   const { clients: client } = reviewLink;
 
-
-
   const [hoveredRating, setHoveredRating] = useState(0);
 
   const handleSelectRating = (star: number) => {

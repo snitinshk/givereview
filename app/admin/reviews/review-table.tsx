@@ -22,7 +22,7 @@ import { FaStar } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import placeholder from "../../images/placeholder.svg";
 import { useRouter } from "next/navigation"; // Import the useRouter hook
-import { TransformedReview } from "@/interfaces/i-reviews";
+import { TransformedReview } from "@/interfaces/reviews";
 import { useSelectedReview } from "@/app/context/selected-negative-review-context";
 import { capitalizeFirstLetter, getSlug } from "@/lib/utils";
 import { useLoader } from "@/app/context/loader.context";
@@ -145,7 +145,7 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
               Date
             </TableHead>
             <TableHead>
-              {reviewType === "internal" ? "Client" : "Stream"}
+              Client
             </TableHead>
             <TableHead>Stars</TableHead>
             <TableHead>Name</TableHead>

@@ -1,3 +1,5 @@
+import { WidgetSettings } from "./interfaces/widget";
+
 export const API_ROUTES = {
     login: '/api/auth/login',
     logout: '/api/auth/logout',
@@ -36,6 +38,22 @@ export const DEFAULT_TEXTS = {
     negativePageDescription: 'We want our customers to be 100% satisfied. Please let us know why you had a bad experience, so we can improve our service. Leave your email to be contacted.',
     thankyouPageTitle: 'Thank you for your review'
 }
+
+export const defaultSettings: WidgetSettings = {
+  isActive: false,
+  showTitle: true,
+  widgetTitle: "What our guests say",
+  showTabs: true,
+  showCustomerName: true,
+  showCustomerAvatar: true,
+  showChannelLogo: true,
+  showReviewDate: true,
+  totalReviewsToDisplay: 9,
+  showRating: true,
+  showPoweredBy: true,
+  poweredByText: "Powered by review booster",
+  isLightTheme: true,
+};
 
 export const reviewLinkPositiveDefaultValue = {
     title: DEFAULT_TEXTS?.positiveReviewTitle,
