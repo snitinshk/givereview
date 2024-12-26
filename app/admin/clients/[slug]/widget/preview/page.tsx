@@ -12,6 +12,7 @@ import { WidgetReview, WidgetSettings } from "@/interfaces/widget";
 import { useWidget } from "@/app/context/widget-context";
 import { useClients } from "@/app/context/clients-context";
 import { useToast } from "@/hooks/use-toast";
+import { Heart } from "lucide-react";
 
 const TestimonialCompo: React.FC = () => {
   const { widget } = useWidget();
@@ -155,9 +156,15 @@ const TestimonialCompo: React.FC = () => {
           <TabsContent
             key={tab?.value}
             value={tab?.value}
-            className="flex flex-col px-4 sm:px-6 lg:px-20 w-full"
+            className="flex flex-col w-full"
           >
             <Slider testimonials={tab?.testimonials ?? []} />
+
+            <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 relative left-1/2 top-10 -translate-x-1/2 w-full justify-center">
+              <span className="font-medium">Powered</span> with{" "}
+              <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+              booster
+            </div>
           </TabsContent>
         ))}
       </Tabs>

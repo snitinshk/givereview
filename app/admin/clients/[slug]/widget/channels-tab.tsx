@@ -70,7 +70,7 @@ const ChannelsTabs: React.FC = () => {
 
   return (
     <>
-      <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10 max-w-[80%] max-xl:max-w-[100%]">
         {widget?.channels?.map((channel) => (
           <ChannelCard
             key={channel.id}
