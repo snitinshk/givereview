@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Testimonial } from "../data/testimonialsData";
+import { WidgetSettings } from "@/interfaces/widget";
 
 interface SliderProps {
   testimonials: Testimonial[];
@@ -15,7 +16,7 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ testimonials }) => {
   return (
-    <div className="w-full mx-auto px-4"> 
+    <div className="w-full mx-auto px-4">
       <Carousel
         opts={{
           loop: true,
@@ -27,9 +28,9 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
             stopOnInteraction: true,
           }),
         ]}
-        className="w-full" 
+        className="w-full"
       >
-        <CarouselContent >
+        <CarouselContent>
           {testimonials.map((testimonial) => (
             <CarouselItem
               key={testimonial.id}
@@ -39,8 +40,12 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        {testimonials.length > 3 && (
+          <>
+            <CarouselPrevious />
+            <CarouselNext />
+          </>
+        )}
       </Carousel>
     </div>
   );

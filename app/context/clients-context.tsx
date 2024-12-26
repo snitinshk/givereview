@@ -1,8 +1,5 @@
 "use client";
 
-import { Client } from "@/interfaces/clients";
-import { fetcher } from "@/lib/utils";
-import { mapClients } from "@/mappers/index-mapper";
 import React, {
   createContext,
   useContext,
@@ -12,9 +9,11 @@ import React, {
   Dispatch,
   useEffect,
 } from "react";
-import useSWR from "swr";
-import { useLoader } from "./loader.context";
 import { useParams } from "next/navigation";
+import { Client } from "@/interfaces/clients";
+import { fetcher } from "@/lib/utils";
+import { mapClients } from "@/mappers/index-mapper";
+import { useLoader } from "./loader.context";
 
 interface ClientsContextProps {
   clients: Client[];
@@ -34,36 +33,33 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
 
   const { slug } = useParams();
   const { setIsLoading } = useLoader();
+
   useEffect(() => {
-    if (!clients?.length) {
+    const fetchClients = async () => {
+      setIsLoading(true);
+      try {
+        const clientsList = await fetcher("/api/admin/clients");
+        const mappedClients = mapClients(clientsList);
+
+        setClients(mappedClients);
+
+        const matchingClient = mappedClients.find(
+          (client) => client.slug === slug
+        );
+        if (matchingClient) {
+          setSelectedClient(matchingClient);
+        }
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (clients.length === 0) {
       fetchClients();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clients?.length]);
-
-  const fetchClients = async () => {
-    setIsLoading(true);
-    const clientsList = await fetcher("/api/admin/clients");
-    setIsLoading(false);
-    const mappedClients = mapClients(clientsList);
-    const selectedClient = mappedClients?.find(
-      (client) => client.slug === slug
-    );
-    if (selectedClient) setSelectedClient(selectedClient);
-    setClients(mappedClients);
-  };
-
-  // const { slug } = useParams();
-  // const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-
-  // const { clients } = useClients();
-
-  // console.log(clients);
-
-  // useEffect(() => {
-  //   const selectedClient = clients?.find((client) => client.slug === slug);
-  //   if(selectedClient) setSelectedClient(selectedClient);
-  // }, [clients]);
+  }, [clients.length, slug, setIsLoading]);
 
   return (
     <ClientsContext.Provider
@@ -74,11 +70,11 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook for consuming the alert context
+// Custom hook for consuming the clients context
 export const useClients = (): ClientsContextProps => {
   const context = useContext(ClientsContext);
   if (!context) {
-    throw new Error("useClients must be used within an ClientsProvider");
+    throw new Error("useClients must be used within a ClientsProvider");
   }
   return context;
 };

@@ -105,19 +105,6 @@ export const getURL = () => {
   return url
 }
 
-
-// if (uploadError) {
-//   toast({
-//     description: `Error in uploading client logo, please try again later`,
-//   });
-//   return;
-// }
-// const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
-// if (clientLogoUrl) {
-//   setSelectedClient((prev: any) => ({
-//     ...prev,
-//     logo: clientLogoUrl,
-//   }));
-// }
-
-// handleUpdateClient({ client_logo: clientLogoUrl });
+export function camelToSnakeCase(str: string): string {
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+}

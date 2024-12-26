@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { VscTriangleLeft } from "react-icons/vsc";
 import { FaStar } from "react-icons/fa6";
-import { TransformedReview } from "@/interfaces/i-reviews";
+import { TransformedReview } from "@/interfaces/reviews";
 import { useSelectedReview } from "@/app/context/selected-negative-review-context";
 
 const ReviewDetail = () => {

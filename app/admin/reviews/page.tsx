@@ -17,7 +17,7 @@ import {
   ExternalReviewDB,
   ReviewDetailDB,
   TransformedReview,
-} from "@/interfaces/i-reviews";
+} from "@/interfaces/reviews";
 import { mapReviews } from "@/mappers/reviews-mapper";
 import { useClients } from "@/app/context/clients-context";
 import { useLoader } from "@/app/context/loader.context";
@@ -33,7 +33,6 @@ const ReviewPage: React.FC = () => {
   const [reviews, setReviews] = useState<TransformedReview[]>([]);
   const [externalReviews, setExternalReviews] = useState([]);
   const [reviewLinks, setReviewLinks] = useState([]);
-  const [externalReviewsFilter, setExternalReviewsFilter] = useState<any>([]);
 
   const searchParams = useSearchParams();
   const filteredClientQuery = searchParams.get("client");
@@ -66,21 +65,16 @@ const ReviewPage: React.FC = () => {
         (externalReview) => {
           return {
             id: externalReview.id,
+            clientId: externalReview.client_id,
             name: externalReview?.reviewers_name,
             image: externalReview?.channels?.channel_logo_url,
-            client: externalReview?.stream_name,
+            client: externalReview?.clients?.client_name,
             stars: externalReview?.review_count,
             review: externalReview?.review_description,
             date: externalReview?.review_date,
           };
         }
       );
-
-      const uniqueClients = Array.from(
-        new Set(mappedExternalReviews.map((item) => item.client.toLowerCase()))
-      ).map((client) => ({ id: client, name: capitalizeFirstLetter(client) }));
-
-      setExternalReviewsFilter(uniqueClients);
 
       setExternalReviews(mappedExternalReviews as any);
     }
@@ -135,10 +129,11 @@ const ReviewPage: React.FC = () => {
   let filteredReviews: any = [];
 
   if (externalReviews?.length) {
+    
     filteredExternalReviews = externalReviews?.filter((review: any) => {
       return (
         filteredExternalReview === "All" ||
-        filteredExternalReview === review?.client.toLowerCase()
+        filteredExternalReview === review?.clientId.toString()
       );
     });
   }
@@ -183,11 +178,11 @@ const ReviewPage: React.FC = () => {
             return "All";
         }
       };
-  
+
       const onValueChange = (newValue: string) => {
         handleSelectChange(newValue, placeholder);
       };
-  
+
       return (
         <div className="w-1/5 max-sm:w-full">
           <Select onValueChange={onValueChange} value={getValue()}>
@@ -205,9 +200,13 @@ const ReviewPage: React.FC = () => {
         </div>
       );
     },
-    [filteredClient, filteredReviewsByRL, filteredExternalReview, handleSelectChange]
+    [
+      filteredClient,
+      filteredReviewsByRL,
+      filteredExternalReview,
+      handleSelectChange,
+    ]
   );
-  
 
   // const renderSelect = useCallback(
   //   (placeholder: string, items: SelectItem[]) => {
@@ -268,10 +267,7 @@ const ReviewPage: React.FC = () => {
         {/* StreamTbs Content */}
         <TabsContent value="StreamTbs">
           <div className="px-6 pt-6 flex items-center mb-4 gap-4">
-            {renderSelect("Stream", [
-              { id: "All", name: "All" },
-              ...externalReviewsFilter,
-            ])}
+            {renderSelect("Stream", [{ id: "All", name: "All" }, ...clients])}
           </div>
           <ReviewTable
             reviewType="external"

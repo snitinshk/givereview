@@ -73,27 +73,28 @@ export interface TransformedReview {
 }
 
 
-export interface ExternalReviewRequest {
+export interface ExternalReview {
     id: number
-    streamName: string,
-    reviewSourceId: string,
+    clientId: number,
+    channelId: string,
     reviewDate: Date,
     reviewCount: number,
     reviewersName: string,
-    reviewersAvtar: string,
+    fileUrl: string,
     reviewTitle: string,
     reviewDescription: string,
 }
 
 export interface ExternalReviewDB {
     id?: number,
-    stream_name: string,
-    review_source_id: string,
+    client_id: number,
+    channel_id: string,
     review_date: Date,
     review_count: number,
     reviewers_name: string,
     reviewers_avtar: string,
     review_title: string,
     review_description: string,
+    clients?: ClientDB,
     channels?: ChannelDB;
 }
