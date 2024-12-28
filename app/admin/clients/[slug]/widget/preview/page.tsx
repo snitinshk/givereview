@@ -129,7 +129,7 @@ const TestimonialCompo: React.FC = () => {
         {widget?.settings?.showTabs && (
           <TabsList className="flex-wrap gap-4 justify-start border-b border-gray-200">
             {tabs?.map((tab: any) => (
-              <TabsTrigger key={tab?.value} value={tab?.value}>
+              <TabsTrigger key={tab?.value} value={tab?.value} className="gap-2">
                 {tab.channelLogo && (
                   <Image
                     src={tab?.channelLogo}
@@ -149,7 +149,7 @@ const TestimonialCompo: React.FC = () => {
             {widget?.settings?.showPoweredBy && (
               <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
                 <span>Powered</span> with{" "}
-                <Heart className="w-4 h-4 text-red-500" /> by place booster
+                <Heart className="w-4 h-4 text-red-500 fill-red-500" />  by place booster
               </div>
             )}
           </TabsContent>

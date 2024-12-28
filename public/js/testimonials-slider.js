@@ -1,8 +1,8 @@
 (function () {
+  // Get the script tag and extract attributes
   const scriptTag = document.querySelector(
     'script[src="testimonials-slider.js"]'
   );
-
   const widgetId = scriptTag.getAttribute("widget-id");
   const clientId = scriptTag.getAttribute("client-id");
 
@@ -14,6 +14,7 @@
   // Async function to fetch and render the widget
   const fetchAndRenderWidget = async () => {
     try {
+      // Fetch widget details
       const response = await fetch(
         `http://localhost:3000/api/widget?widgetId=${widgetId}`,
         requestOptions
@@ -29,7 +30,6 @@
         }));
 
       let widgetsQueryStr;
-
       if (fetchConditions?.length && clientId) {
         const params = {};
         params["conditions"] = JSON.stringify(fetchConditions);
@@ -37,65 +37,66 @@
         widgetsQueryStr = new URLSearchParams(params).toString();
       }
 
+      // Fetch external reviews
       const externalReviewResponse = await fetch(
         `http://localhost:3000/api/web/external-reviews?${widgetsQueryStr}`,
         requestOptions
       );
       const externalReviews = await externalReviewResponse.json();
 
-      // Inject Swiper CSS dynamically
-      const swiperStyle = document.createElement("link");
-      swiperStyle.rel = "stylesheet";
-      swiperStyle.href = "https://unpkg.com/swiper/swiper-bundle.min.css";
-      document.head.appendChild(swiperStyle);
+      // Inject Swiper and custom styles
+      injectStylesAndScripts();
 
-      // Inject Swiper JS dynamically
-      const swiperScript = document.createElement("script");
-      swiperScript.src = "https://unpkg.com/swiper/swiper-bundle.min.js";
-      document.body.appendChild(swiperScript);
-
-      swiperScript.onload = () => {
-        // Create the main container using HTML strings
-        const widgetContainerHTML = `
-          <div id="testimonial-widget" style="font-family: Arial, sans-serif; text-align: center; max-width: 900px; margin: auto;">
-            ${widget.show_title ? `<h2>${widget.widget_title || 'What our guests say'}</h2>` : ''}
-            ${widget.show_tabs ? generateTabs(externalReviews) : ''}
-            <div class="swiper-container" style="position: relative;">
-              <div class="swiper-wrapper" style="display: flex;">
-                ${generateSlides(externalReviews)}
-              </div>
-              <div class="swiper-button-prev"></div>
-              <div class="swiper-button-next"></div>
-            </div>
-            ${widget.show_powered_by ? '<footer style="margin-top: 20px; font-size: 12px; color: #888;">Powered with ❤️ by Place Booster</footer>' : ''}
-          </div>
-        `;
-
-        // Append the widget to the specified container
+      // Wait for Swiper script to load and initialize the widget
+      document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload = () => {
         const container = document.getElementById("testimonial-widget-container");
-        container.innerHTML = widgetContainerHTML;
+        container.innerHTML = generateWidgetHTML(widget, externalReviews);
 
-        // Initialize Swiper
-        const swiper = new Swiper(".swiper-container", {
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          loop: true,
-          slidesPerView: 2,
-          spaceBetween: 20,
-          breakpoints: {
-            768: { slidesPerView: 2 },
-            480: { slidesPerView: 1 },
-          },
-        });
+        // Initialize tabs and Swiper
+        initializeTabs();
+        initializeSwiper();
       };
     } catch (error) {
       console.error("Error fetching widget:", error);
     }
   };
 
-  // Function to generate Tabs HTML string
+  // Inject Swiper and custom CSS
+  const injectStylesAndScripts = () => {
+    const swiperStyle = document.createElement("link");
+    swiperStyle.rel = "stylesheet";
+    swiperStyle.href = "https://unpkg.com/swiper/swiper-bundle.min.css";
+    document.head.appendChild(swiperStyle);
+
+    const customStyle = document.createElement("link");
+    customStyle.rel = "stylesheet";
+    customStyle.href = "http://localhost:3000/js/widget.css";
+    document.head.appendChild(customStyle);
+
+    const swiperScript = document.createElement("script");
+    swiperScript.src = "https://unpkg.com/swiper/swiper-bundle.min.js";
+    document.body.appendChild(swiperScript);
+  };
+
+  // Generate widget HTML
+  const generateWidgetHTML = (widget, externalReviews) => `
+    <div id="testimonial-widget" class="plcboot-widget-mwapper">
+      ${widget.show_title ? `<h2 class="plcboot-heading">${widget.widget_title || 'What our guests say'}</h2>` : ''}
+      ${widget.show_tabs ? generateTabs(externalReviews) : ''}
+      <div class="sliderm-wrapper">
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              ${generateSlides(externalReviews)}
+            </div>
+          </div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+       </div>
+      ${widget.show_powered_by ? '<footer class="plcboot-widget-copyright">Powered with ❤️ by Place Booster</footer>' : ''}
+    </div>
+  `;
+
+  // Generate tabs
   const generateTabs = (externalReviews) => {
     const uniqueChannels = Array.from(
       new Set(externalReviews.map((review) => review.channels.channel_name))
@@ -106,16 +107,16 @@
         (review) => review.channels.channel_name === channelName
       );
       return `
-        <button class="tab" widget-platform="${channelName}" style="cursor: pointer; padding: 10px 20px; font-size: 14px; border: none; background: none; display: flex; align-items: center;">
-          <img src="${channel?.channels.channel_logo_url}" alt="${channelName}" style="width: 24px; margin-right: 8px;">
+        <button class="plcboot-widget-tab" widget-platform="${channelName}">
+          <img src="${channel?.channels.channel_logo_url}" alt="${channelName}" class="plcboot-widget-tab-icon">
           ${channelName}
         </button>
       `;
     }).join('');
 
     return `
-      <div class="tabs" style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <button class="tab active" widget-platform="all" style="cursor: pointer; padding: 10px 20px; font-size: 14px; border: none; background: none;">
+      <div class="plcboot-widget-tabs">
+        <button class="plcboot-widget-tab active" widget-platform="all">
           All
         </button>
         ${channelTabsHTML}
@@ -123,30 +124,86 @@
     `;
   };
 
-  // Function to generate Slides HTML string
+  // Generate slides
   const generateSlides = (externalReviews) => {
     return externalReviews.map((review) => {
       return `
-        <div class="swiper-slide" widget-platform="${review.channels.channel_name}" style="display: flex; justify-content: center; max-width: 300px;">
-          <div class="review-card" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); padding: 20px; text-align: left;">
-            <div class="review-header" style="display: flex; align-items: center; margin-bottom: 15px;">
-              <img src="${review.reviewers_avtar}" alt="${review.reviewers_name}" class="avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
-              <div>
-                <h3 style="margin: 0;">${review.reviewers_name}</h3>
-                <p style="margin: 0; color: gray;">${review.review_date}</p>
+       <div class="swiper-slide" widget-platform="${review.channels.channel_name}">
+          <div class="review-card">
+            <div class="review-header">
+              <img 
+                src="${review.reviewers_avtar}" 
+                alt="${review.reviewers_name}" 
+                class="avatar" 
+              />
+              <div class="reviewer-info">
+                <h3 class="reviewer-name">${review.reviewers_name}</h3>
+                <p class="review-date">${review.review_date}</p>
               </div>
-              <img src="${review.channels.channel_logo_url}" alt="${review.channels.channel_name}" class="platform-icon" style="margin-left: auto; width: 24px;">
+              <img 
+                src="${review.channels.channel_logo_url}" 
+                alt="${review.channels.channel_name}" 
+                class="platform-icon" 
+              />
             </div>
-            <div class="review-rating" style="color: #f5c518; font-size: 20px; margin-bottom: 10px;">
-              ⭐${'⭐'.repeat(review.review_count)}
+            <div class="review-rating">
+              ★${'★'.repeat(review.review_count)}
             </div>
-            <p class="review-text" style="color: gray;">${review.review_description}</p>
+            <p class="review-text">${review.review_description}</p>
           </div>
         </div>
       `;
     }).join('');
   };
 
-  // Call the async function
+  // Initialize tabs functionality
+  const initializeTabs = () => {
+    const tabs = document.querySelectorAll(".plcboot-widget-tab");
+    const slides = document.querySelectorAll(".swiper-slide");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        const platform = tab.getAttribute("widget-platform");
+        slides.forEach((slide) => {
+          slide.style.display =
+            platform === "all" || slide.getAttribute("widget-platform") === platform
+              ? "flex"
+              : "none";
+        });
+      });
+    });
+  };
+
+  // Initialize Swiper
+  const initializeSwiper = () => {
+    new Swiper(".swiper-container", {
+      loop: true, // Enable loop
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      slidesPerView: 2,
+      spaceBetween: 20,
+      breakpoints: {
+        1024: { slidesPerView: 2, spaceBetween: 30 },
+        768: { slidesPerView: 1, spaceBetween: 20 },
+        480: { slidesPerView: 1, spaceBetween: 15 },
+      },
+      // Ensure looped slides are duplicated properly
+      on: {
+        beforeInit(swiper) {
+          const slides = swiper.el.querySelectorAll(".swiper-slide");
+          if (slides.length < swiper.params.slidesPerView) {
+            swiper.params.loop = false; // Disable loop if not enough slides
+          }
+        },
+      },
+    });
+  };
+
+  // Fetch and render the widget
   fetchAndRenderWidget();
 })();
