@@ -55,207 +55,25 @@
       document.body.appendChild(swiperScript);
 
       swiperScript.onload = () => {
-        // Create the main container dynamically
-        const widgetContainer = document.createElement("div");
-        widgetContainer.id = "testimonial-widget";
-        widgetContainer.style.fontFamily = "Arial, sans-serif";
-        widgetContainer.style.textAlign = "center";
-        widgetContainer.style.maxWidth = "900px";
-        widgetContainer.style.margin = "auto";
+        // Create the main container using HTML strings
+        const widgetContainerHTML = `
+          <div id="testimonial-widget" style="font-family: Arial, sans-serif; text-align: center; max-width: 900px; margin: auto;">
+            ${widget.show_title ? `<h2>${widget.widget_title || 'What our guests say'}</h2>` : ''}
+            ${widget.show_tabs ? generateTabs(externalReviews) : ''}
+            <div class="swiper-container" style="position: relative;">
+              <div class="swiper-wrapper" style="display: flex;">
+                ${generateSlides(externalReviews)}
+              </div>
+              <div class="swiper-button-prev"></div>
+              <div class="swiper-button-next"></div>
+            </div>
+            ${widget.show_powered_by ? '<footer style="margin-top: 20px; font-size: 12px; color: #888;">Powered with ❤️ by Place Booster</footer>' : ''}
+          </div>
+        `;
 
-        // Title
-        if (widget.show_title) {
-          const title = document.createElement("h2");
-          title.innerText = widget.widget_title || "What our guests say";
-          widgetContainer.appendChild(title);
-        }
-
-        // Tabs
-        if (widget.show_tabs) {
-          const tabs = document.createElement("div");
-          tabs.className = "tabs";
-          tabs.style.display = "flex";
-          tabs.style.justifyContent = "center";
-          tabs.style.marginBottom = "20px";
-
-          // All Tab
-          const allTab = document.createElement("button");
-          allTab.className = "tab active";
-          allTab.setAttribute("widget-platform", "all");
-          allTab.innerText = "All";
-          allTab.style.cursor = "pointer";
-          allTab.style.padding = "10px 20px";
-          allTab.style.fontSize = "14px";
-          allTab.style.border = "none";
-          allTab.style.background = "none";
-          allTab.addEventListener("click", () => {
-            document.querySelector(".tab.active")?.classList.remove("active");
-            allTab.classList.add("active");
-
-            document.querySelectorAll(".swiper-slide").forEach((slide) => {
-              slide.style.display = "flex";
-            });
-          });
-          tabs.appendChild(allTab);
-
-          // Channel Tabs
-          const uniqueChannels = Array.from(
-            new Set(externalReviews.map((review) => review.channels.channel_name))
-          );
-
-          uniqueChannels.forEach((channelName) => {
-            const channelTab = document.createElement("button");
-            channelTab.className = "tab";
-            channelTab.setAttribute("widget-platform", channelName);
-            channelTab.style.cursor = "pointer";
-            channelTab.style.padding = "10px 20px";
-            channelTab.style.fontSize = "14px";
-            channelTab.style.border = "none";
-            channelTab.style.background = "none";
-            channelTab.style.display = "flex";
-            channelTab.style.alignItems = "center";
-
-            // Channel Icon
-            const channelIcon = document.createElement("img");
-            const channel = externalReviews.find(
-              (review) => review.channels.channel_name === channelName
-            );
-            channelIcon.src = channel?.channels.channel_logo_url;
-            channelIcon.alt = channelName;
-            channelIcon.style.width = "24px";
-            channelIcon.style.marginRight = "8px";
-
-            channelTab.appendChild(channelIcon);
-            channelTab.appendChild(document.createTextNode(channelName));
-
-            channelTab.addEventListener("click", () => {
-              document.querySelector(".tab.active")?.classList.remove("active");
-              channelTab.classList.add("active");
-
-              document.querySelectorAll(".swiper-slide").forEach((slide) => {
-                const slidePlatform = slide.getAttribute("widget-platform");
-                if (slidePlatform === channelName) {
-                  slide.style.display = "flex";
-                } else {
-                  slide.style.display = "none";
-                }
-              });
-            });
-
-            tabs.appendChild(channelTab);
-          });
-
-          widgetContainer.appendChild(tabs);
-        }
-
-        // Swiper container
-        const swiperContainer = document.createElement("div");
-        swiperContainer.className = "swiper-container";
-        swiperContainer.style.position = "relative";
-
-        const swiperWrapper = document.createElement("div");
-        swiperWrapper.className = "swiper-wrapper";
-        swiperWrapper.style.display = "flex";
-
-        // Create slides dynamically from externalReviews
-        externalReviews.forEach((review) => {
-          const slide = document.createElement("div");
-          slide.className = "swiper-slide";
-          slide.setAttribute("widget-platform", review.channels.channel_name);
-          slide.style.display = "flex";
-          slide.style.justifyContent = "center";
-          slide.style.maxWidth = "300px";
-
-          const reviewCard = document.createElement("div");
-          reviewCard.className = "review-card";
-          reviewCard.style.background = "#fff";
-          reviewCard.style.borderRadius = "8px";
-          reviewCard.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.1)";
-          reviewCard.style.padding = "20px";
-          reviewCard.style.textAlign = "left";
-
-          const reviewHeader = document.createElement("div");
-          reviewHeader.className = "review-header";
-          reviewHeader.style.display = "flex";
-          reviewHeader.style.alignItems = "center";
-          reviewHeader.style.marginBottom = "15px";
-
-          const avatar = document.createElement("img");
-          avatar.src = review.reviewers_avtar;
-          avatar.alt = review.reviewers_name;
-          avatar.className = "avatar";
-          avatar.style.width = "50px";
-          avatar.style.height = "50px";
-          avatar.style.borderRadius = "50%";
-          avatar.style.marginRight = "10px";
-          reviewHeader.appendChild(avatar);
-
-          const userInfo = document.createElement("div");
-          const userName = document.createElement("h3");
-          userName.innerText = review.reviewers_name;
-          userName.style.margin = "0";
-          const userDate = document.createElement("p");
-          userDate.innerText = review.review_date;
-          userDate.style.margin = "0";
-          userDate.style.color = "gray";
-          userInfo.appendChild(userName);
-          userInfo.appendChild(userDate);
-          reviewHeader.appendChild(userInfo);
-
-          const platformIcon = document.createElement("img");
-          platformIcon.src = review.channels.channel_logo_url;
-          platformIcon.alt = review.channels.channel_name;
-          platformIcon.className = "platform-icon";
-          platformIcon.style.marginLeft = "auto";
-          platformIcon.style.width = "24px";
-          reviewHeader.appendChild(platformIcon);
-
-          reviewCard.appendChild(reviewHeader);
-
-          const reviewRating = document.createElement("div");
-          reviewRating.className = "review-rating";
-          reviewRating.style.color = "#f5c518";
-          reviewRating.style.fontSize = "20px";
-          reviewRating.style.marginBottom = "10px";
-          reviewRating.innerText = "⭐".repeat(review.review_count);
-          reviewCard.appendChild(reviewRating);
-
-          const reviewText = document.createElement("p");
-          reviewText.className = "review-text";
-          reviewText.style.color = "gray";
-          reviewText.innerText = review.review_description;
-          reviewCard.appendChild(reviewText);
-
-          slide.appendChild(reviewCard);
-          swiperWrapper.appendChild(slide);
-        });
-
-        swiperContainer.appendChild(swiperWrapper);
-
-        // Add navigation buttons
-        const prevButton = document.createElement("div");
-        prevButton.className = "swiper-button-prev";
-        swiperContainer.appendChild(prevButton);
-
-        const nextButton = document.createElement("div");
-        nextButton.className = "swiper-button-next";
-        swiperContainer.appendChild(nextButton);
-
-        widgetContainer.appendChild(swiperContainer);
-
-        // Footer
-        if (widget.show_powered_by) {
-          const footer = document.createElement("footer");
-          footer.style.marginTop = "20px";
-          footer.style.fontSize = "12px";
-          footer.style.color = "#888";
-          footer.innerHTML = "Powered with ❤️ by Place Booster";
-          widgetContainer.appendChild(footer);
-        }
-
-        // Append widget to the specified container
+        // Append the widget to the specified container
         const container = document.getElementById("testimonial-widget-container");
-        container.appendChild(widgetContainer);
+        container.innerHTML = widgetContainerHTML;
 
         // Initialize Swiper
         const swiper = new Swiper(".swiper-container", {
@@ -264,7 +82,7 @@
             prevEl: ".swiper-button-prev",
           },
           loop: true,
-          slidesPerView: 3,
+          slidesPerView: 2,
           spaceBetween: 20,
           breakpoints: {
             768: { slidesPerView: 2 },
@@ -275,6 +93,58 @@
     } catch (error) {
       console.error("Error fetching widget:", error);
     }
+  };
+
+  // Function to generate Tabs HTML string
+  const generateTabs = (externalReviews) => {
+    const uniqueChannels = Array.from(
+      new Set(externalReviews.map((review) => review.channels.channel_name))
+    );
+
+    const channelTabsHTML = uniqueChannels.map((channelName) => {
+      const channel = externalReviews.find(
+        (review) => review.channels.channel_name === channelName
+      );
+      return `
+        <button class="tab" widget-platform="${channelName}" style="cursor: pointer; padding: 10px 20px; font-size: 14px; border: none; background: none; display: flex; align-items: center;">
+          <img src="${channel?.channels.channel_logo_url}" alt="${channelName}" style="width: 24px; margin-right: 8px;">
+          ${channelName}
+        </button>
+      `;
+    }).join('');
+
+    return `
+      <div class="tabs" style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <button class="tab active" widget-platform="all" style="cursor: pointer; padding: 10px 20px; font-size: 14px; border: none; background: none;">
+          All
+        </button>
+        ${channelTabsHTML}
+      </div>
+    `;
+  };
+
+  // Function to generate Slides HTML string
+  const generateSlides = (externalReviews) => {
+    return externalReviews.map((review) => {
+      return `
+        <div class="swiper-slide" widget-platform="${review.channels.channel_name}" style="display: flex; justify-content: center; max-width: 300px;">
+          <div class="review-card" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); padding: 20px; text-align: left;">
+            <div class="review-header" style="display: flex; align-items: center; margin-bottom: 15px;">
+              <img src="${review.reviewers_avtar}" alt="${review.reviewers_name}" class="avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+              <div>
+                <h3 style="margin: 0;">${review.reviewers_name}</h3>
+                <p style="margin: 0; color: gray;">${review.review_date}</p>
+              </div>
+              <img src="${review.channels.channel_logo_url}" alt="${review.channels.channel_name}" class="platform-icon" style="margin-left: auto; width: 24px;">
+            </div>
+            <div class="review-rating" style="color: #f5c518; font-size: 20px; margin-bottom: 10px;">
+              ⭐${'⭐'.repeat(review.review_count)}
+            </div>
+            <p class="review-text" style="color: gray;">${review.review_description}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
   };
 
   // Call the async function
