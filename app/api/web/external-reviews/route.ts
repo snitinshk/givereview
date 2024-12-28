@@ -6,6 +6,18 @@ import { headers } from "next/headers";
 import { BUCKET_NAME } from "@/constant";
 import { getSlug, mediaUrl } from "@/lib/utils";
 
+export async function OPTIONS() {
+  // Handle preflight request
+  return new Response(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function GET(request: NextRequest) {
   try {
     const clientId = request.nextUrl.searchParams.get("clientId");
