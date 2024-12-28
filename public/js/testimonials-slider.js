@@ -1,4 +1,6 @@
 (function () {
+  // const baseUrl = `http://localhost:3000`
+  const baseUrl = `https://app.givereview.to`
   // Get the script tag and extract attributes
   const scriptTag = document.querySelector(
     'script[src="testimonials-slider.js"]'
@@ -16,7 +18,7 @@
     try {
       // Fetch widget details
       const response = await fetch(
-        `http://localhost:3000/api/widget?widgetId=${widgetId}`,
+        `${baseUrl}/api/widget?widgetId=${widgetId}`,
         requestOptions
       );
       const widget = await response.json();
@@ -39,7 +41,7 @@
 
       // Fetch external reviews
       const externalReviewResponse = await fetch(
-        `http://localhost:3000/api/web/external-reviews?${widgetsQueryStr}`,
+        `${baseUrl}/api/web/external-reviews?${widgetsQueryStr}`,
         requestOptions
       );
       const externalReviews = await externalReviewResponse.json();
@@ -65,16 +67,16 @@
   const injectStylesAndScripts = () => {
     const swiperStyle = document.createElement("link");
     swiperStyle.rel = "stylesheet";
-    swiperStyle.href = "https://unpkg.com/swiper/swiper-bundle.min.css";
+    swiperStyle.href = `https://unpkg.com/swiper/swiper-bundle.min.css`;
     document.head.appendChild(swiperStyle);
 
     const customStyle = document.createElement("link");
     customStyle.rel = "stylesheet";
-    customStyle.href = "http://localhost:3000/js/widget.css";
+    customStyle.href = `${baseUrl}/js/widget.css`;
     document.head.appendChild(customStyle);
 
     const swiperScript = document.createElement("script");
-    swiperScript.src = "https://unpkg.com/swiper/swiper-bundle.min.js";
+    swiperScript.src = `https://unpkg.com/swiper/swiper-bundle.min.js`;
     document.body.appendChild(swiperScript);
   };
 
