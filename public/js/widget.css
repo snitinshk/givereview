@@ -1,0 +1,327 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap");
+
+/* font-family: "Public Sans", sans-serif;   font-family: "Poppins", sans-serif;   font-family: "Montserrat", sans-serif; */
+
+/* Reset CSS */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+  font-family: "Public Sans", sans-serif;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.plcboot-widget-mwapper {
+  margin: 0 auto;
+  max-width: 1250px;
+  overflow: hidden;
+}
+
+.plcboot-heading {
+  font-weight: 700;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.plcboot-widget-tabs {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px 10px 0;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.plcboot-widget-tab {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color 0.3s, border-bottom 0.3s;
+  position: relative;
+  font-family: "Public Sans", sans-serif;
+}
+
+.plcboot-widget-tab-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.plcboot-widget-tab.active {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.plcboot-widget-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #28a745;
+  transition: all 0.3s;
+}
+
+.plcboot-widget-tab:hover {
+  color: #000;
+}
+
+.plcboot-widget-copyright {
+  font-family: "Public Sans", sans-serif;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin-top: 40px;
+  color: #363e4a;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  max-width: 300px;
+}
+
+.review-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 12px 12px rgba(145, 158, 171, 0.12),
+    0px 0px 1px rgba(145, 158, 171, 0.2);
+  padding: 20px;
+  text-align: left;
+  width: 100%;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.reviewer-info {
+  flex-grow: 1;
+}
+
+.reviewer-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Public Sans", sans-serif;
+  margin-bottom: 5px;
+}
+
+.review-date {
+  margin: 0;
+  color: gray;
+  font-size: 14px;
+  font-family: "Public Sans", sans-serif;
+}
+
+.platform-icon {
+  margin-left: auto;
+  width: 24px;
+  height: auto;
+}
+
+.review-rating {
+  color: #f5c518;
+  font-size: 20px;
+  margin-bottom: 10px;
+  letter-spacing: 5px;
+}
+
+.review-text {
+  color: rgb(75 85 99);
+  font-family: "Public Sans", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.swiper-container {
+  position: relative;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #ddd;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 28px !important;
+}
+
+.swiper-container {
+  width: 100%;
+  overflow: hidden; 
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: auto; 
+}
+
+.swiper-wrapper {
+  display: flex;
+  align-items: stretch;
+  margin: 20px 0;
+}
+
+.review-card {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+}
+
+.sliderm-wrapper{
+    position: relative;
+}
