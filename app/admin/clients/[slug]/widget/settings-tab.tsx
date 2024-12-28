@@ -88,24 +88,9 @@ const sections: Section[] = [
         type: "switch",
         id: "showPoweredBy",
         label: "Show powered by",
-      },
-      {
-        type: "editable",
-        id: "poweredByText",
-        defaultValue: "Powered by Us",
-      },
+      }
     ],
-  },
-  {
-    title: "Style",
-    elements: [
-      {
-        type: "switch",
-        id: "isLightTheme",
-        label: "Light",
-      },
-    ],
-  },
+  }
 ];
 
 const SettingsTabs: React.FC = () => {

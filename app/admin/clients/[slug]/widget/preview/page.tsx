@@ -113,7 +113,6 @@ const TestimonialCompo: React.FC = () => {
           ),
         })),
       ];
-      console.log(tabs);
       setTabs(tabs);
     }
   }, [channels]);
@@ -160,11 +159,13 @@ const TestimonialCompo: React.FC = () => {
           >
             <Slider testimonials={tab?.testimonials ?? []} />
 
-            <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 relative left-1/2 top-10 -translate-x-1/2 w-full justify-center">
-              <span className="font-medium">Powered</span> with{" "}
-              <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
-              booster
-            </div>
+            {widget?.settings?.showPoweredBy && (
+              <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 relative left-1/2 top-10 -translate-x-1/2 w-full justify-center">
+                <span className="font-medium">Powered</span> with{" "}
+                <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+                booster
+              </div>
+            )}
           </TabsContent>
         ))}
       </Tabs>

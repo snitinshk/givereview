@@ -6,7 +6,6 @@ import { updateWidgetChannels } from "./action";
 import { useToast } from "@/hooks/use-toast";
 
 const ChannelsTabs: React.FC = () => {
-
   const { widget, setWidget } = useWidget();
   const { toast } = useToast();
 
@@ -22,16 +21,15 @@ const ChannelsTabs: React.FC = () => {
 
     if (widget && widget?.id) {
       try {
-        const response = await updateWidgetChannels(
-          { is_active: newStatus },
-          { widget_id: widget.id, channel_id: channelId }
-        );
+        const response = await updateWidgetChannels({
+          widget_id: widget.id,
+          channel_id: channelId,
+          is_active: newStatus,
+        });
         const { error } = JSON.parse(response);
+        console.log(error);
         if (!error) {
           toast({ title: "Channel info updated" });
-        }
-        {
-          toast({ title: "Failed to update channel info" });
         }
       } catch (err) {
         toast({ title: "Failed to update channel info" });
@@ -52,10 +50,11 @@ const ChannelsTabs: React.FC = () => {
 
     if (widget && widget?.id) {
       try {
-        const response = await updateWidgetChannels(
-          { rating_threshold: value },
-          { widget_id: widget.id, channel_id: channelId }
-        );
+        const response = await updateWidgetChannels({
+          widget_id: widget.id,
+          channel_id: channelId,
+          rating_threshold: value,
+        });
         const { error } = JSON.parse(response);
         if (!error) {
           toast({ title: "Channel info updated" });
