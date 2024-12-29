@@ -16,36 +16,44 @@ export async function OPTIONS() {
 }
 
 export async function GET(request: NextRequest) {
-
   try {
     const clientId = request.nextUrl.searchParams.get('client');
-
-    const supabase = await createClient()
+    const supabase = await createClient();
 
     const { error, data: widget } = await supabase
       .from('widgets')
       .select(
         ` *,
-            widget_channels(*, channels!inner(channel_name, channel_logo_url))
-          `
+          widget_channels(*, channels!inner(channel_name, channel_logo_url))
+        `
       )
       .eq('client_id', clientId)
       .maybeSingle();
 
+    const responseHeaders = new Headers({
+      ...corsHeaders, // Include CORS headers
+      "Content-Type": "application/json", // Ensure JSON response type
+    });
+
     if (!error) {
-      return NextResponse.json(widget, { status: 200, headers: corsHeaders });
+      return new Response(JSON.stringify(widget), {
+        status: 200,
+        headers: responseHeaders,
+      });
     } else {
-      return NextResponse.json({ ...error }, { status: 400, headers: corsHeaders });
+      return new Response(JSON.stringify({ error }), {
+        status: 400,
+        headers: responseHeaders,
+      });
     }
-
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: errorMessage }),
+      {
+        status: 500,
+        headers: corsHeaders,
+      }
     );
   }
 }
-
-// You can also handle POST, PUT, DELETE, etc.
