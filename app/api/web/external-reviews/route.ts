@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/supabase-server";
-import { mapExternalReviewsToDb } from "@/mappers/reviews-mapper";
-import { ExternalReviewDB } from "@/interfaces/reviews";
 import { headers } from "next/headers";
-import { BUCKET_NAME } from "@/constant";
 import { getSlug, mediaUrl } from "@/lib/utils";
+import { ExternalReviewDB } from "@/interfaces/reviews";
+import { mapExternalReviewsToDb } from "@/mappers/reviews-mapper";
+import { BUCKET_NAME } from "@/constant";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
-
 
 export async function OPTIONS() {
   // Handle preflight request
@@ -28,31 +27,30 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     if (!clientId) {
-      return NextResponse.json(
-        { error: "clientId is required" },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "clientId is required" }),
+        { status: 400, headers: corsHeaders }
       );
     }
 
     if (!conditionsJson) {
-      return NextResponse.json(
-        { error: "conditions are required" },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "conditions are required" }),
+        { status: 400, headers: corsHeaders }
       );
     }
 
-    let externalReviews: any[] = [];
     const conditionsArr = JSON.parse(conditionsJson);
 
     // Validate parsed conditions
     if (!Array.isArray(conditionsArr)) {
-      return NextResponse.json(
-        { error: "Invalid conditions format" },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "Invalid conditions format" }),
+        { status: 400, headers: corsHeaders }
       );
     }
 
-    const queries = conditionsArr.map((condition: any) => {
+    const queries = conditionsArr.map((condition) => {
       if (
         !condition.channelId ||
         !condition.ratingThreshold ||
@@ -83,13 +81,19 @@ export async function GET(request: NextRequest) {
     );
 
     // Flatten results array
-    externalReviews = results.flat();
+    const externalReviews = results.flat();
 
-    return NextResponse.json(externalReviews, { status: 200, headers: corsHeaders });
+    return new Response(
+      JSON.stringify(externalReviews),
+      { status: 200, headers: corsHeaders }
+    );
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json({ error: errorMessage }, { status: 500, headers: corsHeaders });
+    return new Response(
+      JSON.stringify({ error: errorMessage }),
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
 
