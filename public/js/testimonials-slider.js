@@ -1,7 +1,7 @@
 (function () {
-  // const baseUrl = `http://localhost:3000`
+  const baseUrl = `http://localhost:3000`
 
-  const baseUrl = `https://app.givereview.to`
+  // const baseUrl = `https://app.givereview.to`
   // Get the script tag and extract attributes
   const scriptTag = document.querySelector('script[data-widget="testimonials-slider"]');
   const widgetId = scriptTag.getAttribute("widget-id");
@@ -182,11 +182,14 @@
   const initializeSwiper = () => {
     new Swiper(".swiper-container", {
       loop: true, // Enable loop
+      autoplay: {
+        delay: 2500,
+      },
       navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
-      slidesPerView: 2,
+      slidesPerView: 3,
       spaceBetween: 20,
       breakpoints: {
         1024: { slidesPerView: 2, spaceBetween: 30 },
@@ -203,6 +206,7 @@
         },
       },
     });
+  
   };
 
   // Fetch and render the widget
