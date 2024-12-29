@@ -2,7 +2,9 @@
   //const baseUrl = `https://app.givereview.to`;
   const baseUrl = `http://localhost:3000`;
 
-  const scriptTag = document.querySelector('script[data-widget="testimonials-slider"]');
+  const scriptTag = document.querySelector(
+    'script[data-widget="testimonials-slider"]'
+  );
   const widgetId = scriptTag.getAttribute("widget-id");
   const clientId = scriptTag.getAttribute("client-id");
 
@@ -43,8 +45,12 @@
 
       injectStylesAndScripts();
 
-      document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload = () => {
-        const container = document.getElementById("testimonial-widget-container");
+      document.querySelector(
+        "script[src='https://unpkg.com/swiper/swiper-bundle.min.js']"
+      ).onload = () => {
+        const container = document.getElementById(
+          "testimonial-widget-container"
+        );
         container.innerHTML = generateWidgetHTML(widget, externalReviews);
 
         initializeTabs(externalReviews);
@@ -73,8 +79,14 @@
 
   const generateWidgetHTML = (widget, externalReviews) => `
     <div id="testimonial-widget" class="plcboot-widget-mwapper">
-      ${widget.show_title ? `<h2 class="plcboot-heading">${widget.widget_title || 'What our guests say'}</h2>` : ''}
-      ${widget.show_tabs ? generateTabs(externalReviews) : ''}
+      ${
+        widget.show_title
+          ? `<h2 class="plcboot-heading">${
+              widget.widget_title || "What our guests say"
+            }</h2>`
+          : ""
+      }
+      ${widget.show_tabs ? generateTabs(externalReviews) : ""}
       <div class="tab-content-wrapper">
         <div class="swiper-container" id="swiper-container-all" widget-platform="all">
           <div class="swiper-wrapper">
@@ -82,7 +94,11 @@
           </div>
         </div>
       </div>
-      ${widget.show_powered_by ? '<footer class="plcboot-widget-copyright">Powered with ❤️ by Place Booster</footer>' : ''}
+      ${
+        widget.show_powered_by
+          ? '<footer class="plcboot-widget-copyright">Powered with ❤️ by Place Booster</footer>'
+          : ""
+      }
     </div>
   `;
 
@@ -91,17 +107,19 @@
       new Set(externalReviews.map((review) => review.channels.channel_name))
     );
 
-    const channelTabsHTML = uniqueChannels.map((channelName) => {
-      const channel = externalReviews.find(
-        (review) => review.channels.channel_name === channelName
-      );
-      return `
+    const channelTabsHTML = uniqueChannels
+      .map((channelName) => {
+        const channel = externalReviews.find(
+          (review) => review.channels.channel_name === channelName
+        );
+        return `
         <button class="plcboot-widget-tab" widget-platform="${channelName}">
           <img src="${channel?.channels.channel_logo_url}" alt="${channelName}" class="plcboot-widget-tab-icon">
           ${channelName}
         </button>
       `;
-    }).join('');
+      })
+      .join("");
 
     return `
       <div class="plcboot-widget-tabs">
@@ -114,22 +132,32 @@
   };
 
   const generateSlides = (reviews) => {
-    return reviews.map((review) => `
+    return reviews
+      .map(
+        (review) => `
       <div class="swiper-slide">
         <div class="review-card">
           <div class="review-header">
-            <img src="${review.reviewers_avtar}" alt="${review.reviewers_name}" class="avatar" />
+            <img src="${review.reviewers_avtar}" alt="${
+          review.reviewers_name
+        }" class="avatar" />
             <div class="reviewer-info">
               <h3 class="reviewer-name">${review.reviewers_name}</h3>
               <p class="review-date">${review.review_date}</p>
             </div>
-            <img src="${review.channels.channel_logo_url}" alt="${review.channels.channel_name}" class="platform-icon" />
+            <img src="${review.channels.channel_logo_url}" alt="${
+          review.channels.channel_name
+        }" class="platform-icon" />
           </div>
-          <div class="review-rating">★${'★'.repeat(review.review_count - 1)}</div>
+          <div class="review-rating">★${"★".repeat(
+            review.review_count - 1
+          )}</div>
           <p class="review-text">${review.review_description}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   };
 
   let activeSwiper = null;
@@ -150,7 +178,6 @@
   };
 
   const initializeSwiper = (platform, reviews) => {
-
     const filteredReviews =
       platform === "all"
         ? reviews
