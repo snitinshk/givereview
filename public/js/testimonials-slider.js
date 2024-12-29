@@ -1,7 +1,7 @@
 (function () {
-  const baseUrl = `http://localhost:3000`
+  // const baseUrl = `http://localhost:3000`
 
-  // const baseUrl = `https://app.givereview.to`
+  const baseUrl = `https://app.givereview.to`
   // Get the script tag and extract attributes
   const scriptTag = document.querySelector('script[data-widget="testimonials-slider"]');
   const widgetId = scriptTag.getAttribute("widget-id");
