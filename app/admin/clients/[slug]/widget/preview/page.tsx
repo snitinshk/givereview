@@ -127,9 +127,9 @@ const TestimonialCompo: React.FC = () => {
       </h2>
       <Tabs defaultValue="all">
         {widget?.settings?.showTabs && (
-          <TabsList className="flex-wrap gap-4 justify-start border-b border-gray-200">
+          <TabsList className="flex-wrap gap-4 justify-start border-b border-gray-200 w-full rounded-b-none pt-3 h-auto pb-0">
             {tabs?.map((tab: any) => (
-              <TabsTrigger key={tab?.value} value={tab?.value} className="gap-2">
+              <TabsTrigger key={tab?.value} value={tab?.value} className="gap-2 pb-2 border-b-2 border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#28a745] data-[state=active]:font-semibold data-[state=active]:border-b-green-600 data-[state=active]:rounded-none">
                 {tab.channelLogo && (
                   <Image
                     src={tab?.channelLogo}

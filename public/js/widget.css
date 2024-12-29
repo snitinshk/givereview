@@ -112,6 +112,7 @@ section {
 body {
   line-height: 1;
   font-family: "Public Sans", sans-serif;
+  background-color: #fff;
 }
 
 ol,
@@ -140,7 +141,7 @@ table {
 .plcboot-widget-mwapper {
   margin: 0 auto;
   max-width: 1250px;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .plcboot-heading {
@@ -155,8 +156,8 @@ table {
 .plcboot-widget-tabs {
   display: flex;
   align-items: center;
-  background-color: #f8f9fa;
-  padding: 10px 10px 0;
+  background-color: #f4f4f5;
+  padding: 5px 10px 0;
   border-radius: 8px 8px 0 0;
   border-bottom: 1px solid #ddd;
   margin-bottom: 20px;
@@ -216,14 +217,14 @@ table {
 .swiper-slide {
   display: flex;
   justify-content: center;
-  max-width: 300px;
+  max-width: 415px;
 }
 
 .review-card {
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0px 12px 12px rgba(145, 158, 171, 0.12),
-    0px 0px 1px rgba(145, 158, 171, 0.2);
+  box-shadow: 0px 2px 12px rgba(145, 158, 171, 0.12),
+    0px 0px 1px rgba(145, 158, 171, 0.308);
   padding: 20px;
   text-align: left;
   width: 100%;
@@ -283,23 +284,40 @@ table {
 
 .swiper-container {
   position: relative;
-  max-width: 90%;
   margin: 0 auto;
 }
 
 .swiper-button-next,
 .swiper-button-prev {
-  color: #ddd;
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  width: 32px;
+  height: 32px;
+  color: #333;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.swiper-button-next {
+  right: -45px;
+}
+
+.swiper-button-prev {
+  left: -45px;
 }
 
 .swiper-button-next:after,
 .swiper-button-prev:after {
-  font-size: 28px !important;
+  display: none;
 }
 
 .swiper-container {
   width: 100%;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .swiper-slide {
@@ -307,7 +325,7 @@ table {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  width: auto; 
+  width: auto;
 }
 
 .swiper-wrapper {
@@ -319,9 +337,11 @@ table {
 .review-card {
   box-sizing: border-box;
   width: 100%;
-  padding: 10px;
 }
 
-.sliderm-wrapper{
-    position: relative;
+.sliderm-wrapper {
+  position: relative;
+}
+.sliderM_container {
+  position: relative;
 }
