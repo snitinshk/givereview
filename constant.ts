@@ -28,10 +28,10 @@ export enum CLIENT_TYPE {
 
 export const BUCKET_NAME = 'media'
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviewbooster.vercel.app/'
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.givereview.to/'
 
 export const DEFAULT_TEXTS = {
-    reviewSiteBaseUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    reviewSiteBaseUrl: SITE_URL,
     homeReviewTitle: 'How was your experience with ',
     positiveReviewTitle: 'Leave us a review, it will help us grow and better serve our customers like you.',
     title: 'Appears publicly on Google',

@@ -1,8 +1,8 @@
 (function () {
-  const baseUrl = `https://app.givereview.to`;
+
   let widget, externalReviews;
   // const baseUrl = `http://localhost:3000`;
-
+  const baseUrl = `https://app.givereview.to`;
   const scriptTag = document.querySelector(
     'script[data-widget="testimonials-slider"]'
   );

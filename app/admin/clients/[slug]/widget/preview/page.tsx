@@ -11,7 +11,7 @@ import { useClients } from "@/app/context/clients-context";
 import { useToast } from "@/hooks/use-toast";
 import { Heart } from "lucide-react";
 import { ExternalReviewDB } from "@/interfaces/reviews";
-import { WidgetReview } from "@/interfaces/widget";
+import { WidgetChannel, WidgetReview } from "@/interfaces/widget";
 
 const TestimonialCompo: React.FC = () => {
   const { widget } = useWidget();
@@ -25,7 +25,7 @@ const TestimonialCompo: React.FC = () => {
 
   // Construct query string for the SWR fetch
   const fetchConditions = widget?.channels
-    ?.filter((channel) => channel?.isActive)
+    ?.filter((channel: WidgetChannel) => channel?.isActive)
     ?.map((channel) => ({
       channelId: channel.id,
       ratingThreshold: channel.ratingThreshold,
@@ -132,7 +132,9 @@ const TestimonialCompo: React.FC = () => {
     );
   } else if (!externalReviewsList?.length) {
     return (
-      <div className="text-center mt-28 text-gray-500 py-8">No data to display.</div>
+      <div className="text-center mt-28 text-gray-500 py-8">
+        No data to display.
+      </div>
     );
   }
 
