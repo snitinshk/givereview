@@ -93,7 +93,6 @@ export interface ExternalReviewDB {
     review_count: number,
     reviewers_name: string,
     reviewers_avtar: string,
-    review_title: string,
     review_description: string,
     clients?: ClientDB,
     channels?: ChannelDB;

@@ -64,6 +64,7 @@ export interface WidgetChannel {
 
 export interface Widget {
   id?: number;
+  uuid?: string;
   channels: WidgetChannel[];
   settings: WidgetSettings;
 }

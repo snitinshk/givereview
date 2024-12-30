@@ -22,7 +22,6 @@ interface WidgetContextProps {
 
 const WidgetContext = createContext<WidgetContextProps | undefined>(undefined);
 
-
 export const WidgetProvider = ({ children }: { children: ReactNode }) => {
   const [widget, setWidget] = useState<Widget | null>(null);
   const [existingWidget, setExistingWidget] = useState<any>(null);
@@ -53,9 +52,12 @@ export const WidgetProvider = ({ children }: { children: ReactNode }) => {
 
       const updatedWidget: Widget = {
         id: existingWidget?.id ?? null,
+        uuid: existingWidget?.widget_uuid ?? null,
         settings: {
           ...defaultSettings,
-          ...(existingWidget ? mapDbSettingsToWidgetSettings(existingWidget) : {}),
+          ...(existingWidget
+            ? mapDbSettingsToWidgetSettings(existingWidget)
+            : {}),
         },
         channels: updatedChannels,
       };

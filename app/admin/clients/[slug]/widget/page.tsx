@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { updateIndividualAttributes } from "@/app/admin/action";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { v4 as uuidv4 } from 'uuid';
 
 const WidgetCreate: React.FC = () => {
   const { widget, setWidget } = useWidget();
@@ -57,6 +58,7 @@ const WidgetCreate: React.FC = () => {
     if (widget && widget?.settings?.isActive && !widget?.id) {
       saveWidgetDetails();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [widget?.settings?.isActive]);
 
   const updateWidgetChannels = async (
@@ -107,9 +109,11 @@ const WidgetCreate: React.FC = () => {
   };
 
   const saveWidgetDetails = async () => {
+
     const widgetDb = mapWidgetForDb(widget?.settings as WidgetSettings);
     const widgetDataWithClientId = {
       client_id: selectedClient?.id,
+      widget_uuid: uuidv4(),
       ...widgetDb,
     };
 
@@ -130,6 +134,7 @@ const WidgetCreate: React.FC = () => {
     if (channelsSaved) {
       toast({ title: "Widget info saved" });
     }
+    
   };
 
   return (

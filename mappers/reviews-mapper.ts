@@ -35,7 +35,6 @@ export const mapExternalReviewsToDb = (source: ExternalReview) => {
         review_count: source.reviewCount,
         reviewers_name: source.reviewersName,
         reviewers_avtar: source.fileUrl,
-        review_title: source.reviewTitle,
         review_description: source.reviewDescription,
     }
 }
@@ -48,7 +47,6 @@ export const mapExternalReviewsToUI = (source: ExternalReviewDB) => {
         stars: source.review_count,
         name: source.reviewers_name,
         reviewersAvtar: source.reviewers_avtar,
-        reviewTitle: source.review_title,
         reviewDescription: source.review_description,
     }
 }

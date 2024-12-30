@@ -6,37 +6,35 @@ import { ExternalReviewDB } from "@/interfaces/reviews";
 import { mapExternalReviewsToDb } from "@/mappers/reviews-mapper";
 import { BUCKET_NAME } from "@/constant";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
-
-export async function OPTIONS() {
-  // Handle preflight request
-  return new Response(null, {
-    status: 200,
-    headers: corsHeaders,
-  });
-}
-
 export async function GET(request: NextRequest) {
+
   try {
     const clientId = request.nextUrl.searchParams.get("clientId");
     const conditionsJson = request.nextUrl.searchParams.get("conditions");
     const supabase = await createClient();
 
+    if (!clientId && !conditionsJson) {
+      const { data: externalReviews } = await supabase
+        .from("external_reviews")
+        .select("*, clients(client_name), channels(*)")
+
+      return NextResponse.json(
+        externalReviews,
+        { status: 200 }
+      );
+    }
+
     if (!clientId) {
       return new Response(
         JSON.stringify({ error: "clientId is required" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
     if (!conditionsJson) {
       return new Response(
         JSON.stringify({ error: "conditions are required" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
@@ -46,7 +44,7 @@ export async function GET(request: NextRequest) {
     if (!Array.isArray(conditionsArr)) {
       return new Response(
         JSON.stringify({ error: "Invalid conditions format" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
@@ -85,14 +83,14 @@ export async function GET(request: NextRequest) {
 
     return new Response(
       JSON.stringify(externalReviews),
-      { status: 200, headers: corsHeaders }
+      { status: 200 }
     );
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: corsHeaders }
+      { status: 500 }
     );
   }
 }
@@ -237,7 +235,6 @@ const requiredFields = [
   "reviewCount",
   "reviewersName",
   "reviewersAvtar",
-  "reviewTitle",
   "reviewDescription",
 ];
 
@@ -248,6 +245,5 @@ const fieldLabels = {
   reviewCount: "Review Count",
   reviewersName: "Reviewer Name",
   reviewersAvtar: "Reviewer Avatar",
-  reviewTitle: "Review Title",
   reviewDescription: "Review Description",
 } as any;

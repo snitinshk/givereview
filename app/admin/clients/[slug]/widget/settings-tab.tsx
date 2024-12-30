@@ -103,9 +103,9 @@ const SettingsTabs: React.FC = () => {
     poweredByText: widget?.settings?.poweredByText ?? "",
   });
 
-  useEffect(() => {
-    console.log(widget);
-  }, [widget]);
+  // useEffect(() => {
+  //   console.log(widget);
+  // }, [widget]);
 
   const handleSwitchChange = async (id: string, value: boolean | string) => {
     setWidget((prev: any) => ({

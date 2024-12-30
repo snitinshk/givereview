@@ -15,6 +15,7 @@ import { WidgetReview } from "@/interfaces/widget";
 
 const TestimonialCompo: React.FC = () => {
   const { widget } = useWidget();
+
   const { selectedClient } = useClients();
   const { toast } = useToast();
 
@@ -57,19 +58,22 @@ const TestimonialCompo: React.FC = () => {
   // Map external reviews data
   useEffect(() => {
     if (externalReviewsList?.length) {
-      const mappedExternalReviews = externalReviewsList.map((externalReview) => ({
-        id: externalReview.id,
-        clientId: externalReview.client_id,
-        reviewersName: externalReview.reviewers_name,
-        reviewersAvtar: externalReview.reviewers_avtar,
-        channelId: externalReview.channels?.id,
-        channelLogo: externalReview.channels?.channel_logo_url,
-        channelName: externalReview.channels?.channel_name,
-        client: externalReview.clients?.client_name,
-        reviewCount: externalReview.review_count,
-        reviewDescription: externalReview.review_description,
-        reviewDate: externalReview.review_date,
-      }));
+      const mappedExternalReviews = externalReviewsList.map(
+        (externalReview) => ({
+          id: externalReview.id,
+          clientId: externalReview.client_id,
+          reviewersName: externalReview.reviewers_name,
+          reviewersAvtar: externalReview.reviewers_avtar,
+          channelId: externalReview.channels?.id,
+          channelLogo: externalReview.channels?.channel_logo_url,
+          channelName: externalReview.channels?.channel_name,
+          client: externalReview.clients?.client_name,
+          reviewCount: externalReview.review_count,
+          reviewDescription: externalReview.review_description,
+          reviewDate: externalReview.review_date,
+        })
+      );
+
       setExternalReviews(mappedExternalReviews as WidgetReview[]);
     }
   }, [externalReviewsList]);
@@ -111,13 +115,25 @@ const TestimonialCompo: React.FC = () => {
       ];
       setTabs(tabsData);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channels, externalReviews]);
 
   // Helper function: Get random reviews
   function getRandomResults(reviewsArr: WidgetReview[]) {
     const shuffledArray = [...reviewsArr].sort(() => Math.random() - 0.5);
     return shuffledArray.slice(0, widget?.settings?.totalReviewsToDisplay || 5);
+  }
+
+  if (widget && externalReviewsList && !widget?.settings?.isActive) {
+    return (
+      <div className="text-center mt-28 text-gray-500 py-8">
+        Wiget is Inactive.
+      </div>
+    );
+  } else if (!externalReviewsList?.length) {
+    return (
+      <div className="text-center mt-28 text-gray-500 py-8">No data to display.</div>
+    );
   }
 
   return (
@@ -129,7 +145,11 @@ const TestimonialCompo: React.FC = () => {
         {widget?.settings?.showTabs && (
           <TabsList className="flex-wrap gap-4 justify-start border-b border-gray-200 w-full rounded-b-none pt-3 h-auto pb-0">
             {tabs?.map((tab: any) => (
-              <TabsTrigger key={tab?.value} value={tab?.value} className="gap-2 pb-2 border-b-2 border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#28a745] data-[state=active]:font-semibold data-[state=active]:border-b-green-600 data-[state=active]:rounded-none">
+              <TabsTrigger
+                key={tab?.value}
+                value={tab?.value}
+                className="gap-2 pb-2 border-b-2 border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#28a745] data-[state=active]:font-semibold data-[state=active]:border-b-green-600 data-[state=active]:rounded-none"
+              >
                 {tab.channelLogo && (
                   <Image
                     src={tab?.channelLogo}
@@ -149,7 +169,8 @@ const TestimonialCompo: React.FC = () => {
             {widget?.settings?.showPoweredBy && (
               <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
                 <span>Powered</span> with{" "}
-                <Heart className="w-4 h-4 text-red-500 fill-red-500" />  by place booster
+                <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+                booster
               </div>
             )}
           </TabsContent>
