@@ -66,7 +66,7 @@
 
     const customStyle = document.createElement("link");
     customStyle.rel = "stylesheet";
-    customStyle.href = `${baseUrl}/js/widget.css`;
+    customStyle.href = `${baseUrl}/widget.css`;
     document.head.appendChild(customStyle);
 
     const swiperScript = document.createElement("script");
