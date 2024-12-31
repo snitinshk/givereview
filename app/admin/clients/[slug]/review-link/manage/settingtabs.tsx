@@ -208,7 +208,6 @@ export default function SettingTabs() {
   ]);
 
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
-    console.log(updateInfo);
     // do nothing for add case;
     if (!reviewLinkSettings?.reviewLinkId) {
       return;

@@ -7,14 +7,19 @@ import { useEffect, useState } from "react";
 import { useReviewLinkThankyou } from "@/app/context/review-link-thankyou.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import PlaceholderImage from "@/app/images/placeholder-image.svg";
+import {
+  getFileName,
+  handleImageUpload,
+  mediaUrl,
+  uploadFile,
+  uploadFileToSupabase,
+} from "@/lib/utils";
 import { Heart } from "lucide-react";
-import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
+import { updateIndividualAttributes } from "@/app/admin/action";
+import { ReviewLinkThankYouUI } from "@/interfaces/reviewlink";
 
 const ThankYouTabs: React.FC = () => {
-  const { selectedClient } = useClients();
   const { reviewLinkThankyou, setReviewLinkThankyou } = useReviewLinkThankyou();
   const { toast } = useToast();
 
@@ -27,7 +32,7 @@ const ThankYouTabs: React.FC = () => {
   );
 
   useEffect(() => {
-    setReviewLinkThankyou((prevState: any) => {
+    setReviewLinkThankyou((prevState: ReviewLinkThankYouUI) => {
       if (
         prevState.title !== reviewLinkThankyouTitle ||
         prevState.bgImage !== imagePreview
@@ -43,58 +48,69 @@ const ThankYouTabs: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewLinkThankyouTitle, imagePreview]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-
-      setReviewLinkThankyou({
-        ...reviewLinkThankyou,
-        uploadedFile: file,
-      });
-
-      if (!reviewLinkThankyou?.ThankyouRLId) {
-        return;
+  const handleThankyouImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      const { base64, file, error } = await handleImageUpload(event);
+      if (error || !file) {
+        throw new Error(
+          "Error in selecting Thank You Image, please try again later"
+        );
       }
-      const imageUrl = await uploadBgImage(file);
+
+      setImagePreview(base64);
+
+      setReviewLinkThankyou((prevState: ReviewLinkThankYouUI) => ({
+        ...prevState,
+        uploadedFile: file,
+      }));
+
+      if (!reviewLinkThankyou?.thankyouRLId) return;
+
+      const { error: uploadError, fileUrl } = await uploadFileToSupabase(
+        "reviewlinks",
+        file
+      );
+
+      if (uploadError || !fileUrl) {
+        throw new Error(
+          "Error in uploading Thank You Image, please try again later"
+        );
+      }
+
       handleUpdateReviewLinkThankyou({
-        review_thankyou_bg_image: imageUrl,
+        review_thankyou_bg_image: fileUrl,
       });
-    }
-  };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
 
-  const uploadBgImage = async (file: File) => {
-    const uploadPath = `reviewlinks/${getFileName(file)}`;
-    const { data: uploadData, error: uploadError } = await uploadFile(
-      file,
-      uploadPath
-    );
-
-    if (uploadError) {
       toast({
-        description: `Error in uploading image, please try again later`,
+        title: errorMessage,
       });
     }
-
-    return mediaUrl(uploadData?.fullPath as string);
   };
 
-  const handleUpdateReviewLinkThankyou = async (updateInfo: any) => {
+  const handleUpdateReviewLinkThankyou = async (
+    updateInfo: Record<string, string>
+  ) => {
     // do nothing for add case;
-    if (!reviewLinkThankyou?.ThankyouRLId) {
+    if (!reviewLinkThankyou?.thankyouRLId) {
       return;
     }
 
-    const response = await updateReviewLink(
+    const condition = {
+      col: "id",
+      val: reviewLinkThankyou?.thankyouRLId,
+    };
+
+    const response = await updateIndividualAttributes(
       "thankyou_review_link_details",
       updateInfo,
-      {
-        col: "id",
-        val: reviewLinkThankyou?.ThankyouRLId,
-      }
+      condition
     );
+
     const { error } = JSON.parse(response);
 
     if (!error) {
@@ -136,7 +152,7 @@ const ThankYouTabs: React.FC = () => {
                 id="image-upload"
                 type="file"
                 className="opacity-0 invisible absolute left-0 top-0 w-full h-full"
-                onChange={handleImageUpload}
+                onChange={handleThankyouImageUpload}
               />
               <Label
                 htmlFor="image-upload"

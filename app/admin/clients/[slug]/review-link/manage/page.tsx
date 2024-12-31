@@ -8,8 +8,7 @@ import SettingTabs from "./settingtabs";
 import PositiveTabs from "./positivetabs";
 import NegativeTabs from "./negativetabs";
 import ThankYouTabs from "./thankyoutabs";
-import { fetcher, getFileName, mediaUrl, uploadFile } from "@/lib/utils";
-import useSWR from "swr";
+import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
   saveReviewLinkNegativePage,
@@ -20,7 +19,6 @@ import {
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import {
-  mapChannels,
   mapNegativePageDataToDbFormat,
   mapSettingsDbFormat,
 } from "@/mappers/index-mapper";
@@ -41,29 +39,32 @@ const CreateReviewLink: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { setIsLoading } = useLoader();
 
   const reviewLinkId = searchParams.get("review-link");
 
   const { slug } = useParams();
 
-  const [isMainDivVisible, setIsMainDivVisible] = useState(true); // Add this state
-
   const { selectedClient } = useClients();
 
   const handleSaveReviewLink = async () => {
-    // Validate selected channels
     if (!reviewLinkPositive?.selectedChannels?.length) {
       toast({ description: "Please select at least one channel!" });
       return;
     }
 
-    try {
-      // Upload desktop background image
-      const desktopBgImage = await uploadBgImage(
-        reviewLinkSettings?.uploadedFile
-      );
+    setIsLoading(true);
 
-      // Prepare and save settings data
+    try {
+      // Upload images concurrently
+      const [desktopBgImage, thankyouBgImage] = await Promise.all([
+        uploadBgImage(reviewLinkSettings?.uploadedFile),
+        reviewLinkThankyou?.uploadedFile
+          ? uploadBgImage(reviewLinkThankyou.uploadedFile)
+          : Promise.resolve(""),
+      ]);
+
+      // Prepare data
       const settingsData = mapSettingsDbFormat({
         ...reviewLinkSettings,
         clientId: selectedClient?.id,
@@ -73,6 +74,7 @@ const CreateReviewLink: React.FC = () => {
 
       const { data: settings, error: settingsError } =
         await saveReviewLinkSettings(settingsData);
+
       if (settingsError) {
         handleSaveError(
           settingsError,
@@ -81,7 +83,6 @@ const CreateReviewLink: React.FC = () => {
         return;
       }
 
-      // Prepare positive and negative review link data
       const positivePageData = reviewLinkPositive.selectedChannels.map(
         (channel: any) => ({
           channel_id: channel.id,
@@ -95,70 +96,41 @@ const CreateReviewLink: React.FC = () => {
         reviewLinkId: settings.id,
       });
 
-      let thankyouBgImage;
-      if (reviewLinkThankyou?.uploadedFile) {
-        thankyouBgImage = await uploadBgImage(reviewLinkThankyou?.uploadedFile);
-      }
-
       const thankyouPageData = {
         review_thankyou_title: reviewLinkThankyou?.title,
-        review_thankyou_bg_image: thankyouBgImage ?? "",
+        review_thankyou_bg_image: thankyouBgImage,
         review_link_id: settings.id,
       };
 
-      // Trigger both saves concurrently
-      const [
-        positiveReviewLinkResult,
-        negativeReviewLinkResult,
-        thankyouReviewLinkResult,
-      ] = await Promise.all([
+      // Save all data concurrently
+      const results = await Promise.all([
         saveReviewLinkPositivePage(positivePageData),
         saveReviewLinkNegativePage(negativePageData),
         saveReviewLinkThankyouPage(thankyouPageData),
       ]);
 
-      const { error: positiveReviewLinkError } = JSON.parse(
-        positiveReviewLinkResult
-      );
-      const { error: negativeReviewLinkError } = JSON.parse(
-        negativeReviewLinkResult
-      );
-      const { error: thankyouReviewLinkError } = JSON.parse(
-        thankyouReviewLinkResult
-      );
+      const errors = results.map((result) => JSON.parse(result).error);
 
-      // Handle errors for either save
-      if (positiveReviewLinkError) {
-        toast({
-          description:
-            "Error in saving positive review links, please try again later",
-        });
-        return;
+      const errorMessages = [
+        "Error in saving positive review links, please try again later",
+        "Error in saving negative review links, please try again later",
+        "Error in saving thankyou review links, please try again later",
+      ];
+
+      for (let i = 0; i < errors.length; i++) {
+        if (errors[i]) {
+          handleSaveError(errors[i], errorMessages[i]);
+          return;
+        }
       }
 
-      if (negativeReviewLinkError) {
-        toast({
-          description:
-            "Error in saving negative review links, please try again later",
-        });
-        return;
-      }
-
-      if (thankyouReviewLinkError) {
-        toast({
-          description:
-            "Error in saving thankyou review links, please try again later",
-        });
-        return;
-      }
-      // Success toast and redirection
+      // Success
       toast({ description: "Review link created successfully!" });
       router.push(`/admin/clients/${slug}/review-link/`);
     } catch (err) {
-      console.error("Unexpected error:", err);
-      toast({
-        description: "An unexpected error occurred, please try again later",
-      });
+      handleSaveError(err, "An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,7 +138,7 @@ const CreateReviewLink: React.FC = () => {
   const handleSaveError = (error: any, fallbackMessage: string) => {
     const errorMessage =
       error?.code === "23505" ? "Duplicate slug" : fallbackMessage;
-    toast({ description: errorMessage });
+    toast({ title: errorMessage });
   };
 
   const uploadBgImage = async (file: File) => {
@@ -178,7 +150,7 @@ const CreateReviewLink: React.FC = () => {
 
     if (uploadError) {
       toast({
-        description: `Error in uploading image, please try again later`,
+        title: `Error in uploading image, please try again later`,
       });
     }
 

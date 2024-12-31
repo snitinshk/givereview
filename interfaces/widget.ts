@@ -32,21 +32,26 @@ interface WidgetSettingsDb {
 
 export type SectionElement =
   | {
-      type: "switch";
-      id: string;
-      label: string;
-    }
+    type: "switch";
+    id: string;
+    label: string;
+  }
   | {
-      type: "editable";
-      id: string;
-      defaultValue: string;
-    }
+    type: "editable";
+    id: string;
+    defaultValue: string;
+  }
   | {
-      type: "select";
-      id: string;
-      label: string;
-      options: { label: string; value: string }[];
-    };
+    type: "select";
+    id: string;
+    label: string;
+    options: { label: string; value: string }[];
+  }
+  | {
+    type: "label";
+    id: string;
+    label: string;
+  }
 
 export type Section = {
   title: string;

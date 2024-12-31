@@ -21,6 +21,7 @@ import {
 } from "@/mappers/index-mapper";
 import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
+import { updateIndividualAttributes } from "@/app/admin/action";
 
 export interface SelectedChannel {
   id: number;
@@ -163,11 +164,14 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
     if (!reviewLinkSettings?.reviewLinkId) return;
 
-    const response = await updateReviewLink(
+    const condition = { col: "id", val: reviewLinkSettings.reviewLinkId };
+
+    const response = await updateIndividualAttributes(
       "setting_review_link_details",
       updateInfo,
-      { col: "id", val: reviewLinkSettings.reviewLinkId }
+      condition
     );
+
     const { error } = JSON.parse(response);
 
     if (!error) {

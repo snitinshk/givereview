@@ -1,16 +1,23 @@
 "use client";
 
-import { DEFAULT_TEXTS, reviewLinkThankyouDefaultValue } from "@/constant";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { reviewLinkThankyouDefaultValue } from "@/constant";
+import { ReviewLinkThankYouUI } from "@/interfaces/reviewlink";
+import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from "react";
 
-const ReviewLinkThankyouContext = createContext<any>(null);
+// Define the context type
+interface ReviewLinkThankYouUIContextType {
+  reviewLinkThankyou: ReviewLinkThankYouUI;
+  setReviewLinkThankyou: Dispatch<SetStateAction<ReviewLinkThankYouUI>>;
+}
+
+const ReviewLinkThankyouContext = createContext<ReviewLinkThankYouUIContextType | null>(null);
 
 export const ReviewLinkThankyouProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const [reviewLinkThankyou, setReviewLinkThankyou] = useState<any>(reviewLinkThankyouDefaultValue);
+  const [reviewLinkThankyou, setReviewLinkThankyou] = useState<ReviewLinkThankYouUI>(reviewLinkThankyouDefaultValue);
 
   return (
     <ReviewLinkThankyouContext.Provider

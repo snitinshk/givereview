@@ -1,5 +1,11 @@
 import { ChannelDB, Channel } from "@/interfaces/channels"
 import { ClientDB } from "@/interfaces/clients"
+import {
+    NegativeLinkDefault, NegativeReviewLinkDB,
+    PositivePageDB, PositivePageUI, ReviewLinkNegativeDB,
+    ReviewLinkNegativeUI, ReviewLinkSettingsDB, ReviewLinkSettingsUI,
+    ReviewLinkThankYouUI, ReviewLinkThankYouDB
+} from "@/interfaces/reviewlink"
 
 
 export const mapChannels = (channels: ChannelDB[]): Channel[] => {
@@ -30,7 +36,7 @@ export const mapClients = (clients: ClientDB[]) => {
     })
 }
 
-export const mapSettingsDbFormat = (reviewLinkSettings: any) => {
+export const mapSettingsDbFormat = (reviewLinkSettings: ReviewLinkSettingsUI): ReviewLinkSettingsDB => {
     return {
         client_id: reviewLinkSettings?.clientId,
         review_link_name: reviewLinkSettings?.reviewLinkName,
@@ -44,8 +50,7 @@ export const mapSettingsDbFormat = (reviewLinkSettings: any) => {
     };
 }
 
-export const mapNegativePageDataToDbFormat = (reviewLinkNegative: any) => {
-
+export const mapNegativePageDataToDbFormat = (reviewLinkNegative: ReviewLinkNegativeUI): ReviewLinkNegativeDB => {
     const getCategoryEnabled = (dbField: string) =>
         reviewLinkNegative?.ratingCategories?.find((cat: any) => cat.dbField === dbField)?.enabled;
 
@@ -81,7 +86,7 @@ export const mapNegativePageDataToDbFormat = (reviewLinkNegative: any) => {
 };
 
 
-export const mapSettingsUIFormat = (reviewLinkSettings: any) => {
+export const mapSettingsUIFormat = (reviewLinkSettings: ReviewLinkSettingsDB): ReviewLinkSettingsUI => {
     return {
         reviewLinkId: reviewLinkSettings?.id,
         isActive: (reviewLinkSettings?.is_active),
@@ -95,7 +100,7 @@ export const mapSettingsUIFormat = (reviewLinkSettings: any) => {
     };
 }
 
-export const mapPositivePageUIFormat = (positivePageData: any) => {
+export const mapPositivePageUIFormat = (positivePageData: PositivePageDB[]): any => {
 
     return positivePageData?.map((client: any) => {
         return {
@@ -108,7 +113,7 @@ export const mapPositivePageUIFormat = (positivePageData: any) => {
     })
 }
 
-export const mapNegativeLinkDefault = (negativeReviewLink: any) => {
+export const mapNegativeLinkDefault = (negativeReviewLink: NegativeReviewLinkDB): NegativeLinkDefault => {
 
     return {
         negativeRLId: negativeReviewLink.id,
@@ -209,9 +214,9 @@ export const mapPositivePageDBFormat = (reviewLinkPositive: any) => {
 
 }
 
-export const mapThankyouUIFormat = (reviewLinkThankyou: any) => {
+export const mapThankyouUIFormat = (reviewLinkThankyou: ReviewLinkThankYouDB): ReviewLinkThankYouUI => {
     return {
-        ThankyouRLId: reviewLinkThankyou.id,
+        thankyouRLId: reviewLinkThankyou.id,
         bgImage: reviewLinkThankyou?.review_thankyou_bg_image,
         title: reviewLinkThankyou?.review_thankyou_title
     }

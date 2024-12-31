@@ -1,19 +1,34 @@
 "use client";
 
 import { DEFAULT_TEXTS } from "@/constant";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { ReviewLinkPositive } from "@/interfaces/reviewlink";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
 
-const ReviewLinkPositiveContext = createContext<any>(null);
+interface ReviewLinkPositiveContextType {
+  reviewLinkPositive: ReviewLinkPositive;
+  setReviewLinkPositive: Dispatch<SetStateAction<ReviewLinkPositive>>;
+}
+
+const ReviewLinkPositiveContext =
+  createContext<ReviewLinkPositiveContextType | null>(null);
 
 export const ReviewLinkPositiveProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const [reviewLinkPositive, setReviewLinkPositive] = useState<any>({
-    title: DEFAULT_TEXTS?.positiveReviewTitle,
-    selectedChannels: [],
-  });
+  const [reviewLinkPositive, setReviewLinkPositive] =
+    useState<ReviewLinkPositive>({
+      title: DEFAULT_TEXTS?.positiveReviewTitle,
+      selectedChannels: [],
+    });
 
   return (
     <ReviewLinkPositiveContext.Provider

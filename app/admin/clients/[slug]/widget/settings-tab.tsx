@@ -88,11 +88,16 @@ const sections: Section[] = [
         type: "switch",
         id: "showPoweredBy",
         label: "Show powered by",
-      }
+      },
+      {
+        type: "label",
+        id: "poweredByLabel",
+        label: "Powered with ❤️ by Place Booster",
+      },
     ],
-  }
+  },
 ];
-
+// Powered with ❤️ by Place Booster
 const SettingsTabs: React.FC = () => {
   const { widget, setWidget } = useWidget();
   const { toast } = useToast();
@@ -244,7 +249,13 @@ const SettingsTabs: React.FC = () => {
                   </div>
                 );
               default:
-                return null;
+                return (
+                  <div key={elementId} className="flex items-center space-x-2">
+                    <Label htmlFor={elementId} className="font-normal">
+                      {element.label}
+                    </Label>
+                  </div>
+                );
             }
           })}
         </div>

@@ -9,10 +9,16 @@ import { Heart, Star, UploadIcon } from "lucide-react";
 import { useReviewLinkNegative } from "@/app/context/review-link-negative.context";
 import { updateReviewLink } from "../action";
 import { useToast } from "@/hooks/use-toast";
-import { getFileName, mediaUrl, uploadFile } from "@/lib/utils";
+import {
+  getFileName,
+  mediaUrl,
+  uploadFile,
+  uploadFileToSupabase,
+} from "@/lib/utils";
 import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
+import { updateIndividualAttributes } from "@/app/admin/action";
 
 type HoverStates = {
   [key: string]: number;
@@ -49,16 +55,6 @@ const NegativeTabs: React.FC = () => {
     "Cleanliness",
     "WaitTime",
   ];
-
-  const [hoverStates, setHoverStates] = useState<HoverStates>({});
-
-  const handleMouseEnter = (category: string, star: number) => {
-    setHoverStates((prev) => ({ ...prev, [category]: star }));
-  };
-
-  const handleMouseLeave = (category: string) => {
-    setHoverStates((prev) => ({ ...prev, [category]: 0 }));
-  };
 
   const { toast } = useToast();
   const [ratingCategories, setRatingCategories] = useState(
@@ -104,6 +100,7 @@ const NegativeTabs: React.FC = () => {
   const handleNewLogoUpload = async () => {
     if (fileInputRef.current?.files) {
       const uploadedFile = fileInputRef.current.files[0];
+
       if (uploadedFile) {
         const previewUrl = URL.createObjectURL(uploadedFile);
 
@@ -117,12 +114,23 @@ const NegativeTabs: React.FC = () => {
           return;
         }
 
-        const imageUrl = await uploadReviewLinkImage(uploadedFile);
+        const { error, fileUrl } = await uploadFileToSupabase(
+          "reviewlinks",
+          uploadedFile
+        );
+
+        if (error) {
+          toast({
+            title: "Error in uploading channel logo, please try again later.",
+          });
+
+          return;
+        }
 
         handleUpdateReviewLink({
           channel_logo: {
             ...defaultChannel,
-            logo: imageUrl,
+            logo: fileUrl,
           },
         });
       }
@@ -194,15 +202,18 @@ const NegativeTabs: React.FC = () => {
     if (!reviewLinkNegative?.negativeRLId) {
       return;
     }
-    console.log(updateInfo);
-    const response = await updateReviewLink(
+
+    const condition = {
+      col: "id",
+      val: reviewLinkNegative?.negativeRLId,
+    };
+
+    const response = await updateIndividualAttributes(
       "negative_review_link_details",
       updateInfo,
-      {
-        col: "id",
-        val: reviewLinkNegative?.negativeRLId,
-      }
+      condition
     );
+
     const { error } = JSON.parse(response);
 
     if (!error) {

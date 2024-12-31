@@ -49,15 +49,6 @@ export const ReviewLinkSettingsProvider = ({
     imageFile: "",
   });
 
-  // React.useEffect(() => {
-  //   if (slug) {
-  //     setReviewLinkSettings((prev: any) => ({
-  //       ...prev,
-  //       reviewLinkSlug: uniqueSlug,
-  //     }));
-  //   }
-  // }, [slug]);
-
   return (
     <ReviewLinkSettingsContext.Provider
       value={{ reviewLinkSettings, setReviewLinkSettings }}
