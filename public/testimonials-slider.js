@@ -58,6 +58,11 @@
     }
   };
 
+  const getRandomResults = (reviewsArr) => {
+    const shuffledArray = [...reviewsArr].sort(() => Math.random() - 0.5);
+    return shuffledArray.slice(0, widget?.total_reviews_to_display || 9);
+  }
+
   const injectStylesAndScripts = () => {
     const swiperStyle = document.createElement("link");
     swiperStyle.rel = "stylesheet";
@@ -198,7 +203,7 @@
     const sanitizedPlatform = platform.replace(/\s+/g, "-"); // Sanitize platform name
     const filteredReviews =
       platform === "all"
-        ? reviews
+        ? getRandomResults(reviews)
         : reviews.filter((review) => review.channels.channel_name === platform);
 
     const swiperContainer = document.querySelector(".tab-content-wrapper");
