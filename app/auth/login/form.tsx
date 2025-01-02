@@ -28,7 +28,6 @@ export default function LoginForm({
   }, [invalidCredentials]);
 
   const environment = process.env.NEXT_PUBLIC_VERCEL_ENV;
-  console.log(process.env.NEXT_PUBLIC_VERCEL_URL)
   console.log('Enviornement --',environment);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
