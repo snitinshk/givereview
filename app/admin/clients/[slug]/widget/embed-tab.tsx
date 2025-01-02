@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SITE_URL } from "@/constant";
 import { useToast } from "@/hooks/use-toast";
+import { getURL } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { LuCopy } from "react-icons/lu";
 
@@ -16,7 +17,11 @@ const EmbedTabs = () => {
     if (widget?.uuid) {
       setEmbedCode(`
         <div id="testimonial-widget-container"></div>
-        <script src="${SITE_URL}testimonials-slider.js" data-widget="testimonials-slider" uuid="${widget?.uuid}">
+        <script src="${getURL(
+          "frontend"
+        )}testimonials-slider.js" data-widget="testimonials-slider" uuid="${
+        widget?.uuid
+      }">
         </script>
       `);
     }

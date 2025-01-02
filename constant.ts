@@ -28,7 +28,7 @@ export enum CLIENT_TYPE {
 
 export const BUCKET_NAME = 'media'
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.givereview.to/'
+export const SITE_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://app.givereview.to/'
 
 export const DEFAULT_TEXTS = {
     reviewSiteBaseUrl: SITE_URL,
