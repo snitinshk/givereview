@@ -17,9 +17,7 @@ const EmbedTabs = () => {
     if (widget?.uuid) {
       setEmbedCode(`
         <div id="testimonial-widget-container"></div>
-        <script src="${getURL(
-          "frontend"
-        )}testimonials-slider.js" data-widget="testimonials-slider" uuid="${
+        <script src="${getURL()}testimonials-slider.js" data-widget="testimonials-slider" uuid="${
         widget?.uuid
       }">
         </script>
