@@ -31,8 +31,6 @@ export default function LoginForm({
 
   console.log('Enviornement --',environment);
 
-  // console.log(invalidCredentials);
-
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
