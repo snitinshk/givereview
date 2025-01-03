@@ -12,9 +12,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Heart } from "lucide-react";
 import { ExternalReviewDB } from "@/interfaces/reviews";
 import { WidgetChannel, WidgetReview } from "@/interfaces/widget";
+import { useLoader } from "@/app/context/loader.context";
 
 const TestimonialCompo: React.FC = () => {
   const { widget } = useWidget();
+  const { setIsLoading } = useLoader();
 
   const { selectedClient } = useClients();
   const { toast } = useToast();
