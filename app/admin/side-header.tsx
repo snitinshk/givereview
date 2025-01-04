@@ -95,10 +95,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { slug } = useParams();
   const { isLoading } = useLoader();
 
+  const reviewLinkSubMenus = [
+    `/admin/clients/${slug}/review-link`,
+    `/admin/clients/${slug}/widget`,
+    `/admin/clients/${slug}/settings`,
+  ];
+
   const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const pathname = usePathname();
 
   useEffect(() => {
+    console.log(pathname);
     setSelectedPath(pathname);
     setOpenSubmenu(pathname);
     // setSidebarOpen(true);
@@ -159,6 +166,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (!error) router.replace("/auth/login");
   };
 
+  // useEffect(()=>{
+  //   console.log(pathname)
+  //   console.log(reviewLinkSubMenus)
+  //   console.log(reviewLinkSubMenus.includes(pathname))
+
+  // },[pathname])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -217,69 +231,71 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
         <nav>
           <ul>
-            {finalMenuItems.map((item) => (
-              <li key={item.path} className="relative mb-2">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
-                    selectedPath === item.path
-                      ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    item.submenu
-                      ? toggleSubmenu(item.path)
-                      : handleNavigation(item.path)
-                  }
-                >
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`[&>svg]:fill-[#637381] ${
-                        selectedPath === item.path
-                          ? "[&>svg]:!fill-[#00AB55]"
-                          : ""
-                      }`}
-                    >
-                      {item.icon}
-                    </span>
-                    {item.name}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {item.clientNumber && (
-                      <span className="ml-auto w-6 h-6 bg-[#FF5630]/[0.16] text-[#B71D18] flex justify-center items-center rounded-md">
-                        {item.clientNumber}
+            {finalMenuItems.map((item) => {
+              return (
+                <li key={item.path} className="relative mb-2">
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
+                      selectedPath === item.path || reviewLinkSubMenus.includes(item.path)
+                        ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      item.submenu
+                        ? toggleSubmenu(item.path)
+                        : handleNavigation(item.path)
+                    }
+                  >
+                    <div className="flex items-center gap-4">
+                      <span
+                        className={`[&>svg]:fill-[#637381] ${
+                          selectedPath === item.path
+                            ? "[&>svg]:!fill-[#00AB55]"
+                            : ""
+                        }`}
+                      >
+                        {item.icon}
                       </span>
-                    )}
-                    {item.submenu &&
-                      (openSubmenu === item.path ? (
-                        <ChevronDown />
-                      ) : (
-                        <ChevronRight />
+                      {item.name}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {item.clientNumber && (
+                        <span className="ml-auto w-6 h-6 bg-[#FF5630]/[0.16] text-[#B71D18] flex justify-center items-center rounded-md">
+                          {item.clientNumber}
+                        </span>
+                      )}
+                      {item.submenu &&
+                        (openSubmenu === item.path || reviewLinkSubMenus.includes(openSubmenu ?? '') ? (
+                          <ChevronDown />
+                        ) : (
+                          <ChevronRight />
+                        ))}
+                    </div>
+                  </Button>
+                  {item.submenu && (openSubmenu === item.path || reviewLinkSubMenus.includes(openSubmenu ?? '')) && (
+                    <ul className="mt-2 ml-2">
+                      {item.submenu.map((subItem) => (
+                        <li key={subItem.path}>
+                          <Button
+                            variant="ghost"
+                            className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
+                              selectedPath === subItem.path
+                                ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                                : ""
+                            }`}
+                            onClick={() => handleNavigation(subItem.path)}
+                          >
+                            <span className="w-1 h-1 bg-gray-500 rounded"></span>
+                            {subItem.name}
+                          </Button>
+                        </li>
                       ))}
-                  </div>
-                </Button>
-                {item.submenu && openSubmenu === item.path && (
-                  <ul className="mt-2 ml-2">
-                    {item.submenu.map((subItem) => (
-                      <li key={subItem.path}>
-                        <Button
-                          variant="ghost"
-                          className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
-                            selectedPath === subItem.path
-                              ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                              : ""
-                          }`}
-                          onClick={() => handleNavigation(subItem.path)}
-                        >
-                          <span className="w-1 h-1 bg-gray-500 rounded"></span>
-                          {subItem.name}
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
         <Button

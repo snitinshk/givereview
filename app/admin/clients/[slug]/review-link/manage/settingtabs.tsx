@@ -20,10 +20,7 @@ import {
 import { DEFAULT_TEXTS } from "@/constant";
 import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 import { useToast } from "@/hooks/use-toast";
-import {
-  handleImageUpload,
-  uploadFileToSupabase,
-} from "@/lib/utils";
+import { handleImageUpload, uploadFileToSupabase } from "@/lib/utils";
 import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
 import { updateIndividualAttributes } from "@/app/admin/action";
@@ -69,7 +66,8 @@ export default function SettingTabs() {
   );
 
   const [editingHomeTitle, setEditingHomeTitle] = useState(false);
-  const [title, setTitle] = useState<string>(reviewLinkSettings?.title);
+
+  // const [title, setTitle] = useState<string>(reviewLinkSettings?.title);
 
   const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
     reviewLinkSettings?.isSkipFirstPageEnabled
@@ -133,23 +131,23 @@ export default function SettingTabs() {
       });
     }
 
-    if (reviewLinkSlug !== reviewLinkSettings?.reviewLinkSlug) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          reviewLinkSlug,
-        };
-      });
-    }
+    // if (reviewLinkSlug !== reviewLinkSettings?.reviewLinkSlug) {
+    //   setReviewLinkSettings((prevState: any) => {
+    //     return {
+    //       ...prevState,
+    //       reviewLinkSlug,
+    //     };
+    //   });
+    // }
 
-    if (title !== reviewLinkSettings?.title) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          title,
-        };
-      });
-    }
+    // if (title !== reviewLinkSettings?.title) {
+    //   setReviewLinkSettings((prevState: any) => {
+    //     return {
+    //       ...prevState,
+    //       title,
+    //     };
+    //   });
+    // }
 
     if (isPoweredByEnabled !== reviewLinkSettings?.isPoweredByEnabled) {
       setReviewLinkSettings((prevState: any) => {
@@ -199,13 +197,22 @@ export default function SettingTabs() {
   }, [
     reviewLinkName,
     reviewLinkSlug,
-    title,
     isPoweredByEnabled,
     isSkipFirstPageEnabled,
     ratingThresholdCount,
     isActive,
     imagePreview,
   ]);
+
+  const updateReviewLinkSettingsContext = (updateDetail: any) => {
+    const { field, newValue } = updateDetail;
+    setReviewLinkSettings((prevState: any) => {
+      return {
+        ...prevState,
+        [field]: newValue,
+      };
+    });
+  };
 
   const handleUpdateReviewLinkSettings = async (updateInfo: any) => {
     // do nothing for add case;
@@ -285,20 +292,22 @@ export default function SettingTabs() {
         {/* Editable URL Field */}
         <EditableField
           isEditing={editingSlug}
-          value={reviewLinkSlug}
+          value={reviewLinkSettings?.reviewLinkSlug}
           onEdit={() => setEditingSlug(true)}
           onSave={(newValue) => {
             handleUpdateReviewLinkSettings({
               review_link_slug: newValue,
             });
-            setReviewLinkSlug(newValue);
+            updateReviewLinkSettingsContext({ field: "reviewLinkSlug", newValue });
             setEditingSlug(false);
           }}
           onCancel={() => setEditingSlug(false)}
           renderValue={
             <p>
               {DEFAULT_TEXTS.reviewSiteBaseUrl}
-              <span className="text-black">{reviewLinkSlug}</span>
+              <span className="text-black">
+                {reviewLinkSettings?.reviewLinkSlug}
+              </span>
             </p>
           }
         />
@@ -308,17 +317,17 @@ export default function SettingTabs() {
           <div className="flex items-center gap-1 w-full">
             <EditableField
               isEditing={editingHomeTitle}
-              value={title}
+              value={reviewLinkSettings?.title}
               onEdit={() => setEditingHomeTitle(true)}
               onSave={(newValue) => {
                 handleUpdateReviewLinkSettings({
                   review_link_home_title: newValue,
                 });
-                setTitle(newValue);
+                updateReviewLinkSettingsContext({ field: "title", newValue });
                 setEditingHomeTitle(false);
               }}
               onCancel={() => setEditingHomeTitle(false)}
-              renderValue={<p>{title}</p>}
+              renderValue={<p>{reviewLinkSettings?.title}</p>}
             />
           </div>
         </div>
@@ -448,7 +457,7 @@ export default function SettingTabs() {
           />
         )}
         <p className="max-w-80 text-center mx-auto text-base font-normal text-gray-800">
-          {title}
+          {reviewLinkSettings?.title}
         </p>
         <div className="flex gap-3">
           {Array.from({ length: 5 }, (_, index) => (

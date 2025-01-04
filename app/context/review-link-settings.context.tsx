@@ -1,31 +1,62 @@
 "use client";
 
-import { DEFAULT_TEXTS } from "@/constant";
-import { useParams } from "next/navigation";
 import React, {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useEffect,
+  ReactNode,
 } from "react";
+import { useParams } from "next/navigation";
+import { DEFAULT_TEXTS } from "@/constant";
 import { generateUniqueSlug } from "../admin/clients/[slug]/review-link/action";
+import { useClients } from "./clients-context";
 
-const ReviewLinkSettingsContext = createContext<any>(null);
+// Define the context type
+interface ReviewLinkSettingsContextType {
+  reviewLinkSettings: any;
+  setReviewLinkSettings: React.Dispatch<
+    React.SetStateAction<any>
+  >;
+}
+
+const ReviewLinkSettingsContext =
+  createContext<ReviewLinkSettingsContextType | null>(null);
 
 export const ReviewLinkSettingsProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-
   const { slug } = useParams();
+  const { selectedClient } = useClients();
 
+  const [reviewLinkSettings, setReviewLinkSettings] = useState<any>({
+    isActive: true,
+    reviewLinkName: "",
+    reviewLinkSlug: "",
+    title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient?.name || ""}`,
+    isSkipFirstPageEnabled: false,
+    ratingThresholdCount: 4,
+    isPoweredByEnabled: true,
+    imageFile: "",
+  });
+
+  // Update the title when the selected client changes
   useEffect(() => {
-    if(!slug){
-      return;
+    if (selectedClient) {
+      setReviewLinkSettings((prev: any) => ({
+        ...prev,
+        title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient.name}`,
+      }));
     }
-    (async () => {
+  }, [selectedClient]);
+
+  // Generate a unique slug when the slug changes
+  useEffect(() => {
+    if (!slug) return;
+
+    const fetchUniqueSlug = async () => {
       try {
         const uniqueSlug = await generateUniqueSlug(slug as string);
         setReviewLinkSettings((prev: any) => ({
@@ -33,21 +64,12 @@ export const ReviewLinkSettingsProvider = ({
           reviewLinkSlug: uniqueSlug,
         }));
       } catch (error) {
-        console.log(error);
+        console.error("Error generating unique slug:", error);
       }
-    })();
-  }, [slug]);
+    };
 
-  const [reviewLinkSettings, setReviewLinkSettings] = useState<any>({
-    isActive: true,
-    reviewLinkName: "",
-    reviewLinkSlug: "",
-    title: DEFAULT_TEXTS.homeReviewTitle + "" + slug,
-    isSkipFirstPageEnabled: false,
-    ratingThresholdCount: 4,
-    isPoweredByEnabled: true,
-    imageFile: "",
-  });
+    fetchUniqueSlug();
+  }, [slug]);
 
   return (
     <ReviewLinkSettingsContext.Provider
@@ -58,12 +80,12 @@ export const ReviewLinkSettingsProvider = ({
   );
 };
 
-// Custom hook for consuming the alert context
-export const useReviewLinkSettings = (): any => {
+// Custom hook for consuming the context
+export const useReviewLinkSettings = (): ReviewLinkSettingsContextType => {
   const context = useContext(ReviewLinkSettingsContext);
   if (!context) {
     throw new Error(
-      "useReviewLinkSettings must be used within an ClientProvider"
+      "useReviewLinkSettings must be used within a ReviewLinkSettingsProvider."
     );
   }
   return context;

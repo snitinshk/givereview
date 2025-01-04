@@ -77,7 +77,7 @@ export interface ExternalReview {
     id: number
     clientId: number,
     channelId: string,
-    reviewDate: Date,
+    reviewDate: string,
     reviewCount: number,
     reviewersName: string,
     fileUrl: string,
@@ -89,7 +89,7 @@ export interface ExternalReviewDB {
     id?: number,
     client_id: number,
     channel_id: string,
-    review_date: Date,
+    review_date: string,
     review_count: number,
     reviewers_name: string,
     reviewers_avtar: string,

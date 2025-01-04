@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
       const { data: externalReviews } = await supabase
         .from("external_reviews")
         .select("*, clients(client_name), channels(*)")
+        .order('created_at', { ascending: false })
 
       return NextResponse.json(
         externalReviews,

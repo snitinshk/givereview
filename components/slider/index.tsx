@@ -16,7 +16,7 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ testimonials }) => {
   return (
-    <div className="w-full mx-auto my-4">
+    <div className="w-full mx-auto">
       <Carousel
         opts={{
           loop: true,
@@ -24,7 +24,7 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
         }}
         plugins={[
           Autoplay({
-            delay: 3000,
+            delay: 5000,
             stopOnInteraction: true,
           }),
         ]}
@@ -34,7 +34,7 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
           {testimonials.map((testimonial) => (
             <CarouselItem
               key={testimonial.id}
-              className="sm:basis-full lg:basis-1/2 xl:basis-1/3 p-4 py-8"
+              className="sm:basis-full lg:basis-1/2 xl:basis-1/3 p-4"
             >
               <SliderCard testimonial={testimonial} />
             </CarouselItem>

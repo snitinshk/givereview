@@ -208,7 +208,7 @@ const ReviewLink: React.FC = (params) => {
       setReviewLinkSettings({
         ...reviewLinkSettingsDefaultValue,
         reviewLinkSlug: uniqueSlug,
-        title: `${DEFAULT_TEXTS.homeReviewTitle} ${slug}`,
+        title: `${DEFAULT_TEXTS.homeReviewTitle}`,
       });
     });
 

@@ -1,89 +1,20 @@
 (function () {
 
-  let widget, externalReviews;
-  const baseUrl = `https://app.givereview.to`;
-  const scriptTag = document.querySelector(
-    'script[data-widget="testimonials-slider"]'
-  );
-  const uuid = scriptTag.getAttribute("uuid");
+  let widget,externalReviews;const baseUrl="http://app.givereview.to",scriptTag=document.querySelector('script[data-widget="testimonials-slider"]'),uuid=scriptTag.getAttribute("uuid"),requestOptions={method:"GET",redirect:"follow"};
 
-  const requestOptions = {
-    method: "GET",
-    redirect: "follow",
-  };
-
-  const fetchAndRenderWidget = async () => {
-    try {
-
-      const responseJson = await fetch(
-        `${baseUrl}/api/widget?uuid=${uuid}`,
-        requestOptions
-      );
-
-      injectStylesAndScripts();
-      
-      const rawResponse = await responseJson.json();
-
-      widget = rawResponse?.widget;
-      externalReviews = rawResponse?.externalReviews;
-
-      
-
-      // Check if widget is inactive
-      if (!widget?.is_active) {
-        displayMessage("The widget is inactive.");
-        return;
-      }
-
-      // Check if there are no external reviews
-      if (!externalReviews || externalReviews.length === 0) {
-        displayMessage("No data found.");
-        return;
-      }
-
-      document.querySelector(
-        "script[src='https://unpkg.com/swiper/swiper-bundle.min.js']"
-      ).onload = () => {
-        const container = document.getElementById(
-          "testimonial-widget-container"
-        );
-        container.innerHTML = generateWidgetHTML(widget, externalReviews);
-
-        initializeTabs(externalReviews);
-        initializeSwiper("all", externalReviews); // Default to "all" platform
-      };
-    } catch (error) {
-      console.error("Error fetching widget:", error);
-    }
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  const fetchAndRenderWidget=async()=>{try{let e=await fetch(`${baseUrl}/api/widget?uuid=${uuid}`,requestOptions);injectStylesAndScripts();let t=await e.json();if(widget=t?.widget,externalReviews=t?.externalReviews,!widget?.is_active){displayMessage("The widget is inactive.");return}if(!externalReviews||0===externalReviews.length){displayMessage("No data found.");return}document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload=()=>{let e=document.getElementById("testimonial-widget-container");e.innerHTML=generateWidgetHTML(widget,externalReviews),initializeTabs(externalReviews),initializeSwiper("all",externalReviews)}}catch(i){console.error("Error fetching widget:",i)}};
 
   const getRandomResults = (reviewsArr) => {
     const shuffledArray = [...reviewsArr].sort(() => Math.random() - 0.5);
     return shuffledArray.slice(0, widget?.total_reviews_to_display || 9);
   }
 
-  const injectStylesAndScripts = () => {
-    const swiperStyle = document.createElement("link");
-    swiperStyle.rel = "stylesheet";
-    swiperStyle.href = `https://unpkg.com/swiper/swiper-bundle.min.css`;
-    document.head.appendChild(swiperStyle);
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  const injectStylesAndScripts=()=>{let e=document.createElement("link");e.rel="stylesheet",e.href="https://unpkg.com/swiper/swiper-bundle.min.css",document.head.appendChild(e);let t=document.createElement("link");t.rel="stylesheet",t.href=`${baseUrl}/widget.css`,document.head.appendChild(t);let s=document.createElement("script");s.src="https://unpkg.com/swiper/swiper-bundle.min.js",document.body.appendChild(s)};
 
-    const customStyle = document.createElement("link");
-    customStyle.rel = "stylesheet";
-    customStyle.href = `${baseUrl}/widget.css`;
-    document.head.appendChild(customStyle);
-
-    const swiperScript = document.createElement("script");
-    swiperScript.src = `https://unpkg.com/swiper/swiper-bundle.min.js`;
-    document.body.appendChild(swiperScript);
-  };
-
-  const displayMessage = (message) => {
-    const container = document.getElementById("testimonial-widget-container");
-    if (container) {
-      container.innerHTML = `<div class="widget-message">${message}</div>`;
-    }
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  const displayMessage=e=>{let i=document.getElementById("testimonial-widget-container");i&&(i.innerHTML=`<div class="widget-message">${e}</div>`)};
 
   const generateWidgetHTML = (widget, externalReviews) => `
     <div id="testimonial-widget" class="plcboot-widget-mwapper">
@@ -226,7 +157,7 @@
       loop: false,
       speed: 900,
       autoplay: {
-        delay: 2500,
+        delay: 5000,
       },
       navigation: {
         nextEl: `.swiper-button-next`,
