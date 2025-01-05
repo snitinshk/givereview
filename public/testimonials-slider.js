@@ -1,6 +1,6 @@
 (function () {
 
-  let widget,externalReviews;const baseUrl="http://app.givereview.to",scriptTag=document.querySelector('script[data-widget="testimonials-slider"]'),uuid=scriptTag.getAttribute("uuid"),requestOptions={method:"GET",redirect:"follow"};
+  let widget,externalReviews;const baseUrl="https://app.givereview.to",scriptTag=document.querySelector('script[data-widget="testimonials-slider"]'),uuid=scriptTag.getAttribute("uuid"),requestOptions={method:"GET",redirect:"follow"};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   const fetchAndRenderWidget=async()=>{try{let e=await fetch(`${baseUrl}/api/widget?uuid=${uuid}`,requestOptions);injectStylesAndScripts();let t=await e.json();if(widget=t?.widget,externalReviews=t?.externalReviews,!widget?.is_active){displayMessage("The widget is inactive.");return}if(!externalReviews||0===externalReviews.length){displayMessage("No data found.");return}document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload=()=>{let e=document.getElementById("testimonial-widget-container");e.innerHTML=generateWidgetHTML(widget,externalReviews),initializeTabs(externalReviews),initializeSwiper("all",externalReviews)}}catch(i){console.error("Error fetching widget:",i)}};
@@ -71,47 +71,57 @@
   const generateSlides = (reviews) => {
     return reviews
       .map(
-        (review) => `
-      <div class="swiper-slide">
-        <div class="review-card">
-          <div class="review-header">
-            ${
-              widget?.show_customer_avatar
-                ? `<img src="${review.reviewers_avtar}" alt="${review.reviewers_name}" class="avatar" />`
-                : ""
-            }
-            <div class="reviewer-info">
+        (review) => {
+          // Format the review date
+          const formattedDate = new Intl.DateTimeFormat('sv-SE', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }).format(new Date(review.review_date));
+  
+          return `
+          <div class="swiper-slide">
+            <div class="review-card">
+              <div class="review-header">
+                ${
+                  widget?.show_customer_avatar
+                    ? `<img src="${review.reviewers_avtar}" alt="${review.reviewers_name}" class="avatar" />`
+                    : ""
+                }
+                <div class="reviewer-info">
+                  ${
+                    widget?.show_customer_name
+                      ? `<h3 class="reviewer-name">${review.reviewers_name}</h3>`
+                      : ""
+                  }
+                  ${
+                    widget?.show_review_date
+                      ? `<p class="review-date">${formattedDate}</p>`
+                      : ""
+                  }
+                </div>
+                ${
+                  widget?.show_channel_logo
+                    ? `<img src="${review.channels.channel_logo_url}" alt="${review.channels.channel_name}" class="platform-icon" />`
+                    : ""
+                }
+              </div>
               ${
-                widget?.show_customer_name
-                  ? `<h3 class="reviewer-name">${review.reviewers_name}</h3>`
+                widget?.show_rating
+                  ? `<div class="review-rating">★${"★".repeat(
+                      review.review_count - 1
+                    )}</div>`
                   : ""
               }
-              ${
-                widget?.show_review_date
-                  ? `<p class="review-date">${review.review_date}</p>`
-                  : ""
-              }
+              <p class="review-text">${review.review_description}</p>
             </div>
-            ${
-              widget?.show_channel_logo
-                ? `<img src="${review.channels.channel_logo_url}" alt="${review.channels.channel_name}" class="platform-icon" />`
-                : ""
-            }
           </div>
-          ${
-            widget?.show_rating
-              ? `<div class="review-rating">★${"★".repeat(
-                  review.review_count - 1
-                )}</div>`
-              : ""
-          }
-          <p class="review-text">${review.review_description}</p>
-        </div>
-      </div>
-    `
+        `;
+        }
       )
       .join("");
   };
+  
 
   const initializeTabs = (externalReviews) => {
     const tabs = document.querySelectorAll(".plcboot-widget-tab");

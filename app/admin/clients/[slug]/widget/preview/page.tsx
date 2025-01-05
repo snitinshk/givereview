@@ -16,8 +16,7 @@ import { useLoader } from "@/app/context/loader.context";
 
 const TestimonialCompo: React.FC = () => {
   const { widget } = useWidget();
-  const { setIsLoading } = useLoader();
-
+  
   const { selectedClient } = useClients();
   const { toast } = useToast();
 
@@ -104,7 +103,7 @@ const TestimonialCompo: React.FC = () => {
           value: "all",
           label: "All",
           platformImage: null,
-          testimonials: getRandomResults(externalReviews),
+          testimonials: getFilteredReviews(externalReviews),
         },
         ...channels.map(([channelId, channelInfo]: any) => ({
           value: channelId,
@@ -121,7 +120,7 @@ const TestimonialCompo: React.FC = () => {
   }, [channels, externalReviews]);
 
   // Helper function: Get random reviews
-  function getRandomResults(reviewsArr: WidgetReview[]) {
+  function getFilteredReviews(reviewsArr: WidgetReview[]) {
     return reviewsArr.slice(0, widget?.settings?.totalReviewsToDisplay || 9);
   }
 

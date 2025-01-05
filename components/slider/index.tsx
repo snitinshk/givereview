@@ -19,8 +19,7 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
     <div className="w-full mx-auto">
       <Carousel
         opts={{
-          loop: true,
-          skipSnaps: false,
+          loop: false,
         }}
         plugins={[
           Autoplay({
@@ -40,12 +39,10 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        {testimonials.length > 3 && (
-          <>
-            <CarouselPrevious />
-            <CarouselNext />
-          </>
-        )}
+        <>
+          <CarouselPrevious />
+          <CarouselNext />
+        </>
       </Carousel>
     </div>
   );

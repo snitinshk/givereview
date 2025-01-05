@@ -20,6 +20,14 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
     reviewersAvtar,
   } = testimonial;
 
+ 
+  const formattedDate = new Intl.DateTimeFormat('sv-SE', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(reviewDate as Date));
+
+
   return (
     <div className="bg-white drop-shadow-cl-box-shadow p-4 rounded-lg flex flex-col gap-4 h-full">
       <div className="flex items-center gap-3 relative">
@@ -49,7 +57,7 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
             <h4 className="text-base font-semibold">{reviewersName}</h4>
           )}
           {widget?.settings?.showReviewDate && (
-            <p className="text-gray-500 text-sm">{reviewDate as string}</p>
+            <p className="text-gray-500 text-sm">{formattedDate}</p>
           )}
         </div>
       </div>

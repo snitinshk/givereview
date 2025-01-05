@@ -24,6 +24,7 @@ import { useClients } from "@/app/context/clients-context";
 import { TbCameraPlus } from "react-icons/tb";
 import { IoMdClose } from "react-icons/io";
 import EditableField from "@/components/editable";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { selectedClient, setSelectedClient, clients, setClients } =
@@ -34,42 +35,6 @@ export default function Page() {
   const [editingType, setEditingType] = useState(false);
   const [editingLogo, setEditingLogo] = useState(false);
 
-  // useEffect(() => {
-  //   console.log(selectedClient);
-  // }, [selectedClient]);
-
-  // const handleLogoUpload = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {};
-  //     reader.readAsDataURL(file);
-
-  //     const uploadPath = `clients/${getFileName(file as File)}`;
-  //     const { data: uploadData, error: uploadError } = await uploadFile(
-  //       file as File,
-  //       uploadPath
-  //     );
-
-  //     if (uploadError) {
-  //       toast({
-  //         description: `Error in uploading client logo, please try again later`,
-  //       });
-  //       return;
-  //     }
-  //     const clientLogoUrl = mediaUrl(uploadData?.fullPath as string);
-  //     if (clientLogoUrl) {
-  //       setSelectedClient((prev: any) => ({
-  //         ...prev,
-  //         logo: clientLogoUrl,
-  //       }));
-  //     }
-
-  //     handleUpdateClient({ client_logo: clientLogoUrl });
-  //   }
-  // };
 
   const handleLogoUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -93,6 +58,8 @@ export default function Page() {
     }
   };
 
+  const router = useRouter();
+
   const handleUpdateClient = async (updateInfo: any) => {
     if (!selectedClient?.id) {
       return;
@@ -106,6 +73,12 @@ export default function Page() {
 
     if (!error) {
       toast({ description: "Field updated" });
+      if("client_slug" in updateInfo){
+       setTimeout(() => {
+        // window.location.reload();
+        router.push(`/admin/clients/${updateInfo['client_slug']}/settings`);
+       }, 1000);
+      }
     }
   };
 

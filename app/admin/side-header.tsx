@@ -97,6 +97,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const reviewLinkSubMenus = [
     `/admin/clients/${slug}/review-link`,
+    `/admin/clients/${slug}/review-link/manage`,
     `/admin/clients/${slug}/widget`,
     `/admin/clients/${slug}/settings`,
   ];
