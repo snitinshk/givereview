@@ -122,8 +122,7 @@ const TestimonialCompo: React.FC = () => {
 
   // Helper function: Get random reviews
   function getRandomResults(reviewsArr: WidgetReview[]) {
-    const shuffledArray = [...reviewsArr].sort(() => Math.random() - 0.5);
-    return shuffledArray.slice(0, widget?.settings?.totalReviewsToDisplay || 5);
+    return reviewsArr.slice(0, widget?.settings?.totalReviewsToDisplay || 9);
   }
 
   if (widget && externalReviewsList && !widget?.settings?.isActive) {

@@ -6,8 +6,7 @@
   const fetchAndRenderWidget=async()=>{try{let e=await fetch(`${baseUrl}/api/widget?uuid=${uuid}`,requestOptions);injectStylesAndScripts();let t=await e.json();if(widget=t?.widget,externalReviews=t?.externalReviews,!widget?.is_active){displayMessage("The widget is inactive.");return}if(!externalReviews||0===externalReviews.length){displayMessage("No data found.");return}document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload=()=>{let e=document.getElementById("testimonial-widget-container");e.innerHTML=generateWidgetHTML(widget,externalReviews),initializeTabs(externalReviews),initializeSwiper("all",externalReviews)}}catch(i){console.error("Error fetching widget:",i)}};
 
   const getRandomResults = (reviewsArr) => {
-    const shuffledArray = [...reviewsArr].sort(() => Math.random() - 0.5);
-    return shuffledArray.slice(0, widget?.total_reviews_to_display || 9);
+    return reviewsArr.slice(0, widget?.total_reviews_to_display || 9);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
