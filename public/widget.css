@@ -209,7 +209,7 @@ table {
   text-align: center;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  margin-top: 40px;
+  margin-top: 20px;
   color: #363e4a;
 }
 
@@ -236,8 +236,8 @@ table {
 }
 
 .avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -268,10 +268,13 @@ table {
 }
 
 .review-rating {
-  color: #f5c518;
-  font-size: 20px;
+  color: #eab308;
+  font-size: 16px;
   margin-bottom: 10px;
   letter-spacing: 5px;
+  display: flex;
+  gap: 4px;
+  margin-top: 20px;
 }
 
 .review-text {
@@ -279,6 +282,11 @@ table {
   font-family: "Public Sans", sans-serif;
   font-size: 0.875rem;
   line-height: 1.25rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  min-height: 62px;
 }
 
 .swiper-container {
@@ -289,7 +297,6 @@ table {
 .swiper-button-next,
 .swiper-button-prev {
   background: #fff;
-  border: 1px solid #e4e4e7;
   width: 32px;
   height: 32px;
   color: #333;
@@ -301,12 +308,18 @@ table {
   box-sizing: border-box;
 }
 
+.swiper-button-next svg,
+.swiper-button-prev svg {
+  width: 28px;
+  height: 28px;
+}
+
 .swiper-button-next {
-  right: -45px;
+  right: 0;
 }
 
 .swiper-button-prev {
-  left: -45px;
+  left: 0;
 }
 
 .swiper-button-next:after,
@@ -315,7 +328,7 @@ table {
 }
 
 .swiper-container {
-  width: 100%;
+  width: calc(100% - 90px) !important;
   overflow: hidden;
 }
 
@@ -331,6 +344,7 @@ table {
   display: flex;
   align-items: stretch;
   margin: 20px 0;
+  width: calc(100% - 70px) !important;
 }
 
 .review-card {
@@ -344,3 +358,4 @@ table {
 .sliderM_container {
   position: relative;
 }
+
