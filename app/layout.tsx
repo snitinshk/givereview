@@ -29,10 +29,6 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
         <Toaster />
-
-        <div id="testimonial-widget-container"></div>
-        <script src="http://localhost:3000/testimonials-slider.js" data-widget="testimonials-slider" uuid="d0d564ce-ede6-41f6-9366-0b2b88ba898e">
-        </script>
       </body>
     </html>
   );
