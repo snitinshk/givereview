@@ -25,16 +25,6 @@ import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
 import { updateIndividualAttributes } from "@/app/admin/action";
 
-interface Settings {
-  reviewLinkName: string;
-  reviewLinkSlug: string;
-  homeReviewTitle: string;
-  isSkipFirstPageEnabled: boolean;
-  ratingThresholdCount: number;
-  isPoweredByEnabled: boolean;
-  desktopBgImage: string;
-}
-
 export default function SettingTabs() {
   const { reviewLinkSettings, setReviewLinkSettings } = useReviewLinkSettings();
 
@@ -51,34 +41,9 @@ export default function SettingTabs() {
 
   const { toast } = useToast();
 
-  const [isActive, setIsActive] = useState<boolean>(
-    reviewLinkSettings?.isActive
-  );
-
   const [editingName, setEditingName] = useState(false);
-  const [reviewLinkName, setReviewLinkName] = useState<string>(
-    reviewLinkSettings?.reviewLinkName
-  );
-
   const [editingSlug, setEditingSlug] = useState(false);
-  const [reviewLinkSlug, setReviewLinkSlug] = useState<string>(
-    reviewLinkSettings?.reviewLinkSlug
-  );
-
   const [editingHomeTitle, setEditingHomeTitle] = useState(false);
-
-  // const [title, setTitle] = useState<string>(reviewLinkSettings?.title);
-
-  const [isSkipFirstPageEnabled, setIsSkipFirstPageEnabled] = useState(
-    reviewLinkSettings?.isSkipFirstPageEnabled
-  );
-  const [isPoweredByEnabled, setIsPoweredByEnabled] = useState(
-    reviewLinkSettings?.isPoweredByEnabled
-  );
-
-  const [ratingThresholdCount, setRatingThresholdCount] = useState<number>(
-    reviewLinkSettings?.ratingThresholdCount
-  );
 
   const uploadBgImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { base64, file, error } = await handleImageUpload(event);
@@ -122,68 +87,6 @@ export default function SettingTabs() {
   };
 
   useEffect(() => {
-    if (reviewLinkName !== reviewLinkSettings?.reviewLinkName) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          reviewLinkName,
-        };
-      });
-    }
-
-    // if (reviewLinkSlug !== reviewLinkSettings?.reviewLinkSlug) {
-    //   setReviewLinkSettings((prevState: any) => {
-    //     return {
-    //       ...prevState,
-    //       reviewLinkSlug,
-    //     };
-    //   });
-    // }
-
-    // if (title !== reviewLinkSettings?.title) {
-    //   setReviewLinkSettings((prevState: any) => {
-    //     return {
-    //       ...prevState,
-    //       title,
-    //     };
-    //   });
-    // }
-
-    if (isPoweredByEnabled !== reviewLinkSettings?.isPoweredByEnabled) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          isPoweredByEnabled,
-        };
-      });
-    }
-
-    if (isSkipFirstPageEnabled !== reviewLinkSettings?.isSkipFirstPageEnabled) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          isSkipFirstPageEnabled,
-        };
-      });
-    }
-
-    if (ratingThresholdCount !== reviewLinkSettings?.ratingThresholdCount) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          ratingThresholdCount,
-        };
-      });
-    }
-
-    if (isActive !== reviewLinkSettings?.isActive) {
-      setReviewLinkSettings((prevState: any) => {
-        return {
-          ...prevState,
-          isActive,
-        };
-      });
-    }
 
     if (imagePreview) {
       setReviewLinkSettings((prevState: any) => {
@@ -194,15 +97,7 @@ export default function SettingTabs() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    reviewLinkName,
-    reviewLinkSlug,
-    isPoweredByEnabled,
-    isSkipFirstPageEnabled,
-    ratingThresholdCount,
-    isActive,
-    imagePreview,
-  ]);
+  }, [imagePreview]);
 
   const updateReviewLinkSettingsContext = (updateDetail: any) => {
     const { field, newValue } = updateDetail;
@@ -248,13 +143,16 @@ export default function SettingTabs() {
         {reviewLinkSettings?.reviewLinkId && (
           <div className="flex items-center space-x-2">
             <Label htmlFor="active-toggle">
-              {isActive ? "Active" : "Inactive"}
+              {reviewLinkSettings?.isActive ? "Active" : "Inactive"}
             </Label>
             <Switch
               id="active-toggle"
-              checked={isActive}
+              checked={reviewLinkSettings?.isActive}
               onCheckedChange={(checked) => {
-                setIsActive(!isActive);
+                updateReviewLinkSettingsContext({
+                  field: "reviewLinkName",
+                  newValue: checked,
+                });
                 handleUpdateReviewLinkSettings({
                   is_active: checked,
                 });
@@ -266,8 +164,13 @@ export default function SettingTabs() {
         {/* Editable Name Field */}
         {!reviewLinkSettings?.reviewLinkId ? (
           <Input
-            value={reviewLinkName}
-            onChange={(e) => setReviewLinkName(e.target.value)}
+            value={reviewLinkSettings?.reviewLinkName}
+            onChange={(e) => {
+              updateReviewLinkSettingsContext({
+                field: "reviewLinkName",
+                newValue: e.target.value,
+              });
+            }}
             autoFocus
             className="h-12 w-full max-w-80"
           />
@@ -275,17 +178,24 @@ export default function SettingTabs() {
           <EditableField
             fieldName="name"
             isEditing={editingName}
-            value={reviewLinkName}
+            value={reviewLinkSettings?.reviewLinkName}
             onEdit={() => setEditingName(true)}
             onSave={(newValue) => {
               handleUpdateReviewLinkSettings({
                 review_link_name: newValue,
               });
-              setReviewLinkName(newValue);
+              updateReviewLinkSettingsContext({
+                field: "reviewLinkName",
+                newValue,
+              });
               setEditingName(false);
             }}
             onCancel={() => setEditingName(false)}
-            renderValue={<p className="text-gray-700">{reviewLinkName}</p>}
+            renderValue={
+              <p className="text-gray-700">
+                {reviewLinkSettings?.reviewLinkName}
+              </p>
+            }
           />
         )}
 
@@ -298,7 +208,10 @@ export default function SettingTabs() {
             handleUpdateReviewLinkSettings({
               review_link_slug: newValue,
             });
-            updateReviewLinkSettingsContext({ field: "reviewLinkSlug", newValue });
+            updateReviewLinkSettingsContext({
+              field: "reviewLinkSlug",
+              newValue,
+            });
             setEditingSlug(false);
           }}
           onCancel={() => setEditingSlug(false)}
@@ -338,16 +251,21 @@ export default function SettingTabs() {
             <span>Skip first page and go to positive page</span>
             <div className="flex items-center space-x-2">
               <Label htmlFor="skip-page-toggle">
-                {isSkipFirstPageEnabled ? "Enable" : "Disable"}
+                {reviewLinkSettings?.isSkipFirstPageEnabled
+                  ? "Enable"
+                  : "Disable"}
               </Label>
               <Switch
                 id="skip-page-toggle"
-                checked={isSkipFirstPageEnabled}
+                checked={reviewLinkSettings?.isSkipFirstPageEnabled}
                 onCheckedChange={(checked) => {
                   handleUpdateReviewLinkSettings({
                     skip_first_page_enabled: checked,
                   });
-                  setIsSkipFirstPageEnabled(checked);
+                  updateReviewLinkSettingsContext({
+                    field: "isSkipFirstPageEnabled",
+                    newValue: checked,
+                  });
                 }}
               />
             </div>
@@ -356,12 +274,15 @@ export default function SettingTabs() {
             <span>If stars bigger than</span>
             <Select
               onValueChange={(newValue) => {
-                setRatingThresholdCount(Number(newValue));
+                updateReviewLinkSettingsContext({
+                  field: "ratingThresholdCount",
+                  newValue: Number(newValue),
+                });
                 handleUpdateReviewLinkSettings({
                   rating_threshold_count: newValue,
                 });
               }}
-              value={ratingThresholdCount.toString()}
+              value={reviewLinkSettings?.ratingThresholdCount.toString()}
             >
               <SelectTrigger className="min-w-14 w-auto">
                 <SelectValue placeholder="number" />
@@ -383,16 +304,19 @@ export default function SettingTabs() {
             </span>
             <div className="flex items-center space-x-2">
               <Label htmlFor="powered-by-toggle">
-                {isPoweredByEnabled ? "Enable" : "Disable"}
+                {reviewLinkSettings?.isPoweredByEnabled ? "Enable" : "Disable"}
               </Label>
               <Switch
                 id="powered-by-toggle"
-                checked={isPoweredByEnabled}
+                checked={reviewLinkSettings?.isPoweredByEnabled}
                 onCheckedChange={(checked) => {
                   handleUpdateReviewLinkSettings({
                     powered_by_enabled: checked,
                   });
-                  setIsPoweredByEnabled(checked);
+                  updateReviewLinkSettingsContext({
+                    field: "isPoweredByEnabled",
+                    newValue: checked,
+                  });
                 }}
               />
             </div>
@@ -464,7 +388,7 @@ export default function SettingTabs() {
             <Star key={index} className={`w-8 h-8 text-gray-800`} />
           ))}
         </div>
-        {isPoweredByEnabled && (
+        {reviewLinkSettings?.isPoweredByEnabled && (
           <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
             <span className="font-medium">Powered</span> with{" "}
             <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
