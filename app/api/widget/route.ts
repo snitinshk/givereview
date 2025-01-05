@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
           .eq("client_id", widget?.client_id)
           .gt("review_count", condition.ratingThreshold)
           .eq("channel_id", condition.channelId)
-          .order('created_at', { ascending: false })
+          .order('review_date', { ascending: false })
           .limit(condition.totalReviewsToDisplay);
           
       });
