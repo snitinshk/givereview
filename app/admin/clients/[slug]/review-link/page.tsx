@@ -202,13 +202,12 @@ const ReviewLink: React.FC = (params) => {
     // setIsLoading(true);
     // Navigate immediately to provide a responsive user experience
     router.push(`/admin/clients/${slug}/review-link/manage`);
-
     // Perform the asynchronous operation in the background
     generateUniqueSlug(slug as string).then((uniqueSlug) => {
       setReviewLinkSettings({
         ...reviewLinkSettingsDefaultValue,
         reviewLinkSlug: uniqueSlug,
-        title: `${DEFAULT_TEXTS.homeReviewTitle}`,
+        title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient?.name || ""}?`,
       });
     });
 

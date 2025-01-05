@@ -8,7 +8,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useParams } from "next/navigation";
-import { DEFAULT_TEXTS } from "@/constant";
+import { DEFAULT_TEXTS, reviewLinkSettingsDefaultValue } from "@/constant";
 import { generateUniqueSlug } from "../admin/clients/[slug]/review-link/action";
 import { useClients } from "./clients-context";
 
@@ -32,14 +32,7 @@ export const ReviewLinkSettingsProvider = ({
   const { selectedClient } = useClients();
 
   const [reviewLinkSettings, setReviewLinkSettings] = useState<any>({
-    isActive: true,
-    reviewLinkName: "",
-    reviewLinkSlug: "",
-    title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient?.name || ""}`,
-    isSkipFirstPageEnabled: false,
-    ratingThresholdCount: 4,
-    isPoweredByEnabled: true,
-    imageFile: "",
+    ...reviewLinkSettingsDefaultValue,
   });
 
   // Update the title when the selected client changes
@@ -47,7 +40,7 @@ export const ReviewLinkSettingsProvider = ({
     if (selectedClient) {
       setReviewLinkSettings((prev: any) => ({
         ...prev,
-        title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient.name}`,
+        title: `${DEFAULT_TEXTS.homeReviewTitle}${selectedClient.name}?`,
       }));
     }
   }, [selectedClient]);

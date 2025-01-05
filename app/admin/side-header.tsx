@@ -105,10 +105,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log(pathname);
     setSelectedPath(pathname);
     setOpenSubmenu(pathname);
-    // setSidebarOpen(true);
   }, [pathname]);
 
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
