@@ -84,5 +84,5 @@ export interface WidgetReview {
   client?: string;
   reviewCount?: number;
   reviewDescription?: string;
-  reviewDate?: string | Date;
+  reviewDate?: Date;
 }
