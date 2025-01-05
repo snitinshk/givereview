@@ -347,7 +347,6 @@ table {
   width: calc(100% - 70px) !important;
 }
 
-
 .review-card {
   box-sizing: border-box;
   width: 100%;
@@ -359,4 +358,3 @@ table {
 .sliderM_container {
   position: relative;
 }
-
