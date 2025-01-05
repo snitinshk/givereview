@@ -1,6 +1,6 @@
 (function () {
   let widget, externalReviews;
-  const baseUrl = "https://stg.givereview.to",
+  const baseUrl = "https://app.givereview.to",
     scriptTag = document.querySelector(
       'script[data-widget="testimonials-slider"]'
     ),
