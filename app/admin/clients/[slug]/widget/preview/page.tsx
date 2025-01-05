@@ -169,7 +169,7 @@ const TestimonialCompo: React.FC = () => {
           <TabsContent key={tab?.value} value={tab?.value}>
             <Slider testimonials={tab?.testimonials ?? []} />
             {widget?.settings?.showPoweredBy && (
-              <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
+              <div className="text-sm text-gray-600 flex items-center justify-center gap-1 mt-12">
                 <span>Powered</span> with{" "}
                 <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
                 booster

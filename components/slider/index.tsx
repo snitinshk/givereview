@@ -16,7 +16,7 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ testimonials }) => {
   return (
-    <div className="w-full mx-auto">
+    <div className="w-[calc(100%-50px)] mx-auto">
       <Carousel
         opts={{
           loop: false,
