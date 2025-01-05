@@ -1,24 +1,71 @@
 (function () {
-
-  let widget,externalReviews;const baseUrl="http://localhost:3000",scriptTag=document.querySelector('script[data-widget="testimonials-slider"]'),uuid=scriptTag.getAttribute("uuid"),requestOptions={method:"GET",redirect:"follow"};
+  let widget, externalReviews;
+  const baseUrl = "https://app.givereview.to",
+    scriptTag = document.querySelector(
+      'script[data-widget="testimonials-slider"]'
+    ),
+    uuid = scriptTag.getAttribute("uuid"),
+    requestOptions = { method: "GET", redirect: "follow" };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  const fetchAndRenderWidget=async()=>{try{let e=await fetch(`${baseUrl}/api/widget?uuid=${uuid}`,requestOptions);injectStylesAndScripts();let t=await e.json();if(widget=t?.widget,externalReviews=t?.externalReviews,!widget?.is_active){displayMessage("The widget is inactive.");return}if(!externalReviews||0===externalReviews.length){displayMessage("No data found.");return}document.querySelector("script[src='https://unpkg.com/swiper/swiper-bundle.min.js']").onload=()=>{let e=document.getElementById("testimonial-widget-container");e.innerHTML=generateWidgetHTML(widget,externalReviews),initializeTabs(externalReviews),initializeSwiper("all",externalReviews)}}catch(i){console.error("Error fetching widget:",i)}};
+  const fetchAndRenderWidget = async () => {
+    try {
+      let e = await fetch(`${baseUrl}/api/widget?uuid=${uuid}`, requestOptions);
+      injectStylesAndScripts();
+      let t = await e.json();
+      if (
+        ((widget = t?.widget),
+        (externalReviews = t?.externalReviews),
+        !widget?.is_active)
+      ) {
+        displayMessage("The widget is inactive.");
+        return;
+      }
+      if (!externalReviews || 0 === externalReviews.length) {
+        displayMessage("No data found.");
+        return;
+      }
+      document.querySelector(
+        "script[src='https://unpkg.com/swiper/swiper-bundle.min.js']"
+      ).onload = () => {
+        let e = document.getElementById("testimonial-widget-container");
+        (e.innerHTML = generateWidgetHTML(widget, externalReviews)),
+          initializeTabs(externalReviews),
+          initializeSwiper("all", externalReviews);
+      };
+    } catch (i) {
+      console.error("Error fetching widget:", i);
+    }
+  };
 
-  const getRandomResults = (reviewsArr) => {
+  const getFilteredResults = (reviewsArr) => {
     return reviewsArr.slice(0, widget?.total_reviews_to_display || 9);
-  }
+  };
 
   function truncateString(str, maxLength = 140) {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  const injectStylesAndScripts=()=>{let e=document.createElement("link");e.rel="stylesheet",e.href="https://unpkg.com/swiper/swiper-bundle.min.css",document.head.appendChild(e);let t=document.createElement("link");t.rel="stylesheet",t.href=`${baseUrl}/widget.css`,document.head.appendChild(t);let s=document.createElement("script");s.src="https://unpkg.com/swiper/swiper-bundle.min.js",document.body.appendChild(s)};
+  const injectStylesAndScripts = () => {
+    let e = document.createElement("link");
+    (e.rel = "stylesheet"),
+      (e.href = "https://unpkg.com/swiper/swiper-bundle.min.css"),
+      document.head.appendChild(e);
+    let t = document.createElement("link");
+    (t.rel = "stylesheet"),
+      (t.href = `${baseUrl}/widget.css`),
+      document.head.appendChild(t);
+    let s = document.createElement("script");
+    (s.src = "https://unpkg.com/swiper/swiper-bundle.min.js"),
+      document.body.appendChild(s);
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  const displayMessage=e=>{let i=document.getElementById("testimonial-widget-container");i&&(i.innerHTML=`<div class="widget-message">${e}</div>`)};
-  
+  const displayMessage = (e) => {
+    let i = document.getElementById("testimonial-widget-container");
+    i && (i.innerHTML = `<div class="widget-message">${e}</div>`);
+  };
 
   const generateWidgetHTML = (widget, externalReviews) => `
     <div id="testimonial-widget" class="plcboot-widget-mwapper">
@@ -75,16 +122,15 @@
 
   const generateSlides = (reviews) => {
     return reviews
-      .map(
-        (review) => {
-          // Format the review date
-          const formattedDate = new Intl.DateTimeFormat('sv-SE', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }).format(new Date(review.review_date));
+      .map((review) => {
+        // Format the review date
+        const formattedDate = new Intl.DateTimeFormat("sv-SE", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(new Date(review.review_date));
   
-          return `
+        return `
           <div class="swiper-slide">
             <div class="review-card">
               <div class="review-header">
@@ -122,11 +168,9 @@
             </div>
           </div>
         `;
-        }
-      )
+      })
       .join("");
   };
-  
 
   const initializeTabs = (externalReviews) => {
     const tabs = document.querySelectorAll(".plcboot-widget-tab");
@@ -147,7 +191,7 @@
     const sanitizedPlatform = platform.replace(/\s+/g, "-"); // Sanitize platform name
     const filteredReviews =
       platform === "all"
-        ? getRandomResults(reviews)
+        ? getFilteredResults(reviews)
         : reviews.filter((review) => review.channels.channel_name === platform);
 
     const swiperContainer = document.querySelector(".tab-content-wrapper");
