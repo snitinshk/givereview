@@ -31,7 +31,7 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
   }
 
   return (
-    <div className="bg-white drop-shadow-cl-box-shadow p-4 rounded-lg flex flex-col gap-4">
+    <div className="bg-white drop-shadow-cl-box-shadow p-4 rounded-lg flex flex-col gap-4 h-full">
       <div className="flex items-center gap-3 relative">
         {channelLogo && widget?.settings?.showChannelLogo && (
           <div className="absolute right-2 top-2">
