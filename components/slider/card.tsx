@@ -20,14 +20,13 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
     reviewersAvtar,
   } = testimonial;
 
- 
-  const formattedDate = new Intl.DateTimeFormat('sv-SE', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const formattedDate = new Intl.DateTimeFormat("sv-SE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(new Date(reviewDate as Date));
 
-  function truncateString(str, maxLength = 140) {
+  function truncateString(str: string, maxLength = 140) {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
   }
 
@@ -71,7 +70,9 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
           ))}
         </div>
       )}
-      <p className="text-gray-600 text-sm min-h-[62px]">{truncateString(reviewDescription)}</p>
+      <p className="text-gray-600 text-sm min-h-[62px]">
+        {truncateString(reviewDescription ?? "")}
+      </p>
     </div>
   );
 };
