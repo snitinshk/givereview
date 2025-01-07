@@ -99,6 +99,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     `/admin/clients/${slug}/review-link`,
     `/admin/clients/${slug}/review-link/manage`,
     `/admin/clients/${slug}/widget`,
+    `/admin/clients/${slug}/widget/preview`,
     `/admin/clients/${slug}/settings`,
   ];
 
@@ -279,7 +280,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                           <Button
                             variant="ghost"
                             className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
-                              selectedPath === subItem.path
+                              selectedPath.includes(subItem.path)
                                 ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
                                 : ""
                             }`}
