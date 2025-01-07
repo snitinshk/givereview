@@ -16,7 +16,7 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ testimonials }) => {
   return (
-    <div className="w-[calc(100%-50px)] mx-auto">
+    <div className="w-full mx-auto">
       <Carousel
         opts={{
           loop: false,
@@ -33,7 +33,7 @@ const Slider: React.FC<SliderProps> = ({ testimonials }) => {
           {testimonials.map((testimonial) => (
             <CarouselItem
               key={testimonial.id}
-              className="sm:basis-full lg:basis-1/2 xl:basis-1/3 p-4"
+              className="sm:basis-full lg:basis-1/2 xl:basis-1/3 p-4 pl-8"
             >
               <SliderCard testimonial={testimonial} />
             </CarouselItem>

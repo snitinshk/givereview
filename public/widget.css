@@ -292,6 +292,8 @@ table {
 .swiper-container {
   position: relative;
   margin: 0 auto;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 
 .swiper-button-next,
@@ -315,11 +317,11 @@ table {
 }
 
 .swiper-button-next {
-  right: 0;
+  right: -35px;
 }
 
 .swiper-button-prev {
-  left: 0;
+  left: -35px;
 }
 
 .swiper-button-next:after,
@@ -328,7 +330,7 @@ table {
 }
 
 .swiper-container {
-  width: calc(100% - 90px) !important;
+  width: 100% !important;
   overflow: hidden;
 }
 
@@ -357,4 +359,17 @@ table {
 }
 .sliderM_container {
   position: relative;
+}
+@media (max-width: 676px) {
+  .swiper-container {
+    width: calc(100% - 90px) !important;
+    overflow: hidden;
+  }
+  .swiper-button-next {
+    right: 0;
+  }
+
+  .swiper-button-prev {
+    left: 0;
+  }
 }

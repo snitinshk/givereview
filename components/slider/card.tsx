@@ -27,9 +27,12 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
     year: 'numeric',
   }).format(new Date(reviewDate as Date));
 
+  function truncateString(str, maxLength = 140) {
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  }
 
   return (
-    <div className="bg-white drop-shadow-cl-box-shadow p-4 rounded-lg flex flex-col gap-4 h-full">
+    <div className="bg-white drop-shadow-cl-box-shadow p-4 rounded-lg flex flex-col gap-4">
       <div className="flex items-center gap-3 relative">
         {channelLogo && widget?.settings?.showChannelLogo && (
           <div className="absolute right-2 top-2">
@@ -68,7 +71,7 @@ const SliderCard: React.FC<SliderCardProps> = ({ testimonial }) => {
           ))}
         </div>
       )}
-      <p className="text-gray-600 text-sm">{reviewDescription}</p>
+      <p className="text-gray-600 text-sm min-h-[62px]">{truncateString(reviewDescription)}</p>
     </div>
   );
 };
