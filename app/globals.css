@@ -88,3 +88,21 @@ html,
 body {
   height: 100%;
 }
+
+.priview-slider-wrap .swiper-button-prev {
+  left: -25px;
+}
+
+.priview-slider-wrap .swiper-button-next {
+  right: -25px;
+}
+
+@media (max-width: 676px) {
+  .priview-slider-wrap .swiper-container {
+    width: 100% !important;
+  }
+
+  .priview-slider-wrap .plcboot-widget-tabs {
+    overflow: auto;
+  }
+}
