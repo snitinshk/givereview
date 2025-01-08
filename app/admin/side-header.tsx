@@ -166,7 +166,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const isActive = (type: string, path: string): boolean => {
     if (type === "menu") {
-
       if (path.includes("reviews") || path.includes(slug as string) || pathname.includes("add")) {
         return pathname.includes(path);
       } else {
@@ -174,7 +173,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       }
     }
     if (type === "submenu") {
-      return pathname.includes(path);
+      return pathname.includes(path) || path === openSubmenu;;
     }
     return false;
   };
