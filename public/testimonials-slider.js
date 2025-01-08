@@ -6,8 +6,7 @@
     uuid = scriptTag.getAttribute("uuid"),
     src = scriptTag.getAttribute("src");
     const baseUrlRegex = /(https?:\/\/[^/]+)/;
-    const [] = src.match(baseUrlRegex);
-    console.log(baseUrl)
+    const [baseUrl] = src.match(baseUrlRegex);
     requestOptions = { method: "GET", redirect: "follow" };
 
   const fetchAndRenderWidget = async () => {
