@@ -19,42 +19,13 @@ import PlaceholderImage from "@/app/images/placeholder-image.svg";
 import { useClients } from "@/app/context/clients-context";
 import EditableField from "@/components/editable";
 import { updateIndividualAttributes } from "@/app/admin/action";
+import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 
-type HoverStates = {
-  [key: string]: number;
-};
-
-interface RatingCategory {
-  name: string;
-  dbField: string;
-  enabled: boolean;
-}
-
-interface InputCategory {
-  placeholder: string;
-  dbField: string;
-  type: string;
-  enabled: boolean;
-}
-
-interface TextareaCategory {
-  placeholder: string;
-  dbField: string;
-  enabled: boolean;
-}
 
 const NegativeTabs: React.FC = () => {
   const { reviewLinkNegative, setReviewLinkNegative } = useReviewLinkNegative();
+  const { reviewLinkSettings } = useReviewLinkSettings();
   const { selectedClient } = useClients();
-  const categories = [
-    "Food",
-    "Service",
-    "Atmosphere",
-    "Noise",
-    "Price",
-    "Cleanliness",
-    "WaitTime",
-  ];
 
   const { toast } = useToast();
   const [ratingCategories, setRatingCategories] = useState(
@@ -363,7 +334,7 @@ const NegativeTabs: React.FC = () => {
                   negativePageDescription: newValue,
                 }));
                 handleUpdateReviewLink({
-                  reviewDesc: newValue,
+                  negative_page_description: newValue,
                 });
                 setIsEditingDesc(false);
               },
@@ -554,11 +525,13 @@ const NegativeTabs: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
-          <span className="font-medium">Powered</span> with{" "}
-          <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
-          booster
-        </div>
+        {reviewLinkSettings?.isPoweredByEnabled && (
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+            booster
+          </div>
+        )}
       </div>
     </div>
   );

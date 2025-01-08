@@ -360,11 +360,13 @@ const PositiveTabs: React.FC<PositiveTabsProps> = ({ channels }) => {
               </div>
             ))}
           </div>
-          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
-            <span className="font-medium">Powered</span> with{" "}
-            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
-            booster
-          </div>
+          {reviewLinkSettings?.isPoweredByEnabled && (
+            <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+              <span className="font-medium">Powered</span> with{" "}
+              <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+              booster
+            </div>
+          )}
         </div>
       )}
     </div>

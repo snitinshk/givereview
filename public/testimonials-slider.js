@@ -1,13 +1,15 @@
 (function () {
   let widget, externalReviews;
-  const baseUrl = "https://stg.givereview.to",
-    scriptTag = document.querySelector(
+  const scriptTag = document.querySelector(
       'script[data-widget="testimonials-slider"]'
     ),
     uuid = scriptTag.getAttribute("uuid"),
+    src = scriptTag.getAttribute("src");
+    const baseUrlRegex = /(https?:\/\/[^/]+)/;
+    const [] = src.match(baseUrlRegex);
+    console.log(baseUrl)
     requestOptions = { method: "GET", redirect: "follow" };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   const fetchAndRenderWidget = async () => {
     try {
       let e = await fetch(`${baseUrl}/api/widget?uuid=${uuid}`, requestOptions);
@@ -39,14 +41,14 @@
   };
 
   const getFilteredResults = (reviewsArr) => {
-    return reviewsArr.slice(0, widget?.total_reviews_to_display || 9);
+    return reviewsArr.sort((a, b) => new Date(b.review_date).getTime() - new Date(a.review_date).getTime())
+    .slice(0, widget?.total_reviews_to_display || 9);
   };
 
   function truncateString(str, maxLength = 140) {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   const injectStylesAndScripts = () => {
     let e = document.createElement("link");
     (e.rel = "stylesheet"),

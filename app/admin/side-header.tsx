@@ -95,19 +95,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { slug } = useParams();
   const { isLoading } = useLoader();
 
-  const reviewLinkSubMenus = [
-    `/admin/clients/${slug}/review-link`,
-    `/admin/clients/${slug}/review-link/manage`,
-    `/admin/clients/${slug}/widget`,
-    `/admin/clients/${slug}/widget/preview`,
-    `/admin/clients/${slug}/settings`,
-  ];
+  // const reviewLinkSubMenus = [
+  //   `/admin/clients/${slug}/review-link`,
+  //   `/admin/clients/${slug}/review-link/manage`,
+  //   `/admin/clients/${slug}/widget`,
+  //   `/admin/clients/${slug}/widget/preview`,
+  //   `/admin/clients/${slug}/settings`,
+  // ];
 
-  const [selectedPath, setSelectedPath] = useState("/admin/clients");
   const pathname = usePathname();
 
   useEffect(() => {
-    setSelectedPath(pathname);
     setOpenSubmenu(pathname);
   }, [pathname]);
 
@@ -118,7 +116,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const dynamicMenu = slug
     ? {
         name: capitalizeFirstLetter(slug as string),
-        path: `/admin/clients/${slug}/review-link`,
+        path: `/admin/clients/${slug}`,
         icon: (
           <svg
             width="14"
@@ -151,7 +149,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   })();
 
   const handleNavigation = (path: string) => {
-    setSelectedPath(path);
     setSidebarOpen(false);
     router.push(path);
   };
@@ -166,12 +163,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (!error) router.replace("/auth/login");
   };
 
-  // useEffect(()=>{
-  //   console.log(pathname)
-  //   console.log(reviewLinkSubMenus)
-  //   console.log(reviewLinkSubMenus.includes(pathname))
 
-  // },[pathname])
+  const isActive = (type: string, path: string): boolean => {
+    if (type === "menu") {
+
+      if (path.includes("reviews") || path.includes(slug as string) || pathname.includes("add")) {
+        return pathname.includes(path);
+      } else {
+        return path === pathname
+      }
+    }
+    if (type === "submenu") {
+      return pathname.includes(path);
+    }
+    return false;
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -237,7 +243,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <Button
                     variant="ghost"
                     className={`w-full justify-between text-left px-4 py-3 font-normal h-auto flex items-center ${
-                      selectedPath === item.path || reviewLinkSubMenus.includes(item.path)
+                      isActive("menu", item.path)
                         ? "!bg-[#00AB55]/[.08] !text-[#00AB55] !font-semibold"
                         : ""
                     }`}
@@ -250,7 +256,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     <div className="flex items-center gap-4">
                       <span
                         className={`[&>svg]:fill-[#637381] ${
-                          selectedPath === item.path
+                          isActive("menu", item.path)
                             ? "[&>svg]:!fill-[#00AB55]"
                             : ""
                         }`}
@@ -266,33 +272,34 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         </span>
                       )}
                       {item.submenu &&
-                        (openSubmenu === item.path || reviewLinkSubMenus.includes(openSubmenu ?? '') ? (
+                        (isActive("submenu", item.path) ? (
                           <ChevronDown />
                         ) : (
                           <ChevronRight />
                         ))}
                     </div>
                   </Button>
-                  {item.submenu && (openSubmenu === item.path || reviewLinkSubMenus.includes(openSubmenu ?? '')) && (
-                    <ul className="mt-2 ml-2">
-                      {item.submenu.map((subItem) => (
-                        <li key={subItem.path}>
-                          <Button
-                            variant="ghost"
-                            className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
-                              selectedPath.includes(subItem.path)
-                                ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
-                                : ""
-                            }`}
-                            onClick={() => handleNavigation(subItem.path)}
-                          >
-                            <span className="w-1 h-1 bg-gray-500 rounded"></span>
-                            {subItem.name}
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  {item.submenu &&
+                    (isActive("submenu", item.path)) && (
+                      <ul className="mt-2 ml-2">
+                        {item.submenu.map((subItem) => (
+                          <li key={subItem.path}>
+                            <Button
+                              variant="ghost"
+                              className={`w-full flex gap-6 justify-start text-left px-4 py-2 text-gray-500 ${
+                                isActive("submenu", subItem.path)
+                                  ? "[&>span]:w-2 [&>span]:h-2 [&>span]:bg-[#00AB55] text-ftClor"
+                                  : ""
+                              }`}
+                              onClick={() => handleNavigation(subItem.path)}
+                            >
+                              <span className="w-1 h-1 bg-gray-500 rounded"></span>
+                              {subItem.name}
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                 </li>
               );
             })}

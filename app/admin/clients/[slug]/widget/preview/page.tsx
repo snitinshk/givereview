@@ -121,7 +121,8 @@ const TestimonialCompo: React.FC = () => {
 
   // Helper function: Get random reviews
   function getFilteredReviews(reviewsArr: WidgetReview[]) {
-    return reviewsArr.slice(0, widget?.settings?.totalReviewsToDisplay || 9);
+    return reviewsArr.sort((a, b) => new Date(b.reviewDate as Date).getTime() - new Date(a.reviewDate as Date).getTime())
+    .slice(0, widget?.settings?.totalReviewsToDisplay || 9);
   }
 
   if (widget && externalReviewsList && !widget?.settings?.isActive) {

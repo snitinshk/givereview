@@ -18,9 +18,11 @@ import { Heart } from "lucide-react";
 import EditableField from "@/components/editable";
 import { updateIndividualAttributes } from "@/app/admin/action";
 import { ReviewLinkThankYouUI } from "@/interfaces/reviewlink";
+import { useReviewLinkSettings } from "@/app/context/review-link-settings.context";
 
 const ThankYouTabs: React.FC = () => {
   const { reviewLinkThankyou, setReviewLinkThankyou } = useReviewLinkThankyou();
+  const { reviewLinkSettings } = useReviewLinkSettings();
   const { toast } = useToast();
 
   const [imagePreview, setImagePreview] = useState<string | null>(
@@ -195,11 +197,13 @@ const ThankYouTabs: React.FC = () => {
         <p className="max-w-96 text-center mx-auto text-2xl font-medium text-gray-800 font-MOSTR">
           {reviewLinkThankyouTitle}
         </p>
-        <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
-          <span className="font-medium">Powered</span> with{" "}
-          <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
-          booster
-        </div>
+        {reviewLinkSettings?.isPoweredByEnabled && (
+          <div className="font-MOSTR text-sm text-gray-600 flex items-center gap-1 absolute left-1/2 bottom-3 -translate-x-1/2">
+            <span className="font-medium">Powered</span> with{" "}
+            <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by place
+            booster
+          </div>
+        )}
       </div>
     </div>
   );

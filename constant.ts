@@ -100,7 +100,7 @@ export const reviewLinkNegativeDefaultValue = {
             enabled: true,
         },
         {
-            name: "WaitTime",
+            name: "Waiting Time",
             dbField: "is_wait_time_review_enabled",
             enabled: true,
         },

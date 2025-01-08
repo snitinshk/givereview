@@ -115,22 +115,6 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
     );
   };
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex items-center justify-center p-10">
-  //       <p className="text-gray-500 text-xl">Loading...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (!hasData) {
-  //   return (
-  //     <div className="flex items-center justify-center p-10">
-  //       <p className="text-gray-500 text-xl">No reviews available</p>
-  //     </div>
-  //   );
-  // }
-
   return (
     <>
       <Table className="min-w-[1000px]">
