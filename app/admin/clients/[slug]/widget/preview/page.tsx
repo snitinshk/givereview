@@ -40,7 +40,7 @@ const TestimonialWidget = () => {
     };
   }, [widget]);
 
-  return <div id="testimonial-widget-container"></div>;
+  return <div className="mt-20 priview-slider-wrap" id="testimonial-widget-container"></div>;
 };
 
 export default TestimonialWidget;
