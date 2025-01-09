@@ -28,10 +28,11 @@ export enum CLIENT_TYPE {
 
 export const BUCKET_NAME = 'media'
 
-export const SITE_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://app.givereview.to/'
+export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://app.givereview.to/'
+export const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://givereview.to/'
 
 export const DEFAULT_TEXTS = {
-    reviewSiteBaseUrl: SITE_URL,
+    reviewSiteBaseUrl: FRONTEND_URL,
     homeReviewTitle: 'How was your experience with ',
     positiveReviewTitle: 'Leave us a review, it will help us grow and better serve our customers like you.',
     title: 'Appears publicly on Google',

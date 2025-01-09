@@ -1,7 +1,7 @@
 import { useWidget } from "@/app/context/widget-context";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { SITE_URL } from "@/constant";
+import { ADMIN_URL } from "@/constant";
 import { useToast } from "@/hooks/use-toast";
 import { getURL } from "@/lib/utils";
 import { useEffect, useState } from "react";
