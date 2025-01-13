@@ -109,7 +109,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const requestBody = await request.json();
+    const formData = await request.formData();
+
+    const requestBody: any = {
+      clientId: formData.get('clientId'),
+      channelId: formData.get('channelId'),
+      reviewDate: formData.get('reviewDate'),
+      reviewCount: formData.get('reviewCount'),
+      reviewersName: formData.get('reviewersName'),
+      reviewersAvtar: formData.get('reviewersAvtar'),
+      reviewDescription: formData.get('reviewDescription'),
+    }
 
     // Check for missing required fields
     const missingParams = requiredFields.filter((field) => !requestBody[field]);
