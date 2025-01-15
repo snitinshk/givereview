@@ -90,11 +90,15 @@ body {
 }
 
 .priview-slider-wrap .swiper-button-prev {
-  left: -25px;
+  left: -45px;
 }
 
 .priview-slider-wrap .swiper-button-next {
-  right: -25px;
+  right: -45px;
+}
+
+.priview-slider-wrap .swiper-container {
+  width: 100% !important;
 }
 
 @media (max-width: 676px) {
